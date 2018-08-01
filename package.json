@@ -1,0 +1,25 @@
+{
+  "name": "nuxt-project",
+  "version": "1.0.0",
+  "description": "My dandy Nuxt.js project",
+  "author": "kim-taewoo",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "nuxt": "^1.0.0",
+    "vue-circle-slider": "^1.0.2",
+    "vue-star-rating": "^1.6.0",
+    "vuedraggable": "^2.16.0",
+    "vuetify": "^1.0.19"
+  },
+  "devDependencies": {
+    "cross-env": "^5.0.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1"
+  }
+}
