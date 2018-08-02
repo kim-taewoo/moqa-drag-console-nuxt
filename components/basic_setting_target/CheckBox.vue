@@ -3,10 +3,10 @@
         <v-subheader class="px-0 primary--text">{{label}}</v-subheader>
         <v-layout wrap>
             <v-flex class="xs12 sm4">
-                <v-checkbox label="전체" v-model="optionAll" hide-details @change="changedCheck"></v-checkbox>
+                <v-checkbox color="light-blue" label="전체" v-model="optionAll" hide-details @change="changedCheck"></v-checkbox>
             </v-flex>
             <v-flex xs12 sm4 v-for="(option,index) in options" :key="index">
-                <v-checkbox :label="option" :value="option" v-model="selectedOption" hide-details @change="changedCheck"></v-checkbox>
+                <v-checkbox color="light-blue" :label="option" :value="option" v-model="selectedOption" hide-details @change="changedCheck"></v-checkbox>
             </v-flex>
         </v-layout>
     </v-flex>

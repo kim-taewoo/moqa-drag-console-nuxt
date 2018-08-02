@@ -1,42 +1,74 @@
 <template>
-  <div class="fill-height">
-    <v-container fill-height>
-      <!-- <v-layout row class="text-xs-center" justify-center align-center>
-        <v-flex class="xs12"> -->
-          <v-layout  justify-center align-center>
-            <v-flex xs3 >
-              <v-card height="500px" style="background-image: url('http://cdn.wallpapersafari.com/7/86/gqiGH7.jpg')"></v-card>
-            </v-flex>
-            <v-flex xs4 class="grey lighten-4">
-              <v-container class="text-xs-center" >
-                <v-card flat>
-                  <v-card-title primary-title>
-                    <h4>로그인</h4>
-                  </v-card-title>
-                  <v-form>
-                  <v-text-field prepend-icon="person" name="Username" label="Username"></v-text-field>
-                  <v-text-field prepend-icon="lock" name="Password" label="Password" type="password"></v-text-field>
-                  <v-card-actions>
-                    <v-btn color="primary" large block>Login</v-btn>
-                  </v-card-actions>
-                  </v-form>
-                </v-card>
-              </v-container>
-            </v-flex>            
-          </v-layout>
-        <!-- </v-flex>
-      </v-layout> -->
-    </v-container>
-  </div>
+  <v-container justify-center>
+    <!-- <v-layout justify-center>
+      <v-flex class="text-xs-center notice">
+        <span><v-icon>info</v-icon></span>
+        <p class="notice-content body-1 ma-0">공지사항: 점검이 있을 예정입니다. <span>2018.09.01</span></p>
+      </v-flex>
+    </v-layout> -->
+
+    <v-layout class="ma-3">
+      <v-flex>
+        <v-container :class="{'pa-0': $vuetify.breakpoint.smAndDown}">
+          <v-tabs
+            v-model="active"
+            slider-color="primary"
+          >
+            <v-tab
+              v-for="(tab, index) in dashboardTabs"
+              :key="index"
+              ripple
+              class="title"
+            >
+              {{tab.name}}
+            </v-tab>
+
+            <v-tab-item
+              v-for="(tab, index) in dashboardTabs"
+              :key="index"
+            >
+              <component :is="tab.comp" class="tabComponent"></component>
+            </v-tab-item>
+          </v-tabs>
+
+        </v-container>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
-
 <script>
+import surveyList from "~/components/SurveyList";
+import fitTarget from "~/components/FitTarget";
 export default {
-  layout: "login"
+  data() {
+    return {
+      dashboardTabs: [
+        {
+          name: "설문관리",
+          comp: surveyList
+        },
+        {
+          name: "맞춤타겟",
+          comp: fitTarget
+        }
+      ],
+      active: null
+    };
+  }
 };
 </script>
 
 <style>
+.notice {
+  margin: 1.4rem;
+}
+
+.notice-content {
+  display: inline-block;
+  vertical-align: middle;
+  vertical-align: -webkit-baseline-middle;
+  border-bottom: 1px solid gray;
+}
 </style>
 

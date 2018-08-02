@@ -10,7 +10,9 @@
     >
       <v-tooltip bottom>
         <v-toolbar-title slot="activator" class="toolbar-title">
-          <router-link to="/" tag="span" nuxt style="cursor: pointer;">MOQA!</router-link>
+          <router-link to="/" tag="span" nuxt style="cursor: pointer;">
+            MOQA!<span style="width: 20px; height: 10px background:red;"></span>
+          </router-link>
         </v-toolbar-title>
         <span>홈으로</span>
       </v-tooltip>
@@ -37,16 +39,21 @@
           <v-list>
             <v-list-tile
               v-for="item in dropdown_user"
-              :key="item"
+              :key="item.title"
+              @click=""
             >
-              <v-list-tile-title v-text="item"></v-list-tile-title>
+              <nuxt-link :to="'/'+item.link" style="text-decoration:none;color:inherit;">
+                <v-list-tile-title>{{item.title}}</v-list-tile-title>
+              </nuxt-link>
             </v-list-tile>
           </v-list>
         </v-menu>
       </v-toolbar-items>
     </v-toolbar>
     <v-content style="background: white;">
-      <nuxt />
+      <transition name="fade" mode="out-in">
+        <nuxt />
+      </transition>
     </v-content>
     <v-footer app>
       <v-layout justify-end>
@@ -60,33 +67,46 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      title: 'MOQA!',
-      dropdown_user: ['프로필', '결제 내역', '로그아웃']
-    }
+      title: "MOQA!",
+      dropdown_user: [
+        {
+          title: "프로필",
+          link: "profile"
+        },
+        {
+          title: "결제 내역",
+          link: "payment"
+        },
+        {
+          title: "로그아웃",
+          link: "login"
+        }
+      ]
+    };
   },
-  name: 'App'
-}
+  name: "App"
+};
 </script>
 
 <style>
 * {
-      box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
 }
 
 body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
 }
 </style>
 

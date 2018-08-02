@@ -6,7 +6,7 @@
         <v-flex v-if="drawer" class="cardDrawer">
           <v-layout wrap >
             <v-flex class="xs12" style="position: relative">
-              <v-card id="edit-console" class="ma-2 pa-2 card-collection" >
+              <v-card id="edit-console" class="ma-2 pa-2 card-collection" v-resize="onResize" :style="{maxHeight: calcHeight}">
                 <v-flex xs12>
                   <h2 class="primary--text text--darken-2 mx-1">질문 카드</h2>
                 </v-flex>
@@ -19,7 +19,6 @@
                   xs12 
                   element="v-flex" 
                   v-model="types" 
-                  :move="checkMove"
                   :options="{
                     sort: false, 
                     ghostClass:'ghost', 
@@ -46,17 +45,16 @@
           </v-layout>
         </v-flex>
 
-      <v-flex class="main-workplace-layout" :class="drawer ? 'xs10':'xs12'">
+      <v-flex class="main-workplace-layout mx-2" :class="drawer ? 'xs10':'xs12'">
         <v-layout wrap fill-height>
           <v-flex xs12>
-            <v-card id="main-workplace" class="ma-2" height="100%" tile>
+            <v-card id="main-workplace" class="ma-2">
             <v-btn fab dark absolute color="cyan" @click="drawer=!drawer">
               <v-icon dark :class="{sideToggleActive: drawer}">arrow_forward</v-icon>
             </v-btn>
               <v-layout justify-center class="grey lighten-5">
                 <v-flex xs12 sm7 md7 lg5 class="text-xs-center">
                   <draggable
-                    @add="checkAdd" 
                     class="main-workplace"
                     v-model="workplace" 
                     :options="{
@@ -141,9 +139,13 @@ export default {
     ImageFull,
     VideoFull
   },
+  mounted() {
+    this.onResize();
+  },
   methods: {
-    checkMove(e) {},
-    checkAdd(e) {},
+    onResize(e) {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+    },
     next() {
       const active = parseInt(this.active);
       this.active = active < 2 ? active + 1 : 0;
@@ -211,9 +213,18 @@ export default {
     //   return (!relatedElement || !relatedElement.fixed)
     // }
   },
+  computed: {
+    calcHeight() {
+      return this.windowSize.y - 120;
+    }
+  },
   data() {
     return {
       drawer: true,
+      windowSize: {
+        x: 0,
+        y: 0
+      },
       currentCardNum: 0,
       types: [
         { order: 0, header: "객관식" },

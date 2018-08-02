@@ -13,11 +13,11 @@
                 </v-badge>
               </div>
               
-              <v-stepper-step :complete="e1 > 1" step="1" @click="$router.go(-1)" editable>기본 설정</v-stepper-step>
+              <v-stepper-step :complete="$route.name == 'basicSetting-editor'" step="1" @click="$router.go(-1)" editable>기본 설정</v-stepper-step>
 
               <v-divider></v-divider>
 
-              <v-stepper-step :complete="e1 > 2" step="2">설문 디자인</v-stepper-step>
+              <v-stepper-step :complete="$route.name == 'basicSetting-editor'" step="2">설문 디자인</v-stepper-step>
 
               <v-divider></v-divider>
 
@@ -25,16 +25,13 @@
             
 
               <div class="stepper-header-footer justify-end">
-                <v-btn v-show="e1 !=2" class="primary" @click="e1++">다음 <v-icon>arrow_forward</v-icon></v-btn>
-                <v-btn v-show="e1 == 2" class="primary" @click.stop="lastStepDialog=true">배포<v-icon>arrow_forward</v-icon></v-btn>
+                <v-btn v-show="e1 !=3" class="primary" @click.stop="stepperRoute">다음 <v-icon>arrow_forward</v-icon></v-btn>
               </div>
 
             </v-stepper-header>
 
             <v-stepper-items>
-              <v-stepper-content :step="e1">
-                <nuxt-child />      
-              </v-stepper-content>
+              <nuxt-child />
             </v-stepper-items>
 
           </v-stepper>
@@ -71,30 +68,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>   
-
-          <v-dialog
-            v-model="finishDialog"
-            max-width="320"
-          >
-            <v-card>
-              <v-card-title class="headline">알림</v-card-title>
-
-              <v-card-text>
-                배포되었습니다.
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="green darken-1"
-                  flat="flat"
-                  @click="$router.push('/')"
-                >
-                  대시보드로 돌아가기
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>   
         </v-flex>
       </v-layout>
     </v-container>
@@ -104,28 +77,21 @@
 <script>
 export default {
   methods: {
+    stepperRoute() {
+      if (this.$route.name == "basicSetting") {
+        this.$router.push("/basicSetting/editor");
+      } else if (this.$route.name == "basicSetting-editor") {
+        this.lastStepDialog = true;
+      }
+    },
     finish() {
       this.lastStepDialog = false;
       this.finishDialog = true;
     }
   },
-  watch: {
-    e1: function(val) {
-      if (val == 2) {
-        this.$router.push("/basicSetting/editor");
-      } else if (val == 1) {
-        this.$router.push("/basicSetting");
-      }
-    },
-    $route: function(to, from) {
-      if (to.name == "basicSetting") {
-        this.e1 = 1;
-      }
-    }
-  },
   data() {
     return {
-      e1: 1,
+      e1: 0,
       title: "",
       lastStepDialog: false,
       finishDialog: false
@@ -157,9 +123,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.v-stepper__content {
-  padding: 0;
 }
 </style>
 

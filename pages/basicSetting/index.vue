@@ -65,6 +65,7 @@
                           lazy
                           transition="scale-transition"
                           offset-y
+                          :disabled="!dateFormatted"
                           full-width
                           max-width="290px"
                           min-width="290px"
@@ -74,6 +75,7 @@
                             v-model="dateFormattedEnd"
                             label="끝나는 날"
                             readonly
+                            :disabled="!dateFormatted"
                             persistent-hint
                             prepend-icon="event"
                             @blur="date2 = parseDate(dateFormattedEnd)"
@@ -127,6 +129,7 @@
                           transition="scale-transition"
                           offset-y
                           full-width
+                          :disabled="!time"
                           max-width="290px"
                           min-width="290px"
                         >
@@ -136,6 +139,7 @@
                             label="종료 시간"
                             prepend-icon="access_time"
                             readonly
+                            :disabled="!time"
                           ></v-text-field>
                           <v-time-picker
                             v-if="menu_time2"
