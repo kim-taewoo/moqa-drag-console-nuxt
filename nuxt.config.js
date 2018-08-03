@@ -24,7 +24,10 @@ module.exports = {
           "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons"
       }
     ],
-    script: [{ src: "https://developers.kakao.com/sdk/js/kakao.min.js" }]
+    script: [
+      { src: "https://developers.kakao.com/sdk/js/kakao.min.js" }
+      // { src: "polyfill.min.js" }
+    ]
   },
 
   /*
@@ -54,6 +57,13 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    // npm install babel-loader@next --save 를 반드시 해주어야 한다. @ 관련된 업그레이드 babel-loader 인듯
+    babel: {
+      presets: ["@babel/preset-env"],
+      plugins: ["@babel/plugin-syntax-dynamic-import"]
+    },
+    vendor: ["@babel/polyfill"],
+
     extend(config, ctx) {
       if (ctx.isServer) {
         config.externals = [

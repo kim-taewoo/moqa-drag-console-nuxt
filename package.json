@@ -11,13 +11,19 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.55",
+    "@babel/polyfill": "^7.0.0-beta.55",
+    "babel-loader": "^8.0.0-beta.4",
     "nuxt": "^1.0.0",
+    "vue-awesome-swiper": "^3.1.3",
     "vue-circle-slider": "^1.0.2",
     "vue-star-rating": "^1.6.0",
     "vuedraggable": "^2.16.0",
     "vuetify": "^1.0.19"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.55",
+    "@babel/preset-env": "^7.0.0-beta.55",
     "cross-env": "^5.0.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1"

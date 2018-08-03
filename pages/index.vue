@@ -10,26 +10,34 @@
     <v-layout class="ma-3">
       <v-flex>
         <v-container :class="{'pa-0': $vuetify.breakpoint.smAndDown}">
-          <v-tabs
-            v-model="active"
-            slider-color="primary"
-          >
-            <v-tab
-              v-for="(tab, index) in dashboardTabs"
-              :key="index"
-              ripple
-              class="title"
+          <v-layout>
+            <v-tabs
+              v-model="active"
+              slider-color="primary"
             >
-              {{tab.name}}
-            </v-tab>
+              <v-tab
+                v-for="(tab, index) in dashboardTabs"
+                :key="index"
+                ripple
+                class="title"
+              >
+                {{tab.name}}
+              </v-tab>
 
-            <v-tab-item
-              v-for="(tab, index) in dashboardTabs"
-              :key="index"
-            >
-              <component :is="tab.comp" class="tabComponent"></component>
-            </v-tab-item>
-          </v-tabs>
+              <v-tab-item
+                v-for="(tab, index) in dashboardTabs"
+                :key="index"
+              >
+                <component :is="tab.comp" class="tabComponent"></component>
+              </v-tab-item>
+            </v-tabs>
+          </v-layout>
+
+          <v-layout>
+            <v-flex class="xs12">
+              <notice />
+            </v-flex>
+          </v-layout>
 
         </v-container>
       </v-flex>
@@ -40,7 +48,12 @@
 <script>
 import surveyList from "~/components/SurveyList";
 import fitTarget from "~/components/FitTarget";
+import notice from "~/components/Notice";
+
 export default {
+  components: {
+    notice
+  },
   data() {
     return {
       dashboardTabs: [
