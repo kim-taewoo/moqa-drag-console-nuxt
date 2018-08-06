@@ -11,7 +11,7 @@
             <v-data-table
               :headers="headers"
               :items="target_groups"
-              class="elevation-1"
+              class="elevation-0"
             >
               <template slot="items" slot-scope="props">
                 <td class="text-xs-center">{{ props.item.group_id }}</td>
