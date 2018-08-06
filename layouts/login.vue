@@ -20,7 +20,7 @@ export default {};
   height: 100vh;
   margin: 0;
   padding: 0;
-  background: url(~/assets/food.jpg);
+  background: url(~/assets/wallpaper.jpg);
   background-size: cover;
   background-position: center;
   font-family: sans-serif;

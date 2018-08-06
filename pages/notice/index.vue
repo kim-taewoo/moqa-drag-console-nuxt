@@ -2,15 +2,21 @@
   <v-container>
     <v-layout wrap>
       <v-flex class="ma-3 title" xs12>
-        <v-icon>info_outline</v-icon> 공지사항 목록
+         <span class="pa-2 notice-title">공지사항</span> 
       </v-flex>
-      <v-flex xs12>
-        
-        <v-toolbar flat color="white">
-          <v-toolbar-title class="title"></v-toolbar-title>
-          <v-spacer></v-spacer>
+      <v-flex xs12 sm6 lg4 class="pl-3 text-xs-left">
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="검색"
+            single-line
+            hide-details
+          ></v-text-field>
+      </v-flex>
+      <v-spacer></v-spacer>
+      <v-flex class="xs12 sm6 text-xs-right">
           <v-dialog v-model="dialog" max-width="500px">
-            <v-btn slot="activator" color="primary" left dark class="mb-2">글쓰기</v-btn>
+            <v-btn large slot="activator" color="primary" dark class="mb-2"><v-icon>add</v-icon> 글쓰기</v-btn>
             <v-card>
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
@@ -45,45 +51,46 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
-        <v-divider></v-divider>
-        <v-layout>
-          <v-flex xs12>
-            <v-data-table
-              :headers="headers"
-              :items="desserts"
-              :search="search"
-              class="elevation-0"
-            >
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.name }}</td>
-                <td class="text-xs-right">{{ props.item.calories }}</td>
-                <td class="text-xs-right">{{ props.item.fat }}</td>
-                <td class="text-xs-right">{{ props.item.carbs }}</td>
-                <td class="text-xs-right">{{ props.item.protein }}</td>
-                <td class="justify-center layout px-0">
-                  <v-icon
-                    small
-                    class="mr-2"
-                    @click="editItem(props.item)"
-                  >
-                    edit
-                  </v-icon>
-                  <v-icon
-                    small
-                    @click="deleteItem(props.item)"
-                  >
-                    delete
-                  </v-icon>
-                </td>
-              </template>
-              <template slot="no-data">
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
-              </template>
-            </v-data-table>
-          </v-flex>
-        </v-layout>
+      </v-flex>
+    </v-layout>
+        
+    <v-divider></v-divider>
 
+    <v-layout>
+      <v-flex xs12>
+        <v-data-table
+          :headers="headers"
+          :items="notices"
+          :search="search"
+          class="elevation-0"
+        >
+          <template slot="items" slot-scope="props">
+            <tr @click="$router.push({name: 'notice-id', params: props.item})" >
+              <td class="text-xs-center">{{ props.item.writerId }}</td>
+              <td class="text-xs-center">{{ props.item.name }}</td>
+              <td class="text-xs-center">{{ props.item.title }}</td>
+              <td class="text-xs-center">{{ props.item.created_date }}</td>
+              <!-- <td class="justify-center layout px-0">
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="editItem(props.item)"
+                >
+                  edit
+                </v-icon>
+                <v-icon
+                  small
+                  @click="deleteItem(props.item)"
+                >
+                  delete
+                </v-icon>
+              </td> -->
+            </tr>
+          </template>
+          <template slot="no-data">
+            <v-btn color="primary" @click="initialize">Reset</v-btn>
+          </template>
+        </v-data-table>
       </v-flex>
     </v-layout>
   </v-container>
@@ -96,18 +103,16 @@ export default {
     search: "",
     headers: [
       {
-        text: "Dessert (100g serving)",
-        align: "left",
-        sortable: false,
-        value: "name"
+        text: "사용자ID",
+        align: "center",
+        value: "writerId"
       },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
-      { text: "Actions", value: "name", sortable: false }
+      { text: "이름", align: "center", value: "name" },
+      { text: "제목", align: "center", value: "title", sortable: false },
+      { text: "등록일", align: "center", value: "created_date" }
+      // { text: "Actions", align: "center", value: "name", sortable: false }
     ],
-    desserts: [],
+    notices: [],
     editedIndex: -1,
     editedItem: {
       name: "",
@@ -128,6 +133,11 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    },
+    computedNotices() {
+      if (this.search == "") {
+        return this.notices;
+      }
     }
   },
 
@@ -138,81 +148,58 @@ export default {
   },
 
   created() {
-    this.initialize();
+    this.$nextTick(() => {
+      this.initialize();
+    });
   },
 
   methods: {
+    check(item) {
+      console.log(item);
+    },
     initialize() {
-      this.desserts = [
+      this.notices = [
         {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
+          id: 1,
+          writerId: "admin",
+          name: "관리자",
+          title: "[7/27] 올바른 MOQA 이용을 위한 안내 [필독!]",
+          created_date: "2018-07-27 13:30:28"
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
+          id: 2,
+          writerId: "admin",
+          name: "김태우",
+          title: "[7/21] 금주의 베스트 질문상 [필독!]",
+          created_date: "2018-07-21 13:30:28"
         },
         {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
+          id: 3,
+          writerId: "admin",
+          name: "이하영",
+          title: "[6/19] 모카 아이오에스 오픈",
+          created_date: "2018-06-19 13:35:28"
         },
         {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
+          id: 4,
+          writerId: "admin",
+          name: "안주은",
+          title: "[6/19] 모두와 함께 만드는 모카",
+          created_date: "2018-06-19 13:30:28"
         },
         {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
+          id: 5,
+          writerId: "admin",
+          name: "관리자",
+          title: "[5/22] 테스트중입니다",
+          created_date: "2018-05-22 13:30:28"
         },
         {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
+          id: 6,
+          writerId: "admin",
+          name: "관리자",
+          title: "[3/33] 모카 안드로이드 서비스",
+          created_date: "2018-03-33 13:30:28"
         }
       ];
     },
@@ -248,3 +235,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.notice-title {
+  display: inline-block;
+  border-bottom: 2px solid #1976d2;
+}
+</style>
+

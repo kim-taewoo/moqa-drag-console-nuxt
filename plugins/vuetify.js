@@ -7,12 +7,12 @@ import VueCircleSlider from "vue-circle-slider";
 Vue.use(Vuetify, {
   theme: {
     primary: "#1976D2", // a color that is not in the material colors palette
-    accent: colors.grey.darken3,
-    secondary: "#FFCDD2",
-    info: colors.teal.lighten1,
-    warning: colors.amber.base,
-    error: colors.deepOrange.accent4,
-    success: colors.green.accent3
+    secondary: colors.grey.darken1,
+    info: "#2196F3",
+    accent: "#82B1FF",
+    warning: "#FFC107",
+    error: "#FF5252",
+    success: "#4CAF50"
   }
 });
 

@@ -1,14 +1,7 @@
 <template>
   <v-container justify-center>
-    <v-layout justify-center>
+    <v-layout justify-center class="my-3">
       <v-flex xs10 class="text-xs-center">
-        <!-- <div style="height: 50px; overflow: hidden;">
-          <swiper :options="swiperOption" ref="mySwiper" class="my-swiper">
-            <swiper-slide v-for="(notice,index) in noticeList" :key="index"><p class="notice-content">{{notice.title}} <span>{{notice.date}}</span></p></swiper-slide>
-          </swiper>
-        </div> -->
-        <div class="text-xs-right"> <nuxt-link to="/notice" style="text-decoration:none;" > 공지사항 전체보기</nuxt-link> </div>
-        <v-divider></v-divider>
         <div class="swiper-container">
           <swiper :options="swiperOption" ref="mySwiper" class="my-swiper">
             <swiper-slide v-for="(notice,index) in noticeList" :key="index" class="notice-slide">
@@ -17,10 +10,11 @@
           </swiper>
         </div>
         <v-divider></v-divider>
+        <div class="text-xs-right"> <nuxt-link to="/notice" style="text-decoration:none;" > 공지사항 전체보기</nuxt-link> </div>
       </v-flex>
     </v-layout>
 
-    <v-layout justify-center class="mt-3">
+    <v-layout justify-center>
       <v-flex xs12>
         <v-tabs
           v-model="active"

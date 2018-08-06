@@ -28,7 +28,7 @@ export default {
 .login-box {
   width: 320px;
   height: 440px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   color: #fff;
   top: 50%;
   left: 50%;

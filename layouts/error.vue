@@ -1,5 +1,6 @@
 <template>
-  <div class="error-page">
+  <div class="error-page mt-4">
+    <img src="@/assets/mascot.png" alt="">
     <h1>무언가 문제가 발생했네요!</h1>
     <p><a href="/">홈으로 돌아가기</a></p>
   </div>

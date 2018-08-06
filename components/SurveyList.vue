@@ -1,45 +1,42 @@
 <template>
-  <div>
-    <v-layout class="mt-2" wrap justify-center>
-      <v-flex xs12 sm6 md3 pa-2>
+  <v-container class="pa-0">
+    <v-layout class="mt-3" wrap justify-center>
+      <v-flex xs12 sm4 class="px-3" >
         <v-select
           v-model="searchStatus"
           :items="filter_status"
           label="설문 상태 필터"
-          outline
           hide-details
         ></v-select>
       </v-flex>
-      <v-flex xs12 sm6 md3 pa-2>
+      <v-flex xs12 sm4>
         <v-text-field
           label="제목으로 검색"
-          outline
-          height="60px"
+          append-icon="search"
           v-model="searchTitle"
           hide-details
+          single-line
         ></v-text-field>
       </v-flex>
-      <v-flex text-xs-right xs12 md3 offset-md3>
-        <v-btn :top="$vuetify.breakpoint.mdAndUp" :block="$vuetify.breakpoint.xsOnly" large class="primary" @click.stop="typeDialog = true">
-          <v-icon dark>add</v-icon>
-          새로 만들기
-        </v-btn>
+      <v-spacer></v-spacer>
+      <v-flex xs12 md3 class="text-xs-right">
+        <v-btn :block="$vuetify.breakpoint.xsOnly" large class="primary" @click.stop="typeDialog = true"><v-icon dark>add</v-icon>새로 만들기</v-btn>
 
         <v-dialog
           v-model="typeDialog"
-          max-width="680"
+          max-width="780px"
         >
           <v-card>
-            <v-container style="user-select: none;">
+            <v-container style="user-select: none;" class="px-1">
               <v-layout>
-                <v-card-title class="subheading">
-                  <v-icon small class="mr-3">how_to_vote</v-icon>
+                <v-card-title class="title">
+                  <v-icon class="mr-3">how_to_vote</v-icon>
                     타입을 선택해 주세요!
                 </v-card-title>
               </v-layout>
               <v-layout>
-                <v-flex xs6 mr-3>
-                  <v-card class="type-card">
+                <v-flex xs4>
+                  <v-card class="type-card" height="380px">
                     <v-card-media
                       :src="require('@/assets/quick.jpg')" height="200px"
                       @click="choseQuick">                      
@@ -56,8 +53,8 @@
                   </v-card>
 
                 </v-flex>
-                <v-flex xs6 ml3>
-                  <v-card class="type-card">
+                <v-flex xs4>
+                  <v-card class="type-card mx-1">
                     <v-card-media :src="require('@/assets/survey.jpg')" height="200px" @click="choseSurvey">
 
                     </v-card-media>
@@ -69,6 +66,22 @@
                       </p>
                       <p class="text-xs-center body-1 my-0">보상리워드 지정</p>
                       <p class="text-xs-center body-1 my-0">모든 타입의 설문 등록 가능</p>
+                    </v-card-text>
+                  </v-card>
+                </v-flex>
+                <v-flex xs4>
+                  <v-card class="type-card">
+                    <v-card-media :src="require('@/assets/quiz.jpg')" height="200px" @click="choseSurvey">
+
+                    </v-card-media>
+                    <v-card-text @click="choseSurvey">
+                      <h3 class="text-xs-center title">퀴즈</h3>
+                      <p class="text-xs-center body-1 grey--text mt-2">"시간 제한이 있는 퀴즈를 진행하고 싶을 때!"</p>
+                      <p class="text-xs-center body-1 mb-0">
+                        타이머 설정
+                      </p>
+                      <p class="text-xs-center body-1 my-0">보상리워드 지정</p>
+                      <p class="text-xs-center body-1 my-0">특정 타입의 질문 등록 가능</p>
                     </v-card-text>
                   </v-card>
                 </v-flex>
@@ -95,11 +108,45 @@
             <td class="text-xs-right">{{ props.item.num_distribute }}</td>
             <td class="text-xs-right">{{ props.item.time_period }}</td>
             <td class="text-xs-right">{{ props.item.status }}</td>
+            <td class="justify-end layout px-0">
+              <v-menu bottom left transition="slide-x-transition">
+                <v-btn
+                  slot="activator"
+                  icon
+                >
+                  <v-icon small >more_vert</v-icon>
+                </v-btn>
+
+                <v-list>
+                  <v-list-tile
+                    v-for="(item, i) in items"
+                    :key="i"
+                    @click=""
+                  >
+                    <v-list-tile-title class="text-xs-center">{{item.title}}</v-list-tile-title>
+                  </v-list-tile>
+                </v-list>
+              </v-menu>
+              <!-- <v-icon small @click.stop="">more_vert</v-icon>
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="editItem(props.item)"
+                >
+                  edit
+                </v-icon>
+                <v-icon
+                  small
+                  @click="deleteItem(props.item)"
+                >
+                  delete
+                </v-icon> -->
+              </td>
           </template>
         </v-data-table>
       </v-flex>
     </v-layout>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -139,10 +186,16 @@ export default {
   },
   data() {
     return {
+      items: [
+        { title: "결과 다운로드" },
+        { title: "통계 보기" },
+        { title: "삭제" }
+      ],
       filter_status: ["모든 설문", "작성중", "심사 대기중", "진행중", "완료"],
       searchStatus: "모든 설문",
       searchTitle: "",
       typeDialog: false,
+      search: "",
       headers: [
         {
           text: "ID",
@@ -154,7 +207,8 @@ export default {
         { text: "최대참여인원", value: "num_max_participate", align: "right" },
         { text: "배포인원", value: "num_distribute", align: "right" },
         { text: "설문기간", value: "time_period", align: "right" },
-        { text: "상태", value: "status", align: "right" }
+        { text: "상태", value: "status", align: "right" },
+        { text: "기타", align: "right" }
       ],
       loadedSurveys: [
         {

@@ -1,16 +1,31 @@
 <template>
   <v-container class="pa-0">
-    <v-layout class="mt-2" wrap>
-      <v-flex class="xs12 mt-4 text-xs-right">
+    <v-layout wrap class="mt-3">
+      <v-flex xs12 sm6 lg4 class="pl-3 text-xs-left">
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="검색"
+            hide-details
+          ></v-text-field>
+      </v-flex>
+      <v-spacer></v-spacer>
+      <v-flex class="xs12 sm6 lg4 text-xs-right">
         <v-btn large class="primary" nuxt to="/addGroup"><v-icon>add</v-icon> 그룹 생성</v-btn>
-      <v-divider></v-divider>
       </v-flex>
       <v-flex xs12>
-        <v-layout justify-center>
+        <v-divider></v-divider>
+      </v-flex>
+    </v-layout>
+
+    <v-layout>
+      <v-flex xs12>
+        <v-layout wrap justify-center>
           <v-flex>
             <v-data-table
               :headers="headers"
               :items="target_groups"
+              :search="search"
               class="elevation-0"
             >
               <template slot="items" slot-scope="props">
@@ -32,6 +47,7 @@ export default {
   name: "FitTarget",
   data() {
     return {
+      search: "",
       headers: [
         {
           text: "그룹번호",
