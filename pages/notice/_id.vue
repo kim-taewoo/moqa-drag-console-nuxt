@@ -3,13 +3,11 @@
     <v-layout wrap>
       <v-flex xs12 class="ma-3">
         <v-card class="py-4">
-          <v-card-title class="mb-0">
-            <div>
-              <h3 class="display-1">{{content.title}}</h3>
-            </div>
+          <v-card-title class="mb-0" style="justify-content:center;">
+              <h3 class="display-1 text-xs-center">{{content.title}}</h3>
           </v-card-title>
 
-          <div class="mx-4 secondary--text"><strong>{{content.created_date}}</strong> - <span class="primary--text">{{content.name}}</span> </div>
+          <div class="mx-4 secondary--text text-xs-right"><strong>{{content.created_date}}</strong> - <span class="primary--text">{{content.name}}</span> </div>
           <v-divider></v-divider>
           <v-card-text>
             <p class="pa-4 subheading">

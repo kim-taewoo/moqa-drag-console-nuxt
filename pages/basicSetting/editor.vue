@@ -35,7 +35,10 @@
                         <v-card-title class="py-0 px-0">
                           <div class="subheading" v-html="type.title"></div>
                           <v-spacer></v-spacer>
-                          <v-icon>help_outline</v-icon>
+
+                          <HelpPopup />
+
+                          
                         </v-card-title>
                       </v-card>
                     </template>
@@ -123,6 +126,8 @@ import TickCircle from "@/components/question_types/TickCircle";
 import ImageFull from "@/components/question_types/ImageFull";
 import VideoFull from "@/components/question_types/VideoFull";
 
+import HelpPopup from "@/components/HelpPopup";
+
 export default {
   name: "Editor",
   components: {
@@ -137,12 +142,82 @@ export default {
     TickVertical,
     TickCircle,
     ImageFull,
-    VideoFull
+    VideoFull,
+    HelpPopup
   },
   mounted() {
     this.onResize();
   },
   methods: {
+    showHelp(id) {
+      if (id == 0) {
+        this.workplace.push({
+          id: 0,
+          title: '객관식 <span class="subText">(텍스트)</span>',
+          comp: "MultipleText"
+        });
+      } else if (id == 1) {
+        this.workplace.push({
+          id: 1,
+          title: '객관식 <span class="subText">(이미지)</span>',
+          comp: "MultipleImage"
+        });
+      } else if (id == 4) {
+        this.workplace.push({
+          id: 4,
+          title: "별점형",
+          comp: "StarRating"
+        });
+      } else if (id == 5) {
+        this.workplace.push({
+          id: 5,
+          title: "주관식형",
+          comp: "Subjective"
+        });
+      } else if (id == 2) {
+        this.workplace.push({
+          id: 2,
+          title: '순위 선택형 <span class="subText">(텍스트)</span>',
+          comp: "RankingText"
+        });
+      } else if (id == 3) {
+        this.workplace.push({
+          id: 3,
+          title: '순위 선택형 <span class="subText">(이미지)</span>',
+          comp: "RankingImage"
+        });
+      } else if (id == 6) {
+        this.workplace.push({
+          id: 6,
+          title: '척도형 <span class="subText">(가로)</span>',
+          comp: "TickHorizontal"
+        });
+      } else if (id == 7) {
+        this.workplace.push({
+          id: 7,
+          title: '척도형 <span class="subText">(세로)</span>',
+          comp: "TickVertical"
+        });
+      } else if (id == 8) {
+        this.workplace.push({
+          id: 8,
+          title: '척도형 <span class="subText">(원형)</span>',
+          comp: "TickCircle"
+        });
+      } else if (id == 9) {
+        this.workplace.push({
+          id: 9,
+          title: '이미지 <span class="subText">(Full)</span>',
+          comp: "ImageFull"
+        });
+      } else if (id == 10) {
+        this.workplace.push({
+          id: 10,
+          title: '동영상 <span class="subText">(Full)</span>',
+          comp: "VideoFull"
+        });
+      }
+    },
     onResize(e) {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight };
     },
@@ -205,6 +280,18 @@ export default {
           title: '척도형 <span class="subText">(원형)</span>',
           comp: "TickCircle"
         });
+      } else if (id == 9) {
+        this.workplace.push({
+          id: 9,
+          title: '이미지 <span class="subText">(Full)</span>',
+          comp: "ImageFull"
+        });
+      } else if (id == 10) {
+        this.workplace.push({
+          id: 10,
+          title: '동영상 <span class="subText">(Full)</span>',
+          comp: "VideoFull"
+        });
       }
     }
     // onMove ({relatedContext, draggedContext}) {
@@ -220,6 +307,8 @@ export default {
   },
   data() {
     return {
+      helpPop: false,
+      currentHelp: "",
       drawer: true,
       windowSize: {
         x: 0,

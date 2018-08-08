@@ -95,53 +95,63 @@
     <v-layout justify-center>
       <v-flex xs12>
         <v-divider></v-divider>
+
+        <v-dialog
+          v-model="surveyDetailDialog"
+          width="980"
+        >
+          <SurveyDetail v-if="surveyDetailDialog" :item="selectedItem" @closeDialog="surveyDetailDialog=false"></SurveyDetail>
+        </v-dialog>
+
         <v-data-table
           :headers="headers"
           :items="filteredSurveys"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item.surveyId }}</td>
-            <td class="text-xs-left">{{ props.item.title }}</td>
-            <td class="text-xs-right">{{ props.item.num_participate }}</td>
-            <td class="text-xs-right">{{ props.item.num_max_participate }}</td>
-            <td class="text-xs-right">{{ props.item.num_distribute }}</td>
-            <td class="text-xs-right">{{ props.item.time_period }}</td>
-            <td class="text-xs-right">{{ props.item.status }}</td>
-            <td class="justify-end layout px-0">
-              <v-menu bottom left transition="slide-x-transition">
-                <v-btn
-                  slot="activator"
-                  icon
-                >
-                  <v-icon small >more_vert</v-icon>
-                </v-btn>
-
-                <v-list>
-                  <v-list-tile
-                    v-for="(item, i) in items"
-                    :key="i"
-                    @click=""
+            <tr>
+              <td>{{ props.item.surveyId }}</td>
+              <td class="text-xs-left" @click.stop="itemSelected($event,props.item)" >{{ props.item.title }}</td>
+              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.num_participate }}</td>
+              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.num_max_participate }}</td>
+              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.num_distribute }}</td>
+              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.time_period }}</td>
+              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.status }}</td>
+              <td class="justify-end layout px-0">
+                <v-menu bottom left transition="slide-x-transition">
+                  <v-btn
+                    slot="activator"
+                    icon
                   >
-                    <v-list-tile-title class="text-xs-center">{{item.title}}</v-list-tile-title>
-                  </v-list-tile>
-                </v-list>
-              </v-menu>
-              <!-- <v-icon small @click.stop="">more_vert</v-icon>
-                <v-icon
-                  small
-                  class="mr-2"
-                  @click="editItem(props.item)"
-                >
-                  edit
-                </v-icon>
-                <v-icon
-                  small
-                  @click="deleteItem(props.item)"
-                >
-                  delete
-                </v-icon> -->
-              </td>
+                    <v-icon small >more_vert</v-icon>
+                  </v-btn>
+
+                  <v-list>
+                    <v-list-tile
+                      v-for="(item, i) in items"
+                      :key="i"
+                      @click=""
+                    >
+                      <v-list-tile-title class="text-xs-center">{{item.title}}</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
+                <!-- <v-icon small @click.stop="">more_vert</v-icon>
+                  <v-icon
+                    small
+                    class="mr-2"
+                    @click="editItem(props.item)"
+                  >
+                    edit
+                  </v-icon>
+                  <v-icon
+                    small
+                    @click="deleteItem(props.item)"
+                  >
+                    delete
+                  </v-icon> -->
+                </td>
+              </tr>
           </template>
         </v-data-table>
       </v-flex>
@@ -150,14 +160,25 @@
 </template>
 
 <script>
+const SurveyDetail = () => import("@/components/SurveyDetail");
+// import SurveyDetail from "@/components/SurveyDetail";
+
 export default {
   name: "SurveyList",
+  components: {
+    SurveyDetail
+  },
   methods: {
     choseQuick() {
       this.$router.push("/basicSetting");
     },
     choseSurvey() {
       this.$router.push("/basicSetting");
+    },
+    itemSelected(e, item) {
+      this.openDialogKey++;
+      this.selectedItem = item;
+      this.surveyDetailDialog = true;
     }
   },
   computed: {
@@ -186,6 +207,8 @@ export default {
   },
   data() {
     return {
+      surveyDetailDialog: false,
+      selectedItem: null,
       items: [
         { title: "결과 다운로드" },
         { title: "통계 보기" },
@@ -208,7 +231,7 @@ export default {
         { text: "배포인원", value: "num_distribute", align: "right" },
         { text: "설문기간", value: "time_period", align: "right" },
         { text: "상태", value: "status", align: "right" },
-        { text: "기타", align: "right" }
+        { text: "기타", align: "right", value: "status" }
       ],
       loadedSurveys: [
         {

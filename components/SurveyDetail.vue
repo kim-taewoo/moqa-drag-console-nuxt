@@ -1,0 +1,199 @@
+<template>
+  <v-card>
+    <v-card-title
+      class="headline grey lighten-2 pl-5"
+      primary-title
+    >
+      설문 확인
+    </v-card-title>
+      <v-layout justify-center>
+        <v-flex xs10>
+          <v-card-text>
+            <p class="my-2 ml-3 subheading">기본정보</p>
+            <v-data-table
+              :items="basicInfo"
+              class="elevation-1"
+              hide-actions
+              hide-headers
+            >
+              <template slot="items" slot-scope="props">
+                <td class="font-weight-bold">{{ props.item.name }}</td>
+                <td class="text-xs-left">{{ props.item.value }}</td>
+              </template>
+            </v-data-table>
+
+            <p class="mb-2 mt-5 ml-3 subheading">설문 내용</p>
+            <v-data-table
+              :items="itemContent"
+              class="elevation-1"
+              hide-actions
+              hide-headers
+            >
+              <template slot="items" slot-scope="props">
+                <tr v-if="props.item.name == '객관식형 (텍스트)'">
+                  <td class="font-weight-bold">{{ props.item.name }}</td>
+                  <td>
+                    <v-data-table
+                      :items="props.item.value"
+                      class="elevation-1 my-4"
+                      hide-actions
+                      hide-headers
+                    >
+                      <template slot="items" slot-scope="props">
+                        <tr >
+                          <td>{{props.item.name}}</td>
+                          <td class="text-xs-center"><span class="font-weight-bold">{{props.item.percent}}%</span>  ({{props.item.num_people}}명)</td>
+                        </tr>
+                      </template>
+                    </v-data-table>
+                  </td>
+                </tr>
+                <tr v-else>
+                  <td class="font-weight-bold">{{ props.item.name }}</td>
+                  <td class="text-xs-left">{{ props.item.value }}</td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card-text>
+
+
+
+        </v-flex>
+      </v-layout>
+    <v-divider></v-divider>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="pink"
+        flat
+        @click="surveyDetailDialog = false"
+      >
+        중단
+      </v-btn>
+      <v-btn
+        color="primary"
+        flat
+        @click="surveyDetailDialog = false"
+      >
+        완료
+      </v-btn>
+      <v-btn
+        color="primary"
+        depressed
+        @click="$emit('closeDialog')"
+      >
+        닫기
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script>
+export default {
+  name: "SurveyDetail",
+  props: ["item"],
+  mounted() {
+    console.log("마운트", this.item);
+  },
+  data() {
+    return {
+      basicInfo: [
+        {
+          name: "설문 번호",
+          value: this.item.surveyId
+        },
+        {
+          name: "설문 타입",
+          value: "퀵폴"
+        },
+        {
+          name: "설문 기간",
+          value: this.item.time_period
+        },
+        {
+          name: "진행상태",
+          value: this.item.status
+        },
+        {
+          name: "참여 인원",
+          value:
+            this.item.num_participate +
+            "/" +
+            this.item.num_max_participate +
+            "명"
+        },
+        {
+          name: "등록자 아이디",
+          value:
+            "앱 유저 등록: fb_307023269864415 &nsbsp;&nsbsp;(회원번호: 6266)"
+        },
+        {
+          name: "이름",
+          value: "정채린"
+        },
+        {
+          name: "설문기관",
+          value: "모카"
+        },
+        {
+          name: "설문 대상 설정",
+          value: "전체"
+        },
+        {
+          name: "페이지 무작위화",
+          value: "미적용"
+        },
+        {
+          name: "페이지 번호",
+          value: "표시 안 함"
+        },
+        {
+          name: "설문 주제",
+          value: this.item.title
+        }
+      ],
+      itemContent: [
+        {
+          name: "질문 타입",
+          value: "멀티미디어형"
+        },
+        {
+          name: "질문 제목",
+          value: this.item.title
+        },
+        {
+          name: "객관식형 (텍스트)",
+          value: [
+            {
+              name: "고양이상",
+              percent: "35",
+              num_people: "158"
+            },
+            {
+              name: "강아지상",
+              percent: "45",
+              num_people: "202"
+            },
+            {
+              name: "여우상",
+              percent: "10",
+              num_people: "47"
+            },
+            {
+              name: "골룸상",
+              percent: "2",
+              num_people: "10"
+            },
+            {
+              name: "다람쥐상",
+              percent: "7",
+              num_people: "32"
+            }
+          ]
+        }
+      ]
+    };
+  }
+};
+</script>
+

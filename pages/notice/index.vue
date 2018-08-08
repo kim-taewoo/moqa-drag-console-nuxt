@@ -19,26 +19,17 @@
             <v-btn large slot="activator" color="primary" dark class="mb-2"><v-icon>add</v-icon> 글쓰기</v-btn>
             <v-card>
               <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
+                <span class="headline">공지사항 글쓰기</span>
               </v-card-title>
 
               <v-card-text>
                 <v-container grid-list-md>
                   <v-layout wrap>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
+                    <v-flex xs12>
+                      <v-text-field v-model="editedItem.title" label="제목"></v-text-field>
                     </v-flex>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                    <v-flex xs12>
+                      <v-textarea v-model="editedItem.content" label="내용"></v-textarea>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -46,8 +37,8 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+                <v-btn color="blue darken-1" flat @click.native="close">저장</v-btn>
+                <v-btn color="blue darken-1" flat @click.native="save">취소</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -115,31 +106,10 @@ export default {
     notices: [],
     editedIndex: -1,
     editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    },
-    defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      title: "",
+      content: ""
     }
   }),
-
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
-    },
-    computedNotices() {
-      if (this.search == "") {
-        return this.notices;
-      }
-    }
-  },
 
   watch: {
     dialog(val) {

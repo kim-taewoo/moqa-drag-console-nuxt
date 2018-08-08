@@ -1,7 +1,29 @@
 <template>
   <v-expansion-panel v-model="panel" expand>
     <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 객관식<small class="gray--text"> (텍스트)</small> <span class="q-title">: {{qTitle}}</span> </div>
+      <div slot="header" style="position:relative;">
+        <div>
+          Q{{questionIndex+1}}. 객관식<small class="gray--text"> (텍스트)</small> <span class="q-title">: {{qTitle}}</span>
+        </div>
+        <v-menu
+          transition="slide-x-transition"
+          bottom
+          right
+        >
+          <v-btn slot="activator" dark icon absolute style="right:0px;top:-8px;">
+            <v-icon>more_horiz</v-icon>
+          </v-btn>
+          <v-list>
+            <v-list-tile
+              v-for="(item, i) in deleteMenu"
+              :key="i"
+              @click=""
+            >
+              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </div>
       <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-tabs
         v-model="active"
@@ -65,6 +87,15 @@
                     :src="img"
                     width="100%"
                     alt="">
+                </v-flex>
+                <v-flex xs6>
+                  <v-switch
+                    label="퀴즈 타이머(초)"
+                    v-model="quizTimerSwitch"
+                  ></v-switch>
+                </v-flex>
+                <v-flex xs4>
+                  <v-text-field v-model="quizTime" :disabled="!quizTimerSwitch" type="number"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -146,84 +177,86 @@
 </template>
 
 <script>
-  import LogicCard from '@/components/question_types/LogicCard'
+import LogicCard from "@/components/question_types/LogicCard";
 
-  export default {
-    name: 'MultipleText',
-    props: ['questionIndex'],
-    components: {
-      LogicCard
-    },
-    methods: {
-      addOption () {
-        if (this.anotherOption) {
-          this.options.push(this.anotherOption)
-          this.anotherOption = null
-          this.feedback = null  
-        } else {
-          this.feedback = "빈칸 선택지는 사용할 수 없습니다."
-        }
-      },
-      deleteOption (option) {
-        this.options = this.options.filter(opt => {
-          return opt != option
-        })
-      },
-      addLogicCard () {
-        this.logicCardOrder++
-        this.logicCards.push(this.logicCardOrder)
-      },
-      deleteLogic (logic) {
-        this.logicCards.splice(this.logicCards.indexOf(logic),1)
-      },
-      onPickFile () {
-        this.$refs.fileInput.click()
-      },
-      onFilePicked (event) {
-          this.imageUrl = []
-          const files = event.target.files
-          console.log('1:', files)
-          const file = files[0]
-          let filename = file.name
-          if (filename.lastIndexOf('.') <= 0) {
-              return alert('유효한 이미지 파일을 업로드 해주세요!')
-          }
-          const fileReader = new FileReader()
-          fileReader.addEventListener('load', () => {
-              this.imageUrl.push(fileReader.result)
-          })
-          fileReader.readAsDataURL(file)
+export default {
+  name: "MultipleText",
+  props: ["questionIndex"],
+  components: {
+    LogicCard
+  },
+  methods: {
+    addOption() {
+      if (this.anotherOption) {
+        this.options.push(this.anotherOption);
+        this.anotherOption = null;
+        this.feedback = null;
+      } else {
+        this.feedback = "빈칸 선택지는 사용할 수 없습니다.";
       }
     },
-    data () {
-      return {
-        rules: {
-          option: [
-            val => (val || '').length > 0 || this.feedback
-          ]
-        },
-        feedback: null,
-        anotherOption: null,
-        logicCardOrder: 0,
-        logicCards: [],
-        options: [],
-        logicOption: ['다음문항','자격박탈','설문 종료','3.lorem...'],
-        multiselectSwitch: false,
-        multiselectMax: 0,
-        qTitle: null,
-        panel: [true],
-        active: null,
-        imageUrl: [],
-        multimediaSwitch: false,
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    deleteOption(option) {
+      this.options = this.options.filter(opt => {
+        return opt != option;
+      });
+    },
+    addLogicCard() {
+      this.logicCardOrder++;
+      this.logicCards.push(this.logicCardOrder);
+    },
+    deleteLogic(logic) {
+      this.logicCards.splice(this.logicCards.indexOf(logic), 1);
+    },
+    onPickFile() {
+      this.$refs.fileInput.click();
+    },
+    onFilePicked(event) {
+      this.imageUrl = [];
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
       }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl.push(fileReader.result);
+      });
+      fileReader.readAsDataURL(file);
     }
+  },
+  data() {
+    return {
+      rules: {
+        option: [val => (val || "").length > 0 || this.feedback]
+      },
+      feedback: null,
+      deleteMenu: ["test", "test2"],
+      anotherOption: null,
+      logicCardOrder: 0,
+      logicCards: [],
+      options: [],
+      logicOption: ["다음문항", "자격박탈", "설문 종료", "3.lorem..."],
+      multiselectSwitch: false,
+      multiselectMax: 0,
+      quizTimerSwitch: false,
+      quizTime: 0,
+      qTitle: null,
+      panel: [true],
+      active: null,
+      imageUrl: [],
+      multimediaSwitch: false,
+      text:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    };
   }
+};
 </script>
 
 <style>
 .v-expansion-panel__header {
-  background:#00BCD4;
+  background: #00bcd4;
   color: white;
 }
 .header__icon {
@@ -235,5 +268,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 </style>
