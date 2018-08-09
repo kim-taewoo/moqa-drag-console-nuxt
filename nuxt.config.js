@@ -73,9 +73,9 @@ module.exports = {
         ];
       }
     }
-  },
-  transition: {
-    name: "fade",
-    mode: "out-in"
   }
+  // transition: {
+  //   name: "fade",
+  //   mode: "out-in"
+  // }
 };

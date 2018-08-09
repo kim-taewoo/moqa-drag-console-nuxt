@@ -9,51 +9,56 @@
       <v-layout justify-center>
         <v-flex xs10>
           <v-card-text>
-            <p class="my-2 ml-3 subheading">기본정보</p>
-            <v-data-table
-              :items="basicInfo"
-              class="elevation-1"
-              hide-actions
-              hide-headers
-            >
-              <template slot="items" slot-scope="props">
-                <td class="font-weight-bold">{{ props.item.name }}</td>
-                <td class="text-xs-left">{{ props.item.value }}</td>
-              </template>
-            </v-data-table>
-
-            <p class="mb-2 mt-5 ml-3 subheading">설문 내용</p>
-            <v-data-table
-              :items="itemContent"
-              class="elevation-1"
-              hide-actions
-              hide-headers
-            >
-              <template slot="items" slot-scope="props">
-                <tr v-if="props.item.name == '객관식형 (텍스트)'">
-                  <td class="font-weight-bold">{{ props.item.name }}</td>
-                  <td>
-                    <v-data-table
-                      :items="props.item.value"
-                      class="elevation-1 my-4"
-                      hide-actions
-                      hide-headers
-                    >
-                      <template slot="items" slot-scope="props">
-                        <tr >
-                          <td>{{props.item.name}}</td>
-                          <td class="text-xs-center"><span class="font-weight-bold">{{props.item.percent}}%</span>  ({{props.item.num_people}}명)</td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-                  </td>
-                </tr>
-                <tr v-else>
+            <div v-if="!isAddGroup">
+              <p class="my-2 ml-3 subheading">기본정보</p>
+              <v-data-table
+                :items="basicInfo"
+                class="elevation-1"
+                hide-actions
+                hide-headers
+              >
+                <template slot="items" slot-scope="props">
                   <td class="font-weight-bold">{{ props.item.name }}</td>
                   <td class="text-xs-left">{{ props.item.value }}</td>
-                </tr>
-              </template>
-            </v-data-table>
+                </template>
+              </v-data-table>
+            </div>
+
+            <div>
+              <p class="mb-2 mt-5 ml-3 subheading">설문 내용</p>
+              <v-data-table
+                :items="itemContent"
+                class="elevation-1"
+                hide-actions
+                hide-headers
+              >
+                <template slot="items" slot-scope="props">
+                  <tr v-if="props.item.name == '객관식형 (텍스트)'">
+                    <td class="font-weight-bold">{{ props.item.name }}</td>
+                    <td>
+                      <v-data-table
+                        :items="props.item.value"
+                        class="elevation-1 my-4"
+                        hide-actions
+                        hide-headers
+                      >
+                        <template slot="items" slot-scope="props">
+                          <tr @click="selectOption($event, props.item)">
+                            <td>{{props.item.name}}</td>
+                            <td class="text-xs-center"><span class="font-weight-bold">{{props.item.percent}}%</span>  ({{props.item.num_people}}명)</td>
+                          </tr>
+                        </template>
+                      </v-data-table>
+                    </td>
+                  </tr>
+                  <tr v-else>
+                    <td class="font-weight-bold">{{ props.item.name }}</td>
+                    <td class="text-xs-left">{{ props.item.value }}</td>
+                  </tr>
+                </template>
+              </v-data-table>
+            </div>
+
           </v-card-text>
 
 
@@ -91,12 +96,26 @@
 <script>
 export default {
   name: "SurveyDetail",
-  props: ["item"],
-  mounted() {
-    console.log("마운트", this.item);
+  props: {
+    item: {
+      type: Object
+    },
+    isAddGroup: {
+      type: Boolean
+    }
+  },
+  methods: {
+    selectOption(e, item) {
+      if (!this.isAddGroup) {
+        return;
+      }
+      e.target.parentElement.style.backgroundColor = "cyan";
+      this.selectedOption = item;
+    }
   },
   data() {
     return {
+      selectedOption: null,
       basicInfo: [
         {
           name: "설문 번호",

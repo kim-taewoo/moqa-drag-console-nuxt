@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-0">
     <v-layout class="mt-3" wrap justify-center>
-      <v-flex xs12 sm4 class="px-3" >
+      <v-flex xs12 sm4 class="px-3" :class="{'mb-2': isAddGroup}">
         <v-select
           v-model="searchStatus"
           :items="filter_status"
@@ -9,7 +9,7 @@
           hide-details
         ></v-select>
       </v-flex>
-      <v-flex xs12 sm4>
+      <v-flex xs12 sm4 :class="{'mb-2': isAddGroup}">
         <v-text-field
           label="제목으로 검색"
           append-icon="search"
@@ -20,7 +20,7 @@
       </v-flex>
       <v-spacer></v-spacer>
       <v-flex xs12 md3 class="text-xs-right">
-        <v-btn :block="$vuetify.breakpoint.xsOnly" large class="primary" @click.stop="typeDialog = true"><v-icon dark>add</v-icon>새로 만들기</v-btn>
+        <v-btn v-if="!isAddGroup" :block="$vuetify.breakpoint.xsOnly" large class="primary" @click.stop="typeDialog = true"><v-icon dark>add</v-icon>새로 만들기</v-btn>
 
         <v-dialog
           v-model="typeDialog"
@@ -100,7 +100,7 @@
           v-model="surveyDetailDialog"
           width="980"
         >
-          <SurveyDetail v-if="surveyDetailDialog" :item="selectedItem" @closeDialog="surveyDetailDialog=false"></SurveyDetail>
+          <SurveyDetail v-if="surveyDetailDialog" :item="selectedItem" :is-add-group="isAddGroup" @closeDialog="surveyDetailDialog=false"></SurveyDetail>
         </v-dialog>
 
         <v-data-table
@@ -112,12 +112,12 @@
             <tr>
               <td>{{ props.item.surveyId }}</td>
               <td class="text-xs-left" @click.stop="itemSelected($event,props.item)" >{{ props.item.title }}</td>
-              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.num_participate }}</td>
-              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.num_max_participate }}</td>
-              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.num_distribute }}</td>
-              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.time_period }}</td>
-              <td class="text-xs-right" @click.stop="surveyDetailDialog = true">{{ props.item.status }}</td>
-              <td class="justify-end layout px-0">
+              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.num_participate }}</td>
+              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.num_max_participate }}</td>
+              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.num_distribute }}</td>
+              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.time_period }}</td>
+              <td v-if="!isAddGroup" class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.status }}</td>
+              <td v-if="!isAddGroup" class="justify-end layout px-0">
                 <v-menu bottom left transition="slide-x-transition">
                   <v-btn
                     slot="activator"
@@ -136,20 +136,6 @@
                     </v-list-tile>
                   </v-list>
                 </v-menu>
-                <!-- <v-icon small @click.stop="">more_vert</v-icon>
-                  <v-icon
-                    small
-                    class="mr-2"
-                    @click="editItem(props.item)"
-                  >
-                    edit
-                  </v-icon>
-                  <v-icon
-                    small
-                    @click="deleteItem(props.item)"
-                  >
-                    delete
-                  </v-icon> -->
                 </td>
               </tr>
           </template>
@@ -164,6 +150,12 @@ const SurveyDetail = () => import("@/components/SurveyDetail");
 // import SurveyDetail from "@/components/SurveyDetail";
 
 export default {
+  props: {
+    isAddGroup: {
+      type: Boolean,
+      default: false
+    }
+  },
   name: "SurveyList",
   components: {
     SurveyDetail
@@ -203,6 +195,44 @@ export default {
             .includes(this.searchTitle.toLowerCase());
         });
       }
+    },
+
+    headers() {
+      return this.isAddGroup
+        ? [
+            {
+              text: "ID",
+              align: "left",
+              value: "surveyId"
+            },
+            { text: "제목", value: "title", align: "left", sortable: false },
+            { text: "참여인원", value: "num_participate", align: "right" },
+            {
+              text: "최대참여인원",
+              value: "num_max_participate",
+              align: "right"
+            },
+            { text: "배포인원", value: "num_distribute", align: "right" },
+            { text: "설문기간", value: "time_period", align: "right" }
+          ]
+        : [
+            {
+              text: "ID",
+              align: "left",
+              value: "surveyId"
+            },
+            { text: "제목", value: "title", align: "left", sortable: false },
+            { text: "참여인원", value: "num_participate", align: "right" },
+            {
+              text: "최대참여인원",
+              value: "num_max_participate",
+              align: "right"
+            },
+            { text: "배포인원", value: "num_distribute", align: "right" },
+            { text: "설문기간", value: "time_period", align: "right" },
+            { text: "상태", value: "status", align: "right" },
+            { text: "기타", align: "right", value: "status" }
+          ];
     }
   },
   data() {
@@ -219,20 +249,6 @@ export default {
       searchTitle: "",
       typeDialog: false,
       search: "",
-      headers: [
-        {
-          text: "ID",
-          align: "left",
-          value: "surveyId"
-        },
-        { text: "제목", value: "title", align: "left", sortable: false },
-        { text: "참여인원", value: "num_participate", align: "right" },
-        { text: "최대참여인원", value: "num_max_participate", align: "right" },
-        { text: "배포인원", value: "num_distribute", align: "right" },
-        { text: "설문기간", value: "time_period", align: "right" },
-        { text: "상태", value: "status", align: "right" },
-        { text: "기타", align: "right", value: "status" }
-      ],
       loadedSurveys: [
         {
           value: false,

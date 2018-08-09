@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import surveyList from "~/components/SurveyList";
-import fitTarget from "~/components/FitTarget";
+import SurveyList from "~/components/SurveyList";
+import FitTarget from "~/components/FitTarget";
 import { swiper, swiperSlide } from "vue-awesome-swiper";
 import "swiper/dist/css/swiper.css";
 
@@ -76,11 +76,11 @@ export default {
       dashboardTabs: [
         {
           name: "설문관리",
-          comp: surveyList
+          comp: SurveyList
         },
         {
           name: "맞춤타겟",
-          comp: fitTarget
+          comp: FitTarget
         }
       ],
       active: null

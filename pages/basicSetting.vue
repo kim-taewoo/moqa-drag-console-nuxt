@@ -13,7 +13,7 @@
                 </v-badge>
               </div>
               
-              <v-stepper-step :complete="e1 > 1" step="1" @click="$router.go(-1)" editable>기본 설정</v-stepper-step>
+              <v-stepper-step :complete="e1 > 1" step="1" @click="$router.push('/basicSetting')" editable>기본 설정</v-stepper-step>
 
               <v-divider></v-divider>
 
@@ -31,11 +31,11 @@
 
             </v-stepper-header>
 
-            <v-stepper-items>
-              <v-stepper-content :step="e1">
                 <nuxt-child />      
+            <!--<v-stepper-items>
+              <v-stepper-content :step="e1">
               </v-stepper-content>
-            </v-stepper-items>
+            </v-stepper-items> -->
 
           </v-stepper>
 
