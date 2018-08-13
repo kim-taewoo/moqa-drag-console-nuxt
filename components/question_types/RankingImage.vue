@@ -1,8 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 순위 선택형<small class="gray--text"> (이미지)</small> <span class="q-title">: {{qTitle}}</span> </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-tabs
         v-model="active"
         color="cyan"
@@ -74,94 +70,88 @@
           </v-card>
         </v-tab-item>        
       </v-tabs>
-      
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
-
-  export default {
-    name: 'RankingImage',
-    props: ['questionIndex'],
-    methods: {
-      addOption () {
-        if (this.anotherOption) {
-          this.options.push(this.anotherOption)
-          this.anotherOption = null
-          this.feedback = null  
-        } else {
-          this.feedback = "빈칸 선택지는 사용할 수 없습니다."
-        }
-      },
-      deleteOption (option,index) {
-        this.imageUrlQ.splice(index,1)
-        this.options = this.options.filter(opt => {
-          return opt != option
-        })
-      },
-      onPickFile () {
-        this.$refs.fileInput.click()
-      },
-      onPickFileQ (ref) {
-        console.log(this.$refs)
-        this.$refs[ref][0].click()
-      },
-      onFilePicked (event) {
-          const files = event.target.files
-          console.log('1:', files)
-          const file = files[0]
-          let filename = file.name
-          if (filename.lastIndexOf('.') <= 0) {
-              return alert('유효한 이미지 파일을 업로드 해주세요!')
-          }
-          const fileReader = new FileReader()
-          fileReader.addEventListener('load', () => {
-              this.imageUrl.push(fileReader.result)
-          })
-          fileReader.readAsDataURL(file)
-      },
-      onFilePickedQ (event, index) {
-        const files = event.target.files
-        console.log('1:', files)
-        const file = files[0]
-        let filename = file.name
-        if (filename.lastIndexOf('.') <= 0) {
-            return alert('유효한 이미지 파일을 업로드 해주세요!')
-        }
-        const fileReader = new FileReader()
-        fileReader.addEventListener('load', () => {
-            this.imageUrlQ.splice(parseInt(index), 1, fileReader.result)
-        })
-        fileReader.readAsDataURL(file)
-      },
-
-    },
-    data () {
-      return {
-        rules: {
-          option: [
-            val => (val || '').length > 0 || this.feedback
-          ]
-        },
-        feedback: null,
-        anotherOption: null,
-        options: [],
-        imageUrlQ: ['none','none','none','none','none','none'],
-        imageUrl: [],
-        multimediaSwitch: false,
-        qTitle: null,
-        panel: [true],
-        active: null,
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+export default {
+  name: "RankingImage",
+  props: ["questionIndex"],
+  methods: {
+    addOption() {
+      if (this.anotherOption) {
+        this.options.push(this.anotherOption);
+        this.anotherOption = null;
+        this.feedback = null;
+      } else {
+        this.feedback = "빈칸 선택지는 사용할 수 없습니다.";
       }
+    },
+    deleteOption(option, index) {
+      this.imageUrlQ.splice(index, 1);
+      this.options = this.options.filter(opt => {
+        return opt != option;
+      });
+    },
+    onPickFile() {
+      this.$refs.fileInput.click();
+    },
+    onPickFileQ(ref) {
+      console.log(this.$refs);
+      this.$refs[ref][0].click();
+    },
+    onFilePicked(event) {
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl.push(fileReader.result);
+      });
+      fileReader.readAsDataURL(file);
+    },
+    onFilePickedQ(event, index) {
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrlQ.splice(parseInt(index), 1, fileReader.result);
+      });
+      fileReader.readAsDataURL(file);
     }
+  },
+  data() {
+    return {
+      rules: {
+        option: [val => (val || "").length > 0 || this.feedback]
+      },
+      feedback: null,
+      anotherOption: null,
+      options: [],
+      imageUrlQ: ["none", "none", "none", "none", "none", "none"],
+      imageUrl: [],
+      multimediaSwitch: false,
+      qTitle: null,
+      panel: [true],
+      active: null,
+      text:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    };
   }
+};
 </script>
 
 <style>
 .v-expansion-panel__header {
-  background:#00BCD4;
+  background: #00bcd4;
   color: white;
 }
 .header__icon {
@@ -174,14 +164,13 @@
   text-overflow: ellipsis;
 }
 .backgroundQ {
-    width:97%;
-    height:100px;
-    padding-top:97%;
-    background: #eee no-repeat center center;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+  width: 97%;
+  height: 100px;
+  padding-top: 97%;
+  background: #eee no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
-
 </style>

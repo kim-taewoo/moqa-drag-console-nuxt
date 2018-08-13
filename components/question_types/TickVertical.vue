@@ -1,8 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 척도형<small class="gray--text"> (세로)</small> <span class="q-title">: {{qTitle}}</span> </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-tabs
         v-model="active"
         color="cyan"
@@ -153,16 +149,13 @@
           </v-card>
         </v-tab-item>
       </v-tabs>
-      
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
 import LogicCardStar from "@/components/question_types/LogicCardStar";
 
 export default {
-  name: 'TickVertical',
+  name: "TickVertical",
   props: ["questionIndex"],
   components: {
     LogicCardStar
@@ -189,23 +182,23 @@ export default {
     deleteLogic(logic) {
       this.logicCards.splice(this.logicCards.indexOf(logic), 1);
     },
-    onPickFile () {
-        this.$refs.fileInput.click()
+    onPickFile() {
+      this.$refs.fileInput.click();
     },
-    onFilePicked (event) {
-        this.imageUrl = []
-        const files = event.target.files
-        console.log('1:', files)
-        const file = files[0]
-        let filename = file.name
-        if (filename.lastIndexOf('.') <= 0) {
-            return alert('유효한 이미지 파일을 업로드 해주세요!')
-        }
-        const fileReader = new FileReader()
-        fileReader.addEventListener('load', () => {
-            this.imageUrl.push(fileReader.result)
-        })
-        fileReader.readAsDataURL(file)
+    onFilePicked(event) {
+      this.imageUrl = [];
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl.push(fileReader.result);
+      });
+      fileReader.readAsDataURL(file);
     }
   },
   data() {

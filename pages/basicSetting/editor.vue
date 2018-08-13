@@ -1,11 +1,14 @@
 <template>
 
-  <v-container fluid style="height: inherit;">
-    <v-layout row wrap>
+  <v-container fluid style="height: inherit;" class="workplace" >
+    <v-layout row wrap fill-height>
       <v-flex xs12>
         <v-card>
-          <v-layout justify-center wrap class="grey lighten-5 py-3">
-            <v-flex xs12 sm7 lg5 class="trans-group">
+          <v-layout align-center justify-center wrap class="grey lighten-5 py-3">
+            <v-flex xs12 sm7 lg5 class="trans-group d-flex" align-center>
+              <div style="position:absolute;top:0;right:30px;">
+                <v-switch label="모두 열기/닫기" v-model="panel" hide-details></v-switch>
+              </div>
 
               <draggable 
                 element="v-expansion-panel" 
@@ -14,45 +17,46 @@
                 focusable
                 :list="questions"
                 :options="{
-                    ghostClass:'ghost', 
-                    scrollSensitivity: 80, 
-                    scrollSpeed: 30, 
-                    animation: 150}"
+                  ghostClass:'ghost',
+                  animation: 150
+                }"
               >
                 <v-expansion-panel-content
                   v-for="(question,index) in questions"
-                  :key="index"
+                  :key="question.order"
                   class="elevation-1"
+                  lazy
+                  :value="panel"
                 >
-                  <div slot="header" v-html="question.title"></div>
-                  <v-card>
-                    <v-card class="my-3 drag-item workplace-card">
-                      <component :is="question.comp" :questionIndex="index" class="card-component"></component>
-                    </v-card>
+                  <div slot="header">
+                    <span>Q{{index + 1}}.</span> <span>{{question.typeName}}</span> <small v-if="question.typeSubName">{{question.typeSubName}}</small> <span>{{question.title}}</span>
+                  </div>
+                  <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
+
+
+                  <v-card class="workplace-card">
+                    <component :is="question.comp" :questionIndex="index" class="card-component"></component>
                   </v-card>
+
                 </v-expansion-panel-content>
               </draggable>
               
           </v-flex>
-
-          <!-- <v-layout justify-center class="text-xs-center red--text text--lighten-3"> -->
-            <v-flex xs12 pt-3 class="text-xs-center red--text text--lighten-3">
-              <div class="subheading">아래 버튼을 클릭해서 질문 추가</div>
+            <v-flex xs12 pt-3 class="text-xs-center red--text text--lighten-3 mt-3">
+              <div class="subheading" ref="addButton">아래 버튼을 클릭해서 질문 추가</div>
             </v-flex>
           </v-layout>
           <v-layout>
             <v-flex xs12 class="text-xs-center">
-              <v-menu transition="slide-x-transition" top right>
-                <v-btn slot="activator" fab bottom dark color="pink">
+              <v-menu transition="slide-x-transition" top right offset-x>
+                <v-btn slot="activator" fab bottom dark color="pink" >
                   <v-icon>add</v-icon>
                 </v-btn>
                 <v-card width="380px">
                   <v-layout wrap>
-                    <template v-for="(type, index) in types" >
-                      <v-flex xs6 v-if="type.title" :key="'b-'+index" >
-                        <v-btn flat v-html="type.title" @click="addCard(type.id)"></v-btn>
+                      <v-flex v-for="(type, index) in questionTypes" xs6 v-if="type.typeName" :key="index" @click="addCard(type.id)" class="question-types py-3 pl-3">
+                        {{type.typeName}} <small v-if="type.typeSubName">{{type.typeSubName}}</small>
                       </v-flex>
-                    </template>
                   </v-layout>
                 </v-card>
               </v-menu>
@@ -64,66 +68,7 @@
     </v-layout>
   </v-container>
 
-  <!-- <v-container fluid class="pa-2" style="height:inherit">
-    
-    <v-layout fill-height>
-
-      <v-flex class="main-workplace-layout mx-2" xs12>
-        <v-layout wrap fill-height>
-          <v-flex xs12>
-            <v-card id="main-workplace" class="ma-2">
-              <v-layout justify-center class="grey lighten-5">
-                <v-flex xs12 sm7 md7 lg5 class="text-xs-center">
-                  <draggable
-                    class="main-workplace"
-                    v-model="workplace" 
-                    :options="{
-                      ghostClass:'ghost', 
-                      scrollSensitivity: 80, 
-                      scrollSpeed: 30, 
-                      animation: 150,
-                      group: { name: 'question_cards'}}"
-                    >
-                    <transition-group name="'list-complete'" tag="div" type="transition" class="trans-group">
-
-                      <v-card class="my-3 drag-item workplace-card" v-for="(work,index) in workplace" :key="'a-'+index">
-                        <component :is="work.comp" :questionIndex="index" class="card-component"></component>
-                      </v-card>
-
-                    </transition-group>
-                  </draggable>
-                  <v-layout justify-center class="text-xs-center red--text text--lighten-3">
-                    <v-flex xs12 pb-3 >
-                      <div>아래 버튼을 클릭해서 질문 추가</div>
-                    </v-flex>
-                  </v-layout>
-                </v-flex>
-              </v-layout>
-              <v-layout justify-center>
-                <v-flex xs12 class="text-xs-center">
-                  <v-menu transition="slide-x-transition" top right>
-                    <v-btn slot="activator" fab bottom dark color="pink">
-                      <v-icon>add</v-icon>
-                    </v-btn>
-                    <v-card width="380px">
-                      <v-layout wrap>
-                        <template v-for="(type, index) in types" >
-                          <v-flex xs6 v-if="type.title" :key="'b-'+index" >
-                            <v-btn flat v-html="type.title" @click="addCard(type.id)"></v-btn>
-                          </v-flex>
-                        </template>
-                      </v-layout>
-                    </v-card>
-                  </v-menu>
-                </v-flex>                
-              </v-layout>
-            </v-card>
-          </v-flex>
-        </v-layout>
-        
-      </v-flex>
-    </v-layout>
-  </v-container> -->
+  
 </template>
 
 <script>
@@ -141,7 +86,7 @@ import ImageFull from "@/components/question_types/ImageFull";
 import VideoFull from "@/components/question_types/VideoFull";
 
 import HelpPopup from "@/components/HelpPopup";
-
+import * as easings from "vuetify/es5/util/easing-patterns";
 export default {
   name: "Editor",
   components: {
@@ -159,248 +104,132 @@ export default {
     VideoFull,
     HelpPopup
   },
-  mounted() {
-    this.onResize();
-  },
   methods: {
-    showHelp(id) {
-      if (id == 0) {
-        this.workplace.push({
-          id: 0,
-          title: '객관식 <span class="subText">(텍스트)</span>',
-          comp: "MultipleText"
-        });
-      } else if (id == 1) {
-        this.workplace.push({
-          id: 1,
-          title: '객관식 <span class="subText">(이미지)</span>',
-          comp: "MultipleImage"
-        });
-      } else if (id == 4) {
-        this.workplace.push({
-          id: 4,
-          title: "별점형",
-          comp: "StarRating"
-        });
-      } else if (id == 5) {
-        this.workplace.push({
-          id: 5,
-          title: "주관식형",
-          comp: "Subjective"
-        });
-      } else if (id == 2) {
-        this.workplace.push({
-          id: 2,
-          title: '순위 선택형 <span class="subText">(텍스트)</span>',
-          comp: "RankingText"
-        });
-      } else if (id == 3) {
-        this.workplace.push({
-          id: 3,
-          title: '순위 선택형 <span class="subText">(이미지)</span>',
-          comp: "RankingImage"
-        });
-      } else if (id == 6) {
-        this.workplace.push({
-          id: 6,
-          title: '척도형 <span class="subText">(가로)</span>',
-          comp: "TickHorizontal"
-        });
-      } else if (id == 7) {
-        this.workplace.push({
-          id: 7,
-          title: '척도형 <span class="subText">(세로)</span>',
-          comp: "TickVertical"
-        });
-      } else if (id == 8) {
-        this.workplace.push({
-          id: 8,
-          title: '척도형 <span class="subText">(원형)</span>',
-          comp: "TickCircle"
-        });
-      } else if (id == 9) {
-        this.workplace.push({
-          id: 9,
-          title: '이미지 <span class="subText">(Full)</span>',
-          comp: "ImageFull"
-        });
-      } else if (id == 10) {
-        this.workplace.push({
-          id: 10,
-          title: '동영상 <span class="subText">(Full)</span>',
-          comp: "VideoFull"
-        });
-      }
-    },
-    onResize(e) {
-      this.windowSize = { x: window.innerWidth, y: window.innerHeight };
-    },
     next() {
       const active = parseInt(this.active);
       this.active = active < 2 ? active + 1 : 0;
     },
     addCard(id) {
-      if (id == 0) {
-        this.questions.push({
-          id: 0,
-          title: '객관식 <span class="subText">(텍스트)</span>',
-          comp: "MultipleText"
+      let x = this.questionTypes.filter(type => {
+        return type.id == id;
+      })[0];
+      let y = Object.assign({}, x);
+      y.order = this.$options.localData.currentCardNum;
+      this.questions.push(y);
+      this.$options.localData.currentCardNum++;
+      this.$nextTick(() => {
+        this.$vuetify.goTo(this.$refs.addButton, {
+          offset: 1000,
+          duration: 1000,
+          easing: "easeInOutCubic"
         });
-      } else if (id == 1) {
-        this.questions.push({
-          id: 1,
-          title: '객관식 <span class="subText">(이미지)</span>',
-          comp: "MultipleImage"
-        });
-      } else if (id == 4) {
-        this.questions.push({
-          id: 4,
-          title: "별점형",
-          comp: "StarRating"
-        });
-      } else if (id == 5) {
-        this.questions.push({
-          id: 5,
-          title: "주관식형",
-          comp: "Subjective"
-        });
-      } else if (id == 2) {
-        this.questions.push({
-          id: 2,
-          title: '순위 선택형 <span class="subText">(텍스트)</span>',
-          comp: "RankingText"
-        });
-      } else if (id == 3) {
-        this.questions.push({
-          id: 3,
-          title: '순위 선택형 <span class="subText">(이미지)</span>',
-          comp: "RankingImage"
-        });
-      } else if (id == 6) {
-        this.questions.push({
-          id: 6,
-          title: '척도형 <span class="subText">(가로)</span>',
-          comp: "TickHorizontal"
-        });
-      } else if (id == 7) {
-        this.questions.push({
-          id: 7,
-          title: '척도형 <span class="subText">(세로)</span>',
-          comp: "TickVertical"
-        });
-      } else if (id == 8) {
-        this.questions.push({
-          id: 8,
-          title: '척도형 <span class="subText">(원형)</span>',
-          comp: "TickCircle"
-        });
-      } else if (id == 9) {
-        this.questions.push({
-          id: 9,
-          title: '이미지 <span class="subText">(Full)</span>',
-          comp: "ImageFull"
-        });
-      } else if (id == 10) {
-        this.questions.push({
-          id: 10,
-          title: '동영상 <span class="subText">(Full)</span>',
-          comp: "VideoFull"
-        });
-      }
+      });
     }
-    // onMove ({relatedContext, draggedContext}) {
-    //   const relatedElement = relatedContext.element;
-    //   const draggedElement = draggedContext.element;
-    //   return (!relatedElement || !relatedElement.fixed)
-    // }
   },
-  computed: {
-    calcHeight() {
-      return this.windowSize.y - 120;
-    }
+  localData: {
+    currentCardNum: 0
+  },
+  created() {
+    console.log(this.$options.localData);
   },
   data() {
     return {
-      list: [
-        {
-          title: "test2",
-          description: "test description1"
-        },
-        {
-          title: "test",
-          description: "test description2"
-        }
-      ],
+      panel: true,
       helpPop: false,
       currentHelp: "",
-      drawer: true,
-      windowSize: {
-        x: 0,
-        y: 0
-      },
-      currentCardNum: 0,
-      types: [
-        { order: 0, header: "객관식" },
+      questionTypes: [
         {
           order: 1,
           id: 0,
-          title: '객관식 <span class="subText">(텍스트)</span>',
+          typeName: "객관식",
+          typeSubName: "(텍스트)",
+          title: "",
           comp: "MultipleText"
         },
         {
           order: 2,
           id: 1,
-          title: '객관식 <span class="subText">(이미지)</span>',
+          typeName: "객관식",
+          typeSubName: "(이미지)",
+          title: "",
           comp: "MultipleImage"
         },
-        { order: 3, header: "순위 선택형" },
         {
-          order: 4,
+          order: 3,
           id: 2,
-          title: '순위 선택형 <span class="subText">(텍스트)</span>',
+          typeName: "순위 선택형",
+          typeSubName: "(텍스트)",
+          title: "",
           comp: "RankingText"
         },
         {
-          order: 5,
+          order: 4,
           id: 3,
-          title: '순위 선택형 <span class="subText">(이미지)</span>',
+          typeName: "순위 선택형",
+          typeSubName: "(이미지)",
+          title: "",
           comp: "RankingImage"
         },
-        { order: 6, header: "별점형" },
-        { order: 7, id: 4, title: "별점형", comp: "StarRating" },
-        { order: 8, header: "주관식형" },
-        { order: 9, id: 5, title: "주관식형", comp: "Subjective" },
-        { order: 10, header: "척도형" },
         {
-          order: 11,
+          order: 5,
+          id: 4,
+          typeName: "별점형",
+          title: "",
+          comp: "StarRating"
+        },
+        {
+          order: 6,
+          id: 5,
+          typeName: "주관식",
+          title: "",
+          comp: "Subjective"
+        },
+        {
+          order: 7,
           id: 6,
-          title: '척도형 <span class="subText">(가로)</span>',
+          typeName: "척도형",
+          typeSubName: "(가로)",
+          title: "",
           comp: "TickHorizontal"
         },
         {
-          order: 12,
+          order: 8,
           id: 7,
-          title: '척도형 <span class="subText">(세로)</span>',
+          typeName: "척도형",
+          typeSubName: "(세로)",
+          title: "",
           comp: "TickVertical"
         },
         {
-          order: 13,
+          order: 9,
           id: 8,
-          title: '척도형 <span class="subText">(원형)</span>',
+          typeName: "척도형",
+          typeSubName: "(원형)",
+          title: "",
           comp: "TickCircle"
         },
-        { order: 14, header: "멀티미디어" },
         {
-          order: 15,
+          order: 10,
           id: 9,
-          title: '이미지 <span class="subText">(Full)</span>',
+          typeName: "이미지",
+          typeSubName: "(Full)",
+          title: "",
           comp: "ImageFull"
         },
         {
-          order: 16,
+          order: 11,
           id: 10,
-          title: '동영상 <span class="subText">(Full)</span>',
+          typeName: "동영상",
+          typeSubName: "(Full)",
+          title: "",
           comp: "VideoFull"
+        },
+        {
+          order: 12,
+          id: 11,
+          typeName: "링크",
+          title: "",
+          comp: "ToLink"
         }
       ],
       questions: [],
@@ -411,6 +240,19 @@ export default {
 </script>
 
 <style>
+.v-expansion-panel__header {
+  background: #00bcd4;
+  color: white;
+}
+.header__icon {
+  color: white;
+}
+.q-title {
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .trans-group {
   min-height: 330px;
 }
@@ -428,7 +270,7 @@ export default {
 }
 .subText {
   font-size: 0.8rem;
-  color: grey;
+  color: white;
 }
 .v-stepper__wrapper {
   width: 100%;
@@ -454,5 +296,9 @@ export default {
   left: 0;
   min-width: 280px;
   overflow: auto;
+}
+.question-types:hover {
+  background: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
 }
 </style>

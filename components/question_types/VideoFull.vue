@@ -1,8 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 동영상 <small class="gray--text"> (Full)</small><span class="q-title">: {{qTitle}}</span> </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-card>
           <v-container>
               <v-layout wrap justify-center>
@@ -30,76 +26,71 @@
               </v-layout>
           </v-container>
       </v-card>
-      
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
+export default {
+  name: "StarRating",
+  props: ["questionIndex"],
+  data() {
+    return {
+      panel: [true],
+      qTitle: null,
+      active: null,
+      videoUrl: null,
+      youtubeLink: "",
+      embed: ""
+    };
+  },
+  watch: {
+    youtubeLink(val) {
+      let x = this.youtubeLink.split("/");
 
-  export default {
-    name: 'StarRating',
-    props: ['questionIndex'],
-    data () {
-      return {
-        panel: [true],
-        qTitle: null,
-        active: null,
-        videoUrl: null,
-        youtubeLink: '',
-        embed: ''
-      }
+      this.embed = x.splice(3, 1);
+    }
+  },
+  methods: {
+    onPickFile() {
+      this.$refs.fileInput.click();
     },
-    watch: {
-      youtubeLink (val) {
-        let x = this.youtubeLink.split('/')
-        
-        this.embed = x.splice(3,1)
+    onFilePicked(event) {
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      let filesize = file.size;
+      console.log(filesize);
+      var video = document.getElementById("video");
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 동영상 파일을 업로드 해주세요!");
       }
-    },
-    methods: {
-      onPickFile () {
-        this.$refs.fileInput.click()
-      },
-      onFilePicked (event) {
-          const files = event.target.files
-          console.log('1:', files)
-          const file = files[0]
-          let filename = file.name
-          let filesize = file.size
-          console.log(filesize)
-          var video = document.getElementById('video');
-          if (filename.lastIndexOf('.') <= 0) {
-              return alert('유효한 동영상 파일을 업로드 해주세요!')
-          }
-          if (filesize > 15728640) {
-            return alert('15mb 이상의 파일은 업로드할 수 없습니다.')
-          }
-          
-          const fileReader = new FileReader()
-          fileReader.addEventListener('load', () => {
-            this.videoUrl = fileReader.result
-          })
-          
+      if (filesize > 15728640) {
+        return alert("15mb 이상의 파일은 업로드할 수 없습니다.");
+      }
 
-          fileReader.readAsDataURL(file)
-        //   var rawData = fileReader.readAsBinaryString(file)
-        //   console.log(rawData)
-        //   var binaryData = [];
-        //   binaryData.push(rawData)
-        //   var video = document.getElementById('video');
-        //   var obj_url = window.URL.createObjectURL(file);
-        //   video.src = obj_url;
-        //   video.play()
-        //   window.URL.revokeObjectURL(obj_url);
-      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.videoUrl = fileReader.result;
+      });
+
+      fileReader.readAsDataURL(file);
+      //   var rawData = fileReader.readAsBinaryString(file)
+      //   console.log(rawData)
+      //   var binaryData = [];
+      //   binaryData.push(rawData)
+      //   var video = document.getElementById('video');
+      //   var obj_url = window.URL.createObjectURL(file);
+      //   video.src = obj_url;
+      //   video.play()
+      //   window.URL.revokeObjectURL(obj_url);
     }
   }
+};
 </script>
 
 <style>
 .v-expansion-panel__header {
-  background:#00BCD4;
+  background: #00bcd4;
   color: white;
 }
 .header__icon {

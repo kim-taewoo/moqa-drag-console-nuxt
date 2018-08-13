@@ -1,8 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 이미지 <small class="gray--text"> (Full)</small><span class="q-title">: {{qTitle}}</span> </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-card>
           <v-container>
               <v-layout wrap justify-center>
@@ -24,49 +20,45 @@
               </v-layout>
           </v-container>
       </v-card>
-      
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
-
-  export default {
-    name: 'StarRating',
-    props: ['questionIndex'],
-    data () {
-      return {
-        panel: [true],
-        qTitle: null,
-        active: null,
-        imageUrl: null
-      }
+export default {
+  name: "StarRating",
+  props: ["questionIndex"],
+  data() {
+    return {
+      panel: [true],
+      qTitle: null,
+      active: null,
+      imageUrl: null
+    };
+  },
+  methods: {
+    onPickFile() {
+      this.$refs.fileInput.click();
     },
-    methods: {
-      onPickFile () {
-        this.$refs.fileInput.click()
-      },
-      onFilePicked (event) {
-          const files = event.target.files
-          console.log('1:', files)
-          const file = files[0]
-          let filename = file.name
-          if (filename.lastIndexOf('.') <= 0) {
-              return alert('유효한 이미지 파일을 업로드 해주세요!')
-          }
-          const fileReader = new FileReader()
-          fileReader.addEventListener('load', () => {
-              this.imageUrl=fileReader.result
-          })
-          fileReader.readAsDataURL(file)
+    onFilePicked(event) {
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
       }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl = fileReader.result;
+      });
+      fileReader.readAsDataURL(file);
     }
   }
+};
 </script>
 
 <style>
 .v-expansion-panel__header {
-  background:#00BCD4;
+  background: #00bcd4;
   color: white;
 }
 .header__icon {

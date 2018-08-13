@@ -1,8 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 별점형 <span class="q-title">: {{qTitle}}</span> </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-tabs
         v-model="active"
         color="cyan"
@@ -139,68 +135,65 @@
           </v-card>
         </v-tab-item>
       </v-tabs>
-      
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
-import CompStarRating from 'vue-star-rating'
-import LogicCardStar from '@/components/question_types/LogicCardStar'
+import CompStarRating from "vue-star-rating";
+import LogicCardStar from "@/components/question_types/LogicCardStar";
 
-  export default {
-    name: 'StarRating',
-    components: {
-      CompStarRating,
-      LogicCardStar
+export default {
+  name: "StarRating",
+  components: {
+    CompStarRating,
+    LogicCardStar
+  },
+  props: ["questionIndex"],
+  data() {
+    return {
+      panel: [true],
+      qTitle: null,
+      active: null,
+      options: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+      options2: ["이상", "이하"],
+      logicOption: ["다음문항", "자격박탈", "설문 종료", "3.lorem..."],
+      logicCards: [],
+      multimediaSwitch: false,
+      imageUrl: []
+    };
+  },
+  methods: {
+    addLogicCard() {
+      this.logicCardOrder++;
+      this.logicCards.push(this.logicCardOrder);
     },
-    props: ['questionIndex'],
-    data () {
-      return {
-        panel: [true],
-        qTitle: null,
-        active: null,
-        options: [0.5,1,1.5,2,2.5,3,3.5,4,4.5,5],
-        options2: ['이상','이하'],
-        logicOption: ['다음문항','자격박탈','설문 종료','3.lorem...'],
-        logicCards: [],
-        multimediaSwitch: false,
-        imageUrl: []
-      }
+    deleteLogic(logic) {
+      this.logicCards.splice(this.logicCards.indexOf(logic), 1);
     },
-    methods: {
-      addLogicCard () {
-        this.logicCardOrder++
-        this.logicCards.push(this.logicCardOrder)
-      },
-      deleteLogic (logic) {
-        this.logicCards.splice(this.logicCards.indexOf(logic),1)
-      },
-      onPickFile () {
-        this.$refs.fileInput.click()
-      },
-      onFilePicked (event) {
-          this.imageUrl = []
-          const files = event.target.files
-          console.log('1:', files)
-          const file = files[0]
-          let filename = file.name
-          if (filename.lastIndexOf('.') <= 0) {
-              return alert('유효한 이미지 파일을 업로드 해주세요!')
-          }
-          const fileReader = new FileReader()
-          fileReader.addEventListener('load', () => {
-              this.imageUrl.push(fileReader.result)
-          })
-          fileReader.readAsDataURL(file)
+    onPickFile() {
+      this.$refs.fileInput.click();
+    },
+    onFilePicked(event) {
+      this.imageUrl = [];
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
       }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl.push(fileReader.result);
+      });
+      fileReader.readAsDataURL(file);
     }
   }
+};
 </script>
 
 <style>
 .v-expansion-panel__header {
-  background:#00BCD4;
+  background: #00bcd4;
   color: white;
 }
 .header__icon {

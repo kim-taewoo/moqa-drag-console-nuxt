@@ -1,30 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header" style="position:relative;">
-        <div>
-          Q{{questionIndex+1}}. 객관식<small class="gray--text"> (텍스트)</small> <span class="q-title">: {{qTitle}}</span>
-        </div>
-        <v-menu
-          transition="slide-x-transition"
-          bottom
-          right
-        >
-          <v-btn slot="activator" dark icon absolute style="right:0px;top:-8px;">
-            <v-icon>more_horiz</v-icon>
-          </v-btn>
-          <v-list>
-            <v-list-tile
-              v-for="(item, i) in deleteMenu"
-              :key="i"
-              @click=""
-            >
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
-      </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-tabs
         v-model="active"
         color="cyan"
@@ -46,7 +20,7 @@
                   <v-text-field @click:append="deleteOption(option)" append-icon="delete" :label="(index+1).toString()" v-model="options[index]"></v-text-field>
                 </v-flex>
                 <v-flex xs9 offset-xs1>
-                  <v-text-field label="선택지 (Tab 키로 추가)" v-model="anotherOption" @keydown.tab.prevent="addOption"></v-text-field>
+                  <v-text-field label="선택지 (Enter 키로 추가)" v-model="anotherOption" @keydown.enter.prevent="addOption"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -171,9 +145,6 @@
           </v-card>
         </v-tab-item>
       </v-tabs>
-      
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
@@ -254,7 +225,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-expansion-panel__header {
   background: #00bcd4;
   color: white;

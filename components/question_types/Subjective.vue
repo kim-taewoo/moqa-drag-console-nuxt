@@ -1,8 +1,4 @@
 <template>
-  <v-expansion-panel v-model="panel" expand>
-    <v-expansion-panel-content>
-      <div slot="header">Q{{questionIndex+1}}. 주관식 <span class="q-title">: {{qTitle}}</span> </div>
-      <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
       <v-tabs
         v-model="active"
         color="cyan"
@@ -106,41 +102,38 @@
         </v-tab-item> -->
       </v-tabs>
       
-    </v-expansion-panel-content>
-  </v-expansion-panel>
 </template>
 
 <script>
-
-  export default {
-    name: 'Subjective',
-    props: ['questionIndex'],
-    data () {
-      return {
-        panel: [true],
-        qTitle: null,
-        active: null,
-        options: [0.5,1,1.5,2,2.5,3,3.5,4,4.5,5],
-        options2: ['이상','이하'],
-        logicOption: ['다음문항','자격박탈','설문 종료','3.lorem...'],
-        logicCards: []
-      }
+export default {
+  name: "Subjective",
+  props: ["questionIndex"],
+  data() {
+    return {
+      panel: [true],
+      qTitle: null,
+      active: null,
+      options: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+      options2: ["이상", "이하"],
+      logicOption: ["다음문항", "자격박탈", "설문 종료", "3.lorem..."],
+      logicCards: []
+    };
+  },
+  methods: {
+    addLogicCard() {
+      this.logicCardOrder++;
+      this.logicCards.push(this.logicCardOrder);
     },
-    methods: {
-      addLogicCard () {
-        this.logicCardOrder++
-        this.logicCards.push(this.logicCardOrder)
-      },
-      deleteLogic (logic) {
-        this.logicCards.splice(this.logicCards.indexOf(logic),1)
-      }
+    deleteLogic(logic) {
+      this.logicCards.splice(this.logicCards.indexOf(logic), 1);
     }
   }
+};
 </script>
 
 <style>
 .v-expansion-panel__header {
-  background:#00BCD4;
+  background: #00bcd4;
   color: white;
 }
 .header__icon {
