@@ -1,77 +1,61 @@
 <template>
-
-  <v-container fluid style="height: inherit;">
-    <v-layout row wrap>
-      <v-flex xs12>
-        <v-card>
-          <v-layout justify-center wrap class="grey lighten-5 py-3">
-            <v-flex xs12 sm7 lg5 class="trans-group">
-
-              <draggable 
-                element="v-expansion-panel" 
-                popout 
-                expand
-                focusable
-                :list="questions"
-                :options="{
-                    ghostClass:'ghost', 
-                    scrollSensitivity: 80, 
-                    scrollSpeed: 30, 
-                    animation: 150}"
-              >
-                <v-expansion-panel-content
-                  v-for="(question,index) in questions"
-                  :key="index"
-                  class="elevation-1"
-                >
-                  <div slot="header" v-html="question.title"></div>
-                  <v-card>
-                    <v-card class="my-3 drag-item workplace-card">
-                      <component :is="question.comp" :questionIndex="index" class="card-component"></component>
-                    </v-card>
-                  </v-card>
-                </v-expansion-panel-content>
-              </draggable>
-              
-          </v-flex>
-
-          <!-- <v-layout justify-center class="text-xs-center red--text text--lighten-3"> -->
-            <v-flex xs12 pt-3 class="text-xs-center red--text text--lighten-3">
-              <div class="subheading">아래 버튼을 클릭해서 질문 추가</div>
-            </v-flex>
-          </v-layout>
-          <v-layout>
-            <v-flex xs12 class="text-xs-center">
-              <v-menu transition="slide-x-transition" top right>
-                <v-btn slot="activator" fab bottom dark color="pink">
-                  <v-icon>add</v-icon>
-                </v-btn>
-                <v-card width="380px">
-                  <v-layout wrap>
-                    <template v-for="(type, index) in types" >
-                      <v-flex xs6 v-if="type.title" :key="'b-'+index" >
-                        <v-btn flat v-html="type.title" @click="addCard(type.id)"></v-btn>
-                      </v-flex>
-                    </template>
-                  </v-layout>
-                </v-card>
-              </v-menu>
-            </v-flex>       
-          </v-layout>
-
-        </v-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
-
-  <!-- <v-container fluid class="pa-2" style="height:inherit">
+  <v-container fluid class="pa-2" style="height:inherit">
     
-    <v-layout fill-height>
 
+    <v-layout fill-height>     
+      <!-- <v-flex v-if="drawer" class="cardDrawer">
+        <v-layout wrap >
+          <v-flex class="xs12" style="position: relative">
+            <v-card id="edit-console" class="ma-2 pa-2 card-collection" v-resize="onResize" :style="{maxHeight: calcHeight}">
+              <v-flex xs12>
+                <h2 class="primary--text text--darken-2 mx-1">질문 카드</h2>
+              </v-flex>
+              <v-flex class="xs12">
+                <v-divider></v-divider>
+              </v-flex>
+              <draggable 
+                @start="isDragging=true" 
+                @end="isDragging=false" 
+                xs12 
+                element="v-flex" 
+                v-model="types" 
+                :options="{
+                  sort: false, 
+                  ghostClass:'ghost', 
+                  group: { name: 'question_cards', pull: 'clone', put: false}}"
+                >
+                  <template v-for="(type,index) in types">
+                    <v-subheader v-if="type.header" :key="index" class="mt-2 pl-1" style="height:24px">{{ type.header }}</v-subheader>
+                    <v-card 
+                      v-else-if="type.title" 
+                      :key="type.order"
+                      :id="type.id"
+                      class="mx-1 my-2 pa-2 drag-item question-card"
+                      hover>
+                      <v-card-title class="py-0 px-0">
+                        <div class="subheading" v-html="type.title"></div>
+                        <v-spacer></v-spacer>
+
+                        <HelpPopup />
+
+                        
+                      </v-card-title>
+                    </v-card>
+                  </template>
+              </draggable>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-flex> -->
+
+      <!-- <v-flex class="main-workplace-layout mx-2" :class="drawer ? 'xs10':'xs12'"> -->
       <v-flex class="main-workplace-layout mx-2" xs12>
         <v-layout wrap fill-height>
           <v-flex xs12>
             <v-card id="main-workplace" class="ma-2">
+            <!-- <v-btn fab dark absolute color="cyan" @click="drawer=!drawer">
+              <v-icon dark :class="{sideToggleActive: drawer}">arrow_forward</v-icon>
+            </v-btn> -->
               <v-layout justify-center class="grey lighten-5">
                 <v-flex xs12 sm7 md7 lg5 class="text-xs-center">
                   <draggable
@@ -94,6 +78,9 @@
                   </draggable>
                   <v-layout justify-center class="text-xs-center red--text text--lighten-3">
                     <v-flex xs12 pb-3 >
+                      <!-- <div>
+                        카드를 왼쪽에서 끌어오거나 
+                      </div> -->
                       <div>아래 버튼을 클릭해서 질문 추가</div>
                     </v-flex>
                   </v-layout>
@@ -123,7 +110,7 @@
         
       </v-flex>
     </v-layout>
-  </v-container> -->
+  </v-container>
 </template>
 
 <script>
@@ -241,67 +228,67 @@ export default {
     },
     addCard(id) {
       if (id == 0) {
-        this.questions.push({
+        this.workplace.push({
           id: 0,
           title: '객관식 <span class="subText">(텍스트)</span>',
           comp: "MultipleText"
         });
       } else if (id == 1) {
-        this.questions.push({
+        this.workplace.push({
           id: 1,
           title: '객관식 <span class="subText">(이미지)</span>',
           comp: "MultipleImage"
         });
       } else if (id == 4) {
-        this.questions.push({
+        this.workplace.push({
           id: 4,
           title: "별점형",
           comp: "StarRating"
         });
       } else if (id == 5) {
-        this.questions.push({
+        this.workplace.push({
           id: 5,
           title: "주관식형",
           comp: "Subjective"
         });
       } else if (id == 2) {
-        this.questions.push({
+        this.workplace.push({
           id: 2,
           title: '순위 선택형 <span class="subText">(텍스트)</span>',
           comp: "RankingText"
         });
       } else if (id == 3) {
-        this.questions.push({
+        this.workplace.push({
           id: 3,
           title: '순위 선택형 <span class="subText">(이미지)</span>',
           comp: "RankingImage"
         });
       } else if (id == 6) {
-        this.questions.push({
+        this.workplace.push({
           id: 6,
           title: '척도형 <span class="subText">(가로)</span>',
           comp: "TickHorizontal"
         });
       } else if (id == 7) {
-        this.questions.push({
+        this.workplace.push({
           id: 7,
           title: '척도형 <span class="subText">(세로)</span>',
           comp: "TickVertical"
         });
       } else if (id == 8) {
-        this.questions.push({
+        this.workplace.push({
           id: 8,
           title: '척도형 <span class="subText">(원형)</span>',
           comp: "TickCircle"
         });
       } else if (id == 9) {
-        this.questions.push({
+        this.workplace.push({
           id: 9,
           title: '이미지 <span class="subText">(Full)</span>',
           comp: "ImageFull"
         });
       } else if (id == 10) {
-        this.questions.push({
+        this.workplace.push({
           id: 10,
           title: '동영상 <span class="subText">(Full)</span>',
           comp: "VideoFull"
@@ -321,16 +308,6 @@ export default {
   },
   data() {
     return {
-      list: [
-        {
-          title: "test2",
-          description: "test description1"
-        },
-        {
-          title: "test",
-          description: "test description2"
-        }
-      ],
       helpPop: false,
       currentHelp: "",
       drawer: true,
@@ -403,7 +380,7 @@ export default {
           comp: "VideoFull"
         }
       ],
-      questions: [],
+      workplace: [],
       isDragging: false
     };
   }
