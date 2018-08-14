@@ -17,7 +17,7 @@
 
               <v-divider></v-divider>
 
-              <v-stepper-step :complete="e1 > 2" step="2">설문 디자인</v-stepper-step>
+              <v-stepper-step :complete="e1 > 2" step="2" editable>설문 디자인</v-stepper-step>
 
               <v-divider></v-divider>
 
@@ -30,29 +30,52 @@
               </div>
 
             </v-stepper-header>
-
-                <nuxt-child />      
-            <!--<v-stepper-items>
-              <v-stepper-content :step="e1">
-              </v-stepper-content>
-            </v-stepper-items> -->
+              <nuxt-child />   
 
           </v-stepper>
 
           <v-dialog
             v-model="lastStepDialog"
-            max-width="320"
+            max-width="800"
           >
             <v-card>
-              <v-card-title class="headline">이대로 배포하실건가요?</v-card-title>
+              <v-card-title class="headline">내역 확인</v-card-title>
+              <v-card-text class="pt-0 px-5">
+                <v-data-table
+                  :items="checkList"
+                  class="elevation-1"
+                  hide-actions
+                  hide-headers
+                >
+                  <template slot="items" slot-scope="props">
+                    <tr @click="selectOption($event, props.item)">
+                      <td class="font-weight-bold">{{props.item.name}}</td>
+                      <td class="text-xs-center">{{props.item.value}}</td>
+                    </tr>
+                  </template>
+                </v-data-table>
 
-              <v-card-text>
-                배포 이후에는 '설문관리' 에서 중단할 수 있습니다.
+                <p class="mt-3 mb-1">
+                  위 설정 내역에 변경이 필요한 항목이 있다면 상단 메뉴바의 “기본설정”, “설문디자인”탭으로 돌아가서 수정 후 심사 요청을 다시 진행해주세요.
+                </p>
+
+                <div>
+                  <v-checkbox class="mt-0" hide-details label="위의 설정 내역이 모두 정확한 것을 확인합니다."></v-checkbox> 
+                </div>
+
+                <p class="mt-3 mb-1">
+                  심사는 영업일 기준으로 24시간 이내에 진행됩니다.
+                </p>
+
+                <div>
+                  <v-checkbox class="mt-0" hide-details label="심사 기준에 대해서 잘 인지하였습니다."></v-checkbox> 
+                </div>
+                
               </v-card-text>
+              <v-divider></v-divider>
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-
                 <v-btn
                   color="green darken-1"
                   flat="flat"
@@ -64,9 +87,17 @@
                 <v-btn
                   color="green darken-1"
                   flat="flat"
+                  @click="lastStepDialog = false"
+                >
+                  미리보기
+                </v-btn>
+
+                <v-btn
+                  color="green darken-1"
+                  flat="flat"
                   @click="finish"
                 >
-                  배포하기
+                  심사 요청하기
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -80,7 +111,7 @@
               <v-card-title class="headline">알림</v-card-title>
 
               <v-card-text>
-                배포되었습니다.
+                심사 요청되었습니다.
               </v-card-text>
 
               <v-card-actions>
@@ -120,6 +151,8 @@ export default {
     $route: function(to, from) {
       if (to.name == "basicSetting") {
         this.e1 = 1;
+      } else if (to.name == "basicSetting-editor") {
+        this.e1 = 2;
       }
     }
   },
@@ -128,7 +161,37 @@ export default {
       e1: 1,
       title: "",
       lastStepDialog: false,
-      finishDialog: false
+      finishDialog: false,
+      checkList: [
+        {
+          name: "제목",
+          value: "알라후아크바르크"
+        },
+        {
+          name: "설명",
+          value: ""
+        },
+        {
+          name: "응답 인원수",
+          value: ""
+        },
+        {
+          name: "연령",
+          value: ""
+        },
+        {
+          name: "성별",
+          value: ""
+        },
+        {
+          name: "거주지역",
+          value: ""
+        },
+        {
+          name: "직업",
+          value: ""
+        }
+      ]
     };
   }
 };
