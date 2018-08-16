@@ -150,7 +150,7 @@
                         </v-menu>
                       </v-flex>
                       <!-- 날짜 및 '리워드' 유효하지 않은 값을 입력했을 경우 경고 후 리셋 하도록 로직 설정이 필요함 -->
-                      <v-flex xs9 mt-3>
+                      <!-- <v-flex xs9 mt-3>
                         <v-slider
                           v-model="reward"
                           :max="500"
@@ -181,7 +181,7 @@
                           class="mt-0"
                           type="number"
                         ></v-text-field>
-                      </v-flex>
+                      </v-flex> -->
                       <v-flex xs12>
                         <v-text-field
                           ref="state"

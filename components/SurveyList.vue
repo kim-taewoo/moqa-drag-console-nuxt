@@ -128,11 +128,11 @@
 
                   <v-list>
                     <v-list-tile
-                      v-for="(item, i) in items"
+                      v-for="(item, i) in moreItems"
                       :key="i"
-                      @click=""
+                      @click="$router.push('/'+ item.link)"
                     >
-                      <v-list-tile-title class="text-xs-center">{{item.title}}</v-list-tile-title>
+                      <v-list-tile-title class="text-xs-center" >{{item.title}}</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
                 </v-menu>
@@ -239,10 +239,9 @@ export default {
     return {
       surveyDetailDialog: false,
       selectedItem: null,
-      items: [
+      moreItems: [
         { title: "결과 다운로드" },
-        { title: "통계 보기" },
-        { title: "삭제" }
+        { title: "통계 보기", link: "surveyStatistics" }
       ],
       filter_status: ["모든 설문", "작성중", "심사 대기중", "진행중", "완료"],
       searchStatus: "모든 설문",

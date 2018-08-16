@@ -35,12 +35,12 @@
             <span class="dropdown-user">김태우</span>
             <v-icon dark>arrow_drop_down</v-icon>
           </v-btn>
-
+          
           <v-list>
             <v-list-tile
               v-for="item in dropdown_user"
               :key="item.title"
-              @click=""
+              @click="$router.push(item.link)"
             >
               <nuxt-link :to="'/'+item.link" style="text-decoration:none;color:inherit;">
                 <v-list-tile-title>{{item.title}}</v-list-tile-title>

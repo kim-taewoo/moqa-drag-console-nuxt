@@ -54,9 +54,10 @@
                 </v-btn>
                 <v-card width="380px">
                   <v-layout wrap>
-                      <v-flex v-for="(type, index) in questionTypes" xs6 v-if="type.typeName" :key="index" @click="addCard(type.id)" class="question-types py-3 pl-3">
-                        {{type.typeName}} <small v-if="type.typeSubName">{{type.typeSubName}}</small>
-                      </v-flex>
+                    <v-flex v-for="(type, index) in questionTypes" xs6 v-if="type.typeName" :key="index" @click="addCard(type.id)" style="border: 1px solid #F5F5F5" class="question-types px-3 py-2 text-xs-right">
+                      <span>{{type.typeName}} <small v-if="type.typeSubName">{{type.typeSubName}}</small></span> 
+                      <v-btn icon class="ma-0" color="grey--text" v-on:mouseover.native="onIconHover(type)"><v-icon>help_outline</v-icon></v-btn>
+                    </v-flex>
                   </v-layout>
                 </v-card>
               </v-menu>
@@ -124,6 +125,9 @@ export default {
           easing: "easeInOutCubic"
         });
       });
+    },
+    onIconHover(target) {
+      console.log(target);
     }
   },
   localData: {
