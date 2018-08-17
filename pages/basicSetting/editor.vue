@@ -29,13 +29,14 @@
                   :value="panel"
                 >
                   <div slot="header">
+                    <span style="position: absolute; top: 0; right: 50px;"><v-btn dark icon @click.stop="deleteQ(question)"><v-icon>delete</v-icon></v-btn></span>
                     <span>Q{{index + 1}}.</span> <span>{{question.typeName}}</span> <small v-if="question.typeSubName">{{question.typeSubName}}</small> <span>{{question.title}}</span>
                   </div>
                   <div slot="actions"><v-icon class="white--text">keyboard_arrow_down</v-icon> </div>
 
 
                   <v-card class="workplace-card">
-                    <component :is="question.comp" :questionIndex="index" class="card-component"></component>
+                    <component :is="question.comp" :questionIndex="index" class="card-component" @blur="checkblur(question)"></component>
                   </v-card>
 
                 </v-expansion-panel-content>
@@ -48,7 +49,7 @@
           </v-layout>
           <v-layout>
             <v-flex xs12 class="text-xs-center">
-              <v-menu transition="slide-x-transition" top right offset-x>
+              <v-menu transition="slide-x-transition" top right>
                 <v-btn slot="activator" fab bottom dark color="pink" >
                   <v-icon>add</v-icon>
                 </v-btn>
@@ -56,7 +57,34 @@
                   <v-layout wrap>
                     <v-flex v-for="(type, index) in questionTypes" xs6 v-if="type.typeName" :key="index" @click="addCard(type.id)" style="border: 1px solid #F5F5F5" class="question-types px-3 py-2 text-xs-right">
                       <span>{{type.typeName}} <small v-if="type.typeSubName">{{type.typeSubName}}</small></span> 
-                      <v-btn icon class="ma-0" color="grey--text" v-on:mouseover.native="onIconHover(type)"><v-icon>help_outline</v-icon></v-btn>
+
+                      <v-menu
+                        open-on-hover
+                        :nudge-width="200"
+                        offset-x
+                      >
+                        <v-btn slot="activator"  icon class="ma-0" color="grey--text"x><v-icon>help_outline</v-icon></v-btn>
+                      <v-card>
+                      <v-list>
+                        <v-list-tile>
+
+                          <v-list-tile-content>
+                            <v-list-tile-title><span>{{type.typeName}} <small v-if="type.typeSubName">{{type.typeSubName}}</small></span></v-list-tile-title>
+                            <v-list-tile-sub-title>{{type.description}}</v-list-tile-sub-title>
+                          </v-list-tile-content>
+                        </v-list-tile>
+                      </v-list>
+
+                      <v-divider></v-divider>
+
+                      <div class="example-image-container">
+                        <img class="example-image" v-if="type.id == 6 || type.id == 7" :src="require('@/assets/typeExamples/'+ type.comp + '.jpg')" alt="">
+                        <img class="example-image" v-else-if="type.id == 9" src="" alt="">
+                        <img class="example-image" v-else :src="require('@/assets/typeExamples/'+ type.comp + '.png')" alt="">
+                      </div>
+
+                    </v-card>
+                  </v-menu>
                     </v-flex>
                   </v-layout>
                 </v-card>
@@ -106,9 +134,8 @@ export default {
     HelpPopup
   },
   methods: {
-    next() {
-      const active = parseInt(this.active);
-      this.active = active < 2 ? active + 1 : 0;
+    checkblur(target) {
+      console.log("blur", target);
     },
     addCard(id) {
       let x = this.questionTypes.filter(type => {
@@ -126,18 +153,26 @@ export default {
         });
       });
     },
-    onIconHover(target) {
-      console.log(target);
+    deleteQ(target) {
+      const r = confirm("문항을 삭제할까요?");
+      if (r == true) {
+        this.questions = this.questions.filter(question => {
+          return question.order != target.order;
+        });
+      } else {
+        return;
+      }
     }
   },
   localData: {
     currentCardNum: 0
   },
-  created() {
-    console.log(this.$options.localData);
-  },
   data() {
     return {
+      menu: false,
+      fav: true,
+      message: false,
+      hints: true,
       panel: true,
       helpPop: false,
       currentHelp: "",
@@ -148,7 +183,8 @@ export default {
           typeName: "객관식",
           typeSubName: "(텍스트)",
           title: "",
-          comp: "MultipleText"
+          comp: "MultipleText",
+          description: "선택지를 텍스트로 제공합니다."
         },
         {
           order: 2,
@@ -156,7 +192,8 @@ export default {
           typeName: "객관식",
           typeSubName: "(이미지)",
           title: "",
-          comp: "MultipleImage"
+          comp: "MultipleImage",
+          description: "선택지를 이미지로 제공합니다."
         },
         {
           order: 3,
@@ -164,7 +201,8 @@ export default {
           typeName: "순위 선택형",
           typeSubName: "(텍스트)",
           title: "",
-          comp: "RankingText"
+          comp: "RankingText",
+          description: "텍스트 선택지 순위를 매기도록 합니다."
         },
         {
           order: 4,
@@ -172,21 +210,24 @@ export default {
           typeName: "순위 선택형",
           typeSubName: "(이미지)",
           title: "",
-          comp: "RankingImage"
+          comp: "RankingImage",
+          description: "이미지 선택지 순위를 매기도록 합니다."
         },
         {
           order: 5,
           id: 4,
           typeName: "별점형",
           title: "",
-          comp: "StarRating"
+          comp: "StarRating",
+          description: "5점 만점의 별점을 매기도록 합니다."
         },
         {
           order: 6,
           id: 5,
           typeName: "주관식",
           title: "",
-          comp: "Subjective"
+          comp: "Subjective",
+          description: "주관식으로 답을 받습니다."
         },
         {
           order: 7,
@@ -194,7 +235,8 @@ export default {
           typeName: "척도형",
           typeSubName: "(가로)",
           title: "",
-          comp: "TickHorizontal"
+          comp: "TickHorizontal",
+          description: "가로형 척도를 제공합니다."
         },
         {
           order: 8,
@@ -202,7 +244,8 @@ export default {
           typeName: "척도형",
           typeSubName: "(세로)",
           title: "",
-          comp: "TickVertical"
+          comp: "TickVertical",
+          description: "세로형 척도를 제공합니다."
         },
         {
           order: 9,
@@ -210,7 +253,8 @@ export default {
           typeName: "척도형",
           typeSubName: "(원형)",
           title: "",
-          comp: "TickCircle"
+          comp: "TickCircle",
+          description: "원형 척도를 제공합니다."
         },
         {
           order: 10,
@@ -218,7 +262,8 @@ export default {
           typeName: "이미지",
           typeSubName: "(Full)",
           title: "",
-          comp: "ImageFull"
+          comp: "ImageFull",
+          description: "질문에 답하기 전 보여줄 이미지를 설정합니다."
         },
         {
           order: 11,
@@ -226,14 +271,8 @@ export default {
           typeName: "동영상",
           typeSubName: "(Full)",
           title: "",
-          comp: "VideoFull"
-        },
-        {
-          order: 12,
-          id: 11,
-          typeName: "링크",
-          title: "",
-          comp: "ToLink"
+          comp: "VideoFull",
+          description: "질문에 답하기 전 보여줄 영상을 설정합니다."
         }
       ],
       questions: [],
@@ -304,5 +343,13 @@ export default {
 .question-types:hover {
   background: rgba(0, 0, 0, 0.04);
   cursor: pointer;
+}
+
+.example-image-container {
+  width: 300px;
+}
+.example-image {
+  width: 100%;
+  height: auto;
 }
 </style>

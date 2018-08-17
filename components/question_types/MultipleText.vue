@@ -197,6 +197,13 @@ export default {
       fileReader.readAsDataURL(file);
     }
   },
+  watch: {
+    multiselectSwitch(val) {
+      if (val == false) {
+        this.multiselectMax = 0;
+      }
+    }
+  },
   data() {
     return {
       rules: {
@@ -219,7 +226,13 @@ export default {
       imageUrl: [],
       multimediaSwitch: false,
       text:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      form: {
+        qTitle: this.qTitle,
+        options: this.options,
+        multiselectMax: this.multiselectMax,
+        imageUrl: this.imageUrl
+      }
     };
   }
 };
