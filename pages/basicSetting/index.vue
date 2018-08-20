@@ -220,7 +220,7 @@
                     <v-flex xs9 mt-3>
                       <v-slider
                         v-model="maxParticipate"
-                        :max="5000"
+                        :max="10000"
                         label="최대 참여 인원"
                         thumb-label="always"
                       >

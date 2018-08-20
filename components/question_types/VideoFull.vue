@@ -45,8 +45,12 @@ export default {
   watch: {
     youtubeLink(val) {
       let x = this.youtubeLink.split("/");
-
-      this.embed = x.splice(3, 1);
+      let y = x.splice(3, 1);
+      if (/watch/g.test(y[0])) {
+        this.embed = y[0].split("=")[1];
+      } else {
+        this.embed = y;
+      }
     }
   },
   methods: {

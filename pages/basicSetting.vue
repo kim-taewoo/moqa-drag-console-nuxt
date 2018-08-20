@@ -165,7 +165,7 @@ export default {
       checkList: [
         {
           name: "제목",
-          value: "알라후아크바르크"
+          value: ""
         },
         {
           name: "설명",

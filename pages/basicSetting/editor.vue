@@ -5,9 +5,12 @@
       <v-flex xs12>
         <v-card>
           <v-layout align-center justify-center wrap class="grey lighten-5 py-3">
-            <v-flex xs12 sm7 lg5 class="trans-group d-flex" align-center>
+            <v-flex xs12 sm7 lg4 class="trans-group d-flex mt-4" align-center>
               <div style="position:absolute;top:0;right:30px;">
                 <v-switch label="모두 열기/닫기" v-model="panel" hide-details></v-switch>
+              </div>
+              <div style="position:absolute;top:35px;right:30px;">
+                <v-switch label="문항 순서 드래그" v-model="dragAllow" hide-details></v-switch>
               </div>
 
               <draggable 
@@ -18,7 +21,8 @@
                 :list="questions"
                 :options="{
                   ghostClass:'ghost',
-                  animation: 150
+                  animation: 150,
+                  disabled: !dragAllow
                 }"
               >
                 <v-expansion-panel-content
@@ -36,7 +40,7 @@
 
 
                   <v-card class="workplace-card">
-                    <component :is="question.comp" :questionIndex="index" class="card-component" @blur="checkblur(question)"></component>
+                    <component :is="question.comp" :questionIndex="index" class="card-component"></component>
                   </v-card>
 
                 </v-expansion-panel-content>
@@ -63,7 +67,7 @@
                         :nudge-width="200"
                         offset-x
                       >
-                        <v-btn slot="activator"  icon class="ma-0" color="grey--text"x><v-icon>help_outline</v-icon></v-btn>
+                        <v-btn slot="activator"  icon class="ma-0" color="grey--text"><v-icon>help_outline</v-icon></v-btn>
                       <v-card>
                       <v-list>
                         <v-list-tile>
@@ -173,6 +177,7 @@ export default {
       fav: true,
       message: false,
       hints: true,
+      dragAllow: false,
       panel: true,
       helpPop: false,
       currentHelp: "",

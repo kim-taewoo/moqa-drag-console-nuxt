@@ -15,12 +15,13 @@
       </v-flex>
       <v-spacer></v-spacer>
       <v-flex class="xs12 sm6 text-xs-right">
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog v-model="dialog" max-width="900px" persistent>
             <v-btn large slot="activator" color="primary" dark class="mb-2"><v-icon>add</v-icon> 글쓰기</v-btn>
             <v-card>
               <v-card-title>
                 <span class="headline">공지사항 글쓰기</span>
               </v-card-title>
+              <v-divider></v-divider>
 
               <v-card-text>
                 <v-container grid-list-md>
@@ -29,7 +30,12 @@
                       <v-text-field v-model="editedItem.title" label="제목"></v-text-field>
                     </v-flex>
                     <v-flex xs12>
-                      <v-textarea v-model="editedItem.content" label="내용"></v-textarea>
+                      <div class="subheading grey--text">내용</div>
+                      <quill-editor v-model="content"
+                        ref="myQuillEditor"
+                        :options="editorOption"
+                        style="height: 300px;">
+                      </quill-editor>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -61,21 +67,6 @@
               <td class="text-xs-center">{{ props.item.name }}</td>
               <td class="text-xs-center">{{ props.item.title }}</td>
               <td class="text-xs-center">{{ props.item.created_date }}</td>
-              <!-- <td class="justify-center layout px-0">
-                <v-icon
-                  small
-                  class="mr-2"
-                  @click="editItem(props.item)"
-                >
-                  edit
-                </v-icon>
-                <v-icon
-                  small
-                  @click="deleteItem(props.item)"
-                >
-                  delete
-                </v-icon>
-              </td> -->
             </tr>
           </template>
           <template slot="no-data">
@@ -88,8 +79,33 @@
 </template>
 
 <script>
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+
+import { quillEditor } from "vue-quill-editor";
 export default {
+  components: {
+    quillEditor
+  },
   data: () => ({
+    content: "",
+    editorOption: {
+      // theme: "bubble",
+      placeholder: "",
+      modules: {
+        toolbar: [
+          ["bold", "italic", "underline", "strike"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          [{ color: [] }, { background: [] }],
+          [{ font: [] }],
+          [{ align: [] }],
+          ["link", "image"],
+          ["clean"]
+        ]
+      }
+    },
     dialog: false,
     search: "",
     headers: [
@@ -122,8 +138,17 @@ export default {
       this.initialize();
     });
   },
+  computed: {
+    editor() {
+      return this.$refs.myQuillEditor.quill;
+    }
+  },
 
   methods: {
+    onEditorChange({ quill, html, text }) {
+      console.log("editor change!", quill, html, text);
+      this.content = html;
+    },
     check(item) {
       console.log(item);
     },
@@ -210,6 +235,9 @@ export default {
 .notice-title {
   display: inline-block;
   border-bottom: 2px solid #1976d2;
+}
+.ql-editor {
+  min-height: 300px;
 }
 </style>
 

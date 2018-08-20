@@ -13,8 +13,23 @@
           <v-card>
             <v-container>
               <v-layout wrap justify-center>
-                <v-flex xs10>
+                <v-flex v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;align-items:center;justify-content:center" xs12 class="text-xs-center grey lighten-3 d-flex">
+                  <span @click="onPickFile"><v-icon>image_search</v-icon> <span> 배경 이미지 삽입하기</span></span>
+                </v-flex>
+                <v-flex v-else class="xs10 text-xs-center">
+                  <img
+                  v-for="(img,index) in imageUrl"
+                  :key="index"
+                  :src="img"
+                  width="40%"
+                  alt="">
+                  <div>
+                    <v-btn small color="primary" @click="onPickFile">배경이미지<v-icon right dark>cloud_upload</v-icon></v-btn>
+                  </div>
+                </v-flex>
+                <v-flex xs10 class="mt-3">
                   <v-text-field label="제목" v-model="qTitle"></v-text-field>
+                  <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex class="xs10">
                   <CompStarRating :increment="0.5" :max-rating="5" />
@@ -30,26 +45,7 @@
           <v-card>
             <v-container>
               <v-layout wrap justify-center align-center>                
-                <v-flex xs6>
-                  <v-switch
-                    label="멀티미디어형"
-                    v-model="multimediaSwitch"
-                  ></v-switch>
-                </v-flex>
-                <v-flex xs4>
-                    <v-btn @click="onPickFile" :disabled="!multimediaSwitch" class="primary">
-                        Upload <v-icon right dark>cloud_upload</v-icon>
-                    </v-btn>
-                    <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
-                </v-flex>
-                <v-flex class="xs12">
-                    <img
-                    v-for="(img,index) in imageUrl"
-                    :key="index"
-                    :src="img"
-                    width="100%"
-                    alt="">
-                </v-flex>
+                
               </v-layout>
             </v-container>
           </v-card>
@@ -158,7 +154,7 @@ export default {
       logicOption: ["다음문항", "자격박탈", "설문 종료", "3.lorem..."],
       logicCards: [],
       multimediaSwitch: false,
-      imageUrl: []
+      imageUrl: null
     };
   },
   methods: {

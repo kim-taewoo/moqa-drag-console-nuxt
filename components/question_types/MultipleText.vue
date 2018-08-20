@@ -13,8 +13,23 @@
           <v-card>
             <v-container>
               <v-layout wrap justify-center>
-                <v-flex xs10>
+                <v-flex v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;align-items:center;justify-content:center" xs12 class="text-xs-center grey lighten-3 d-flex">
+                  <span @click="onPickFile"><v-icon>image_search</v-icon> <span> 배경 이미지 삽입하기</span></span>
+                </v-flex>
+                <v-flex v-else class="xs10 text-xs-center">
+                  <img
+                  v-for="(img,index) in imageUrl"
+                  :key="index"
+                  :src="img"
+                  width="40%"
+                  alt="">
+                  <div>
+                    <v-btn small color="primary" @click="onPickFile">배경이미지<v-icon right dark>cloud_upload</v-icon></v-btn>
+                  </div>
+                </v-flex>
+                <v-flex xs10 class="mt-3">
                   <v-text-field label="제목" v-model="qTitle"></v-text-field>
+                  <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex xs9 offset-xs1 v-for="(option,index) in options" :key="index">
                   <v-text-field @click:append="deleteOption(option)" append-icon="delete" :label="(index+1).toString()" v-model="options[index]"></v-text-field>
@@ -42,26 +57,7 @@
                 <v-flex xs4>
                   <v-text-field :disabled="!multiselectSwitch" v-model="multiselectMax" type="number"></v-text-field>
                 </v-flex>
-                <v-flex xs6>
-                  <v-switch
-                    label="멀티미디어형"
-                    v-model="multimediaSwitch"
-                  ></v-switch>
-                </v-flex>
-                <v-flex xs4>
-                    <v-btn @click="onPickFile" :disabled="!multimediaSwitch" class="primary">
-                        Upload <v-icon right dark>cloud_upload</v-icon>
-                    </v-btn>
-                    <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
-                </v-flex>
-                <v-flex class="xs12">
-                    <img
-                    v-for="(img,index) in imageUrl"
-                    :key="index"
-                    :src="img"
-                    width="100%"
-                    alt="">
-                </v-flex>
+                
                 <v-flex xs6>
                   <v-switch
                     label="퀴즈 타이머(초)"
@@ -187,6 +183,7 @@ export default {
       console.log("1:", files);
       const file = files[0];
       let filename = file.name;
+      this.filename = filename;
       if (filename.lastIndexOf(".") <= 0) {
         return alert("유효한 이미지 파일을 업로드 해주세요!");
       }
@@ -223,7 +220,8 @@ export default {
       qTitle: null,
       panel: [true],
       active: null,
-      imageUrl: [],
+      imageUrl: null,
+      filename: null,
       multimediaSwitch: false,
       text:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
