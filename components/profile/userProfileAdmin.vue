@@ -29,12 +29,20 @@ export default {
     return {
       profileInfo: [
         {
-          name: "생성일",
-          value: this.profile.createDt
+          name: "가입일",
+          value: this.profile.joinDt
         },
         {
-          name: "기업회원 ID",
-          value: this.profile.userId
+          name: "아이디",
+          value: this.profile.memberId
+        },
+        {
+          name: "회원타입",
+          value: this.profile.joinType
+        },
+        {
+          name: "모카포인트",
+          value: this.profile.point
         },
         {
           name: "비밀번호",
@@ -46,17 +54,28 @@ export default {
           value: this.profile.name
         },
         {
-          name: "기업코드",
-          value: this.profile.code
+          name: "휴대폰 번호",
+          value: this.profile.mobileNum
         },
         {
-          name: "담당자 이메일",
-          value: this.profile.email
+          name: "성별",
+          value: this.profile.gender
         },
         {
-          name: "휴대전화번호",
-          value: this.profile.mobile,
-          inputValue: "전화번호 변경"
+          name: "생년월일",
+          value: this.profile.birth
+        },
+        {
+          name: "회원상태",
+          value: ""
+        },
+        {
+          name: "탈퇴일",
+          value: ""
+        },
+        {
+          name: "포인트 수동적립",
+          value: ""
         }
       ]
     };

@@ -61,7 +61,7 @@ export default {
         { icon: "message", title: "메세지/push", to: "/admin/message" },
         { icon: "desktop_windows", title: "포인트 관리", to: "/admin/point" },
         { icon: "payment", title: "결제 관리", to: "/admin/payment" },
-        { icon: "domain", title: "기업회원", to: "/admin/users_biz" }
+        { icon: "domain", title: "기업회원", to: "/admin/usersBiz" }
       ],
       miniVariant: false,
       title: "MOQA 관리자"
