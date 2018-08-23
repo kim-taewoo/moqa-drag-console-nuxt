@@ -15,11 +15,31 @@
       <v-flex class="xs12" v-show="radioBtn == 'status'">
         <userProfileAdmin :profile="content"/>
       </v-flex>
+
+
       <v-flex xs12 v-show="radioBtn == 'surveys'">
         <promotion-manage :userId="content.userId"/>
       </v-flex>
+
+
       <v-flex xs12 v-show="radioBtn == 'points'">
-        <promotion-manage :userId="content.userId"/>
+        <div><span class="font-weight-bold">{{content.name}}</span> 회원님의 현재 포인트는 <span class="pink--text">{{content.point}} P</span> 입니다. </div>
+        <v-divider></v-divider>
+        <v-data-table
+          :headers="headers"
+          :items="points"
+          :pagination.sync="pagination"
+          :total-items="totalpoints"
+          :loading="loading"
+          class="elevation-0"
+        >
+          <template slot="items" slot-scope="props">
+            <td class="text-xs-center" v-text="props.item.type == 'save' ? '적립' : '사용'"></td>
+            <td class="text-xs-center">{{ props.item.point }} </td>
+            <td class="text-xs-center">{{ props.item.reason }}</td>
+            <td class="text-xs-center">{{ props.item.date }}</td>
+          </template>
+        </v-data-table>
       </v-flex>
     </v-layout>
   </v-container>
@@ -37,8 +57,155 @@ export default {
   data() {
     return {
       content: { ...this.$route.params },
-      radioBtn: "status"
+      radioBtn: "status",
+      headers: [
+        { text: "유형", align: "center", value: "type" },
+        { text: "포인트", align: "center", value: "point" },
+        { text: "사유", align: "center", value: "reason" },
+        { text: "적립일", align: "center", value: "date" }
+      ],
+      points: [],
+      totalpoints: 0,
+      loading: true,
+      pagination: {}
     };
+  },
+  watch: {
+    pagination: {
+      handler() {
+        this.getDataFromApi("points").then(data => {
+          this.points = data.items;
+          this.totalpoints = data.total;
+        });
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.getDataFromApi("points").then(data => {
+      this.points = data.items;
+      this.totalpoints = data.total;
+    });
+  },
+  methods: {
+    getDataFromApi(arg) {
+      this.loading = true;
+      if (arg == "points") {
+        return new Promise((resolve, reject) => {
+          const { sortBy, descending, page, rowsPerPage } = this.pagination;
+
+          let dataResult = this.getUserPoints();
+          let items = dataResult.rows;
+          const total = dataResult.total;
+
+          if (this.pagination.sortBy) {
+            items = items.sort((a, b) => {
+              const sortA = a[sortBy];
+              const sortB = b[sortBy];
+
+              if (descending) {
+                if (sortA < sortB) return 1;
+                if (sortA > sortB) return -1;
+                return 0;
+              } else {
+                if (sortA < sortB) return -1;
+                if (sortA > sortB) return 1;
+                return 0;
+              }
+            });
+          }
+
+          if (rowsPerPage > 0) {
+            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+          }
+          setTimeout(() => {
+            this.loading = false;
+            resolve({
+              items,
+              total
+            });
+          }, 1000);
+        });
+      } else {
+        return new Promise((resolve, reject) => {
+          const { sortBy, descending, page, rowsPerPage } = this.paginationSave;
+
+          let items = this.getpointsSave();
+          const total = items.length;
+
+          if (this.paginationSave.sortBy) {
+            items = items.sort((a, b) => {
+              const sortA = a[sortBy];
+              const sortB = b[sortBy];
+
+              if (descending) {
+                if (sortA < sortB) return 1;
+                if (sortA > sortB) return -1;
+                return 0;
+              } else {
+                if (sortA < sortB) return -1;
+                if (sortA > sortB) return 1;
+                return 0;
+              }
+            });
+          }
+
+          if (rowsPerPage > 0) {
+            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+          }
+          setTimeout(() => {
+            this.loading = false;
+            resolve({
+              items,
+              total
+            });
+          }, 1000);
+        });
+      }
+    },
+    getUserPoints() {
+      return {
+        total: 5,
+        rows: [
+          {
+            point: 500,
+            reason: "회원가입 축하 리워드",
+            memberSeq: 9452,
+            type: "save",
+            date: "2018-08-23 06:58:06"
+          },
+          {
+            point: 50,
+            reason: "설문완료(성공)",
+            memberSeq: 9452,
+            type: "save",
+            date: "2018-08-23 06:59:21"
+          },
+          {
+            point: 50,
+            reason: "설문완료(성공)",
+            memberSeq: 9452,
+            type: "save",
+            date: "2018-08-23 07:05:52"
+          },
+          {
+            point: 100,
+            reason: "설문완료(성공)",
+            memberSeq: 9452,
+            type: "save",
+            date: "2018-08-23 07:07:54"
+          },
+          {
+            point: 50,
+            reason: "설문완료(성공)",
+            memberSeq: 9452,
+            type: "save",
+            date: "2018-08-23 07:10:02"
+          }
+        ],
+        search: null
+      };
+    }
   }
 };
 </script>

@@ -15,7 +15,7 @@
         </v-radio-group>
       </v-flex>
 
-      <v-flex class="xs12 mt-3" v-show="radioBtn == 'use'">
+      <v-flex class="xs12" v-show="radioBtn == 'use'">
         <v-divider></v-divider>
         <v-data-table
           :headers="headers"
@@ -36,7 +36,7 @@
         </v-data-table>
       </v-flex>
 
-      <v-flex class="xs12 mt-3" v-show="radioBtn == 'save'">
+      <v-flex class="xs12" v-show="radioBtn == 'save'">
         <v-divider></v-divider>
         <v-data-table
           :headers="headersSave"
@@ -77,9 +77,9 @@ export default {
       headersSave: [
         { text: "사용자ID", align: "center", value: "memberId" },
         { text: "이름", align: "center", value: "name" },
-        { text: "사용일시", align: "center", value: "saveDt" },
-        { text: "사용아이템", align: "center", value: "saveReason" },
-        { text: "사용포인트", align: "center", value: "savePoint" }
+        { text: "적립일시", align: "center", value: "saveDt" },
+        { text: "적립사유", align: "center", value: "saveReason" },
+        { text: "적립포인트", align: "center", value: "savePoint" }
       ],
       points: [],
       pointsSave: [],
@@ -550,3 +550,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.v-input {
+  margin-top: 0px;
+}
+</style>

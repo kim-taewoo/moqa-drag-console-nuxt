@@ -12,7 +12,13 @@
         <template slot="items" slot-scope="props">
             <td class="font-weight-bold">{{props.item.name}}</td>
             <td v-if="props.item.name == '비밀번호' || props.item.name == '휴대전화번호'" style="padding-top: 8px; padding-bottom: 8px;">
-                <v-text-field height="48px" hide-details single-line solo :label="props.item.inputValue" :value="props.item.value" ></v-text-field>
+              <v-text-field type="password" height="48px" hide-details single-line solo :label="props.item.inputValue" :value="props.item.value" ></v-text-field>
+            </td>
+            <td style="padding-top: 8px; padding-bottom: 8px;" v-else-if="props.item.name =='포인트 수동적립'">
+
+              <v-text-field append-icon="attach_money" class="d-inline-block mr-2" type="number" height="48px" hide-details single-line solo :value="props.item.value" ></v-text-field>
+              <v-text-field label="포인트 적립사유" class="d-inline-block" height="48px" hide-details single-line solo :value="props.item.value" ></v-text-field>
+              <v-btn>적립</v-btn>
             </td>
             <td v-else class="text-xs-left">{{props.item.value}}</td>
         </template>

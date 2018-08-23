@@ -20,7 +20,7 @@
     <v-flex xs12 class="mt-5">
       <div style="position: relative;">
         <h3>프로모션 가입 회원</h3>
-        <v-btn @click="downloadProm" absolute style="right: 8px; top:-15px;">다운로드</v-btn>
+        <v-btn @click="downloadProm" absolute style="right: 0; top:-15px;">다운로드</v-btn>
       </div>
       <v-divider></v-divider>
       <v-data-table
