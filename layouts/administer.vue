@@ -35,6 +35,7 @@
       </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn flat>Logout</v-btn>
     </v-toolbar>
     <v-content>
         
@@ -58,7 +59,7 @@ export default {
         { icon: "person", title: "회원관리", to: "/admin/users" },
         { icon: "group_add", title: "회원그룹", to: "/admin/addGroup" },
         { icon: "event", title: "이벤트", to: "/admin/event" },
-        { icon: "message", title: "메세지/push", to: "/admin/message" },
+        { icon: "message", title: "메시지/push", to: "/admin/message" },
         { icon: "desktop_windows", title: "포인트 관리", to: "/admin/point" },
         { icon: "payment", title: "결제 관리", to: "/admin/payment" },
         { icon: "domain", title: "기업회원", to: "/admin/usersBiz" }

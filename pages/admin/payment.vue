@@ -17,6 +17,7 @@
         >
           <template slot="items" slot-scope="props">
             <td class="text-xs-center">{{ props.item.payDate }}</td>
+            <td class="text-xs-center">{{ props.item.name }}</td>            
             <td class="text-xs-center">{{ props.item.product }} P</td>
             <td class="text-xs-center">{{ props.item.payAmount }} 원</td>
             <td class="text-xs-center">{{ props.item.status }}</td>
@@ -35,6 +36,7 @@ export default {
       totalpayments: 0,
       headers: [
         { text: "일자", align: "center", value: "payDate" },
+        { text: "이름", align: "center", value: "name" },
         { text: "상품명", align: "center", value: "product" },
         { text: "결제금액", align: "center", value: "payAmount" },
         { text: "처리상태", align: "center", value: "status" },
@@ -104,6 +106,7 @@ export default {
       return [
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",
@@ -111,6 +114,7 @@ export default {
         },
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",
@@ -118,6 +122,7 @@ export default {
         },
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",
@@ -125,6 +130,7 @@ export default {
         },
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",
@@ -132,6 +138,7 @@ export default {
         },
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",
@@ -139,6 +146,7 @@ export default {
         },
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",
@@ -146,6 +154,7 @@ export default {
         },
         {
           payDate: "2018-02-05 18:50",
+          name: "김태우",
           product: 2000,
           payAmount: 2000,
           status: "처리완료",

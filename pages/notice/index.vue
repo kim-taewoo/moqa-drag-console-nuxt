@@ -31,7 +31,7 @@
                     </v-flex>
                     <v-flex xs12>
                       <div class="subheading grey--text">내용</div>
-                      <quill-editor v-model="content"
+                      <quill-editor v-model="editedItem.content"
                         ref="myQuillEditor"
                         :options="editorOption"
                         style="height: 300px;">
@@ -43,8 +43,8 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">저장</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">취소</v-btn>
+                <v-btn color="blue darken-1" flat @click.native="save">저장</v-btn>
+                <v-btn color="blue darken-1" flat @click.native="close">취소</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -79,17 +79,8 @@
 </template>
 
 <script>
-import "quill/dist/quill.core.css";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
-
-import { quillEditor } from "vue-quill-editor";
 export default {
-  components: {
-    quillEditor
-  },
   data: () => ({
-    content: "",
     editorOption: {
       // theme: "bubble",
       placeholder: "",

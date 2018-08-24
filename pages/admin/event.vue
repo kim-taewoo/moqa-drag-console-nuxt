@@ -1,274 +1,355 @@
 <template>
   <v-container>
-    <v-layout>
+    <v-layout wrap>
       <v-flex class="xs12">
         <h3>이벤트</h3>
-        <v-divider class="mb-3"></v-divider>
-
+        <v-divider></v-divider>
+      </v-flex>
+      <!-- 테이블 시작 -->
+      <v-flex xs12 class="mt-3">
+        <div class="text-xs-right">
+          <v-btn @click.stop="newDialog = true">새로 만들기</v-btn>
+        </div>
         <v-divider></v-divider>
 
-        <v-dialog
-          v-model="surveyDetailDialog"
-          width="980"
-        >
-          <SurveyDetail v-if="surveyDetailDialog" :item="selectedItem" :is-add-group="isAddGroup" @closeDialog="surveyDetailDialog=false"></SurveyDetail>
-        </v-dialog>
+
+        <!-- 새로 만들기 눌렀을 시 뜨는 대화창 시작 newDialog 변수가 true 인 경우 열림. -->
+        <v-dialog v-model="newDialog" max-width="900px" persistent>
+            <v-card>
+              <v-card-text>
+                <v-container grid-list-md>
+                  <v-layout wrap>
+                    <v-flex class="xs12 md6 lg4">
+                      <v-btn
+                        :loading="loadingImage"
+                        :disabled="loadingImage"
+                        color="pink"
+                        class="ml-0 my-0 white--text d-inline-block"
+                        @click="onPickFile"
+                      >
+                        썸네일 이미지
+                        <v-icon right dark>cloud_upload</v-icon>
+                      </v-btn>
+                      <span class="grey--text">{{filename}}</span> 
+                      <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
+
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-text-field hide-details v-model="editedItem.title" label="제목"></v-text-field>
+                    </v-flex>
+                    <!-- 이벤트 기간 설정 -->
+                    <v-flex xs12 lg6>
+                      <v-menu
+                        ref="menu1"
+                        :close-on-content-click="false" 
+                        v-model="menu1"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <v-text-field
+                          slot="activator"
+                          readonly
+                          v-model="startDate"
+                          label="시작하는 날"
+                          prepend-icon="event"
+                          hide-details
+                        ></v-text-field>
+                        <v-date-picker 
+                          v-model="startDate" 
+                          no-title 
+                          locale="ko-kr" 
+                          @input="menu1 = false"
+                          :min="new Date(new Date().setDate(new Date().getDate()-1)).toJSON()">
+                        </v-date-picker>
+                      </v-menu>
+                    </v-flex>
+
+                    <v-flex xs12 lg6>
+                      <v-menu
+                        ref="menu2"
+                        :close-on-content-click="false" 
+                        v-model="menu2"
+                        :nudge-right="40"
+                        lazy
+                        :disabled="!startDate"
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <v-text-field
+                          slot="activator"
+                          v-model="endDate"
+                          label="끝나는 날"
+                          :disabled="!startDate"
+                          readonly
+                          prepend-icon="event"
+                          hide-details
+                        ></v-text-field>
+                        <v-date-picker 
+                          v-model="endDate" 
+                          no-title 
+                          locale="ko-kr" 
+                          @input="menu2 = false"
+                          :min="startDate">
+                          </v-date-picker>
+                      </v-menu>
+                    </v-flex>
+                    
+
+                    <v-flex xs12>
+                      <div class="subheading grey--text">내용</div>
+                      <quill-editor v-model="editedItem.content"
+                        ref="myQuillEditor"
+                        :options="editorOption"
+                        style="height: 300px;">
+                      </quill-editor>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" flat @click.native="save">등록</v-btn>
+                <v-btn color="blue darken-1" flat @click.native="close">취소</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- 대화창 끝 -->
 
         <v-data-table
           :headers="headers"
-          :items="filteredSurveys"
+          :items="events"
+          :pagination.sync="pagination"
+          :total-items="totalEvents"
+          :loading="loading"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <tr>
-              <td>{{ props.item.surveyId }}</td>
-              <td class="text-xs-left" @click.stop="itemSelected($event,props.item)" >{{ props.item.title }}</td>
-              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.num_participate }}</td>
-              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.num_max_participate }}</td>
-              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.num_distribute }}</td>
-              <td class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.time_period }}</td>
-              <td v-if="!isAddGroup" class="text-xs-right" @click.stop="itemSelected($event,props.item)">{{ props.item.status }}</td>
-              <td v-if="!isAddGroup" class="justify-end layout px-0">
-                <v-menu bottom left transition="slide-x-transition">
-                  <v-btn
-                    slot="activator"
-                    icon
-                  >
-                    <v-icon small >more_vert</v-icon>
-                  </v-btn>
-
-                  <v-list>
-                    <v-list-tile
-                      v-for="(item, i) in moreItems"
-                      :key="i"
-                      @click="$router.push('/'+ item.link)"
-                    >
-                      <v-list-tile-title class="text-xs-center" >{{item.title}}</v-list-tile-title>
-                    </v-list-tile>
-                  </v-list>
-                </v-menu>
-                </td>
-              </tr>
+            <td class="text-xs-center">{{ props.item.eventId }}</td>
+            <td class="text-xs-center">{{ props.item.eventTitle }} </td>
+            <td class="text-xs-center">{{ props.item.eventPeriod }}</td>
+            <td class="text-xs-center">{{ props.item.eventCreateDt }}</td>
+            <td class="text-xs-center">{{ props.item.eventStatus }}</td>
           </template>
         </v-data-table>
+        
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-const SurveyDetail = () => import("@/components/SurveyDetail");
 export default {
-  props: {
-    isAddGroup: {
-      type: Boolean,
-      default: false
-    }
-  },
-  components: {
-    SurveyDetail
-  },
-  methods: {
-    choseQuick() {
-      this.$router.push("/basicSetting");
-    },
-    choseSurvey() {
-      this.$router.push("/basicSetting");
-    },
-    itemSelected(e, item) {
-      this.openDialogKey++;
-      this.selectedItem = item;
-      this.surveyDetailDialog = true;
-    }
-  },
-  computed: {
-    filteredSurveys() {
-      if (this.searchStatus == "모든 설문" && this.searchTitle == "") {
-        return this.loadedSurveys;
-      } else if (this.searchStatus != "모든 설문" && this.searchTitle == "") {
-        return this.loadedSurveys.filter(survey => {
-          return survey.status == this.searchStatus;
-        });
-      } else if (this.searchStatus != "모든 설문" && this.searchTitle) {
-        return this.loadedSurveys.filter(survey => {
-          return (
-            survey.status == this.searchStatus &&
-            survey.title.toLowerCase().includes(this.searchTitle.toLowerCase())
-          );
-        });
-      } else if (this.searchStatus == "모든 설문" && this.searchTitle) {
-        return this.loadedSurveys.filter(survey => {
-          return survey.title
-            .toLowerCase()
-            .includes(this.searchTitle.toLowerCase());
-        });
-      }
-    },
-
-    headers() {
-      return this.isAddGroup
-        ? [
-            {
-              text: "ID",
-              align: "left",
-              value: "surveyId"
-            },
-            { text: "제목", value: "title", align: "left", sortable: false },
-            { text: "참여인원", value: "num_participate", align: "right" },
-            {
-              text: "최대참여인원",
-              value: "num_max_participate",
-              align: "right"
-            },
-            { text: "배포인원", value: "num_distribute", align: "right" },
-            { text: "설문기간", value: "time_period", align: "right" }
-          ]
-        : [
-            {
-              text: "ID",
-              align: "left",
-              value: "surveyId"
-            },
-            { text: "제목", value: "title", align: "left", sortable: false },
-            { text: "참여인원", value: "num_participate", align: "right" },
-            {
-              text: "최대참여인원",
-              value: "num_max_participate",
-              align: "right"
-            },
-            { text: "배포인원", value: "num_distribute", align: "right" },
-            { text: "설문기간", value: "time_period", align: "right" },
-            { text: "상태", value: "status", align: "right" },
-            { text: "기타", align: "right", value: "status" }
-          ];
-    }
-  },
   data() {
     return {
-      surveyDetailDialog: false,
-      selectedItem: null,
-      moreItems: [
-        { title: "결과 다운로드" },
-        { title: "통계 보기", link: "surveyStatistics" }
-      ],
-      filter_status: ["모든 설문", "작성중", "심사 대기중", "진행중", "완료"],
-      searchStatus: "모든 설문",
-      searchTitle: "",
-      typeDialog: false,
-      search: "",
-      loadedSurveys: [
-        {
-          value: false,
-          surveyId: "1",
-          title: "예시 제목 1",
-          num_max_participate: 120,
-          num_participate: 24,
-          num_distribute: 1120,
-          time_period: "2018-07-12 00:00 ~ 2018-08-12 00:00",
-          status: "작성중"
-        },
-        {
-          value: false,
-          surveyId: "2",
-          title: "예시 제목 2",
-          num_max_participate: 99,
-          num_participate: 37,
-          num_distribute: 1230,
-          time_period: "2018-07-12 00:00 ~ 2018-08-12 00:00",
-          status: "심사 대기중"
-        },
-        {
-          value: false,
-          surveyId: "3",
-          title: "예시 제목 3",
-          num_max_participate: 33,
-          num_participate: 23,
-          num_distribute: 820,
-          time_period: "2018-07-12 00:00 ~ 2018-08-12 00:00",
-          status: "진행중"
-        },
-        {
-          value: false,
-          surveyId: "4",
-          title: "예시 제목 4",
-          num_max_participate: 98,
-          num_participate: 67,
-          num_distribute: 1520,
-          time_period: "2018-07-12 00:00 ~ 2018-08-12 00:00",
-          status: "완료"
-        },
-        {
-          value: false,
-          surveyId: "5",
-          title: "예시 제목 5",
-          num_max_participate: 75,
-          num_participate: 49,
-          num_distribute: 880,
-          time_period: "2018-09-01 00:00 ~ 2018-08-12 00:00",
-          status: "작성중"
-        },
-        {
-          value: false,
-          surveyId: "6",
-          title: "예시 제목 6",
-          num_max_participate: 96,
-          num_participate: 94,
-          num_distribute: 2020,
-          time_period: "2018-02-12 00:00 ~ 2018-08-12 00:00",
-          status: "진행중"
-        },
-        {
-          value: false,
-          surveyId: "7",
-          title: "예시 제목 7",
-          num_max_participate: 160,
-          num_participate: 98,
-          num_distribute: 1777,
-          time_period: "2018-07-12 00:00 ~ 2018-08-12 00:00",
-          status: "심사대기중"
-        },
-        {
-          value: false,
-          surveyId: "8",
-          title: "예시 제목 8",
-          num_max_participate: 444,
-          num_participate: 87,
-          num_distribute: 3230,
-          time_period: "2018-08-12 00:00 ~ 2018-08-12 00:00",
-          status: "진행중"
-        },
-        {
-          value: false,
-          surveyId: "9",
-          title: "예시 제목 9",
-          num_max_participate: 214,
-          num_participate: 51,
-          num_distribute: 1122,
-          time_period: "2018-07-12 00:00 ~ 2018-08-12 00:00",
-          status: "작성중"
-        },
-        {
-          value: false,
-          surveyId: "10",
-          title: "예시 제목 10",
-          num_max_participate: 424,
-          num_participate: 65,
-          num_distribute: 1127,
-          time_period: "2018-07-15 00:00 ~ 2018-08-12 00:00",
-          status: "완료"
+      newDialog: false,
+      menu1: false,
+      menu2: false,
+      imageUrl: [],
+      loadingImage: false,
+      filename: "",
+      startDate: null,
+      endDate: null,
+      editedItem: {
+        title: "",
+        content: ""
+      },
+      editorOption: {
+        // theme: "bubble",
+        placeholder: "",
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline", "strike"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ color: [] }, { background: [] }],
+            [{ font: [] }],
+            [{ align: [] }],
+            ["link", "image"],
+            ["clean"]
+          ]
         }
-      ]
+      },
+      headers: [
+        { text: "ID", align: "center", value: "eventId" },
+        { text: "제목", align: "center", value: "eventTitle" },
+        { text: "기간", align: "center", value: "eventPeriod" },
+        { text: "작성일", align: "center", value: "eventCreateDt" },
+        { text: "상태", align: "center", value: "eventStatus" }
+      ],
+      totalEvents: 0,
+      events: [],
+      loading: true,
+      pagination: {}
     };
+  },
+  watch: {
+    pagination: {
+      handler() {
+        this.getDataFromApi().then(data => {
+          this.events = data.items;
+          this.totalEvents = data.total;
+        });
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.getDataFromApi().then(data => {
+      this.events = data.items;
+      this.totalEvents = data.total;
+    });
+  },
+  methods: {
+    // 새로만들기에서 취소를 클릭시 발생 이벤트. 창을 닫고 내용을 초기화시킨다.
+    close() {
+      this.newDialog = false;
+      this.editedItem.title = "";
+      this.editedItem.content = "";
+    },
+    // 이미지 업로드를 위한 버튼 클릭 method
+    onPickFile() {
+      this.$refs.fileInput.click();
+    },
+    // 실질적으로 이미지 업로드 하는 method
+    onFilePicked(event) {
+      this.loadingImage = true;
+      this.imageUrl = [];
+      const files = event.target.files;
+      console.log("1:", files);
+      const file = files[0];
+      let filename = file.name;
+      this.filename = filename;
+      if (filename.lastIndexOf(".") <= 0) {
+        return alert("유효한 이미지 파일을 업로드 해주세요!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl.push(fileReader.result);
+      });
+      fileReader.readAsDataURL(file);
+      this.loadingImage = false;
+    },
+    getDataFromApi() {
+      this.loading = true;
+      return new Promise((resolve, reject) => {
+        const { sortBy, descending, page, rowsPerPage } = this.pagination;
+        let dataResult = this.getEvents();
+        let items = dataResult.rows;
+        const total = dataResult.total;
+
+        if (this.pagination.sortBy) {
+          items = items.sort((a, b) => {
+            const sortA = a[sortBy];
+            const sortB = b[sortBy];
+
+            if (descending) {
+              if (sortA < sortB) return 1;
+              if (sortA > sortB) return -1;
+              return 0;
+            } else {
+              if (sortA < sortB) return -1;
+              if (sortA > sortB) return 1;
+              return 0;
+            }
+          });
+        }
+
+        if (rowsPerPage > 0) {
+          items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+        }
+        setTimeout(() => {
+          this.loading = false;
+          resolve({
+            items,
+            total
+          });
+        }, 1000);
+      });
+    },
+    getEvents() {
+      return {
+        total: 8,
+        rows: [
+          {
+            eventId: 1,
+            eventTitle: "예시 1",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 2,
+            eventTitle: "예시 2",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 3,
+            eventTitle: "예시 3",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 4,
+            eventTitle: "예시 4",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 5,
+            eventTitle: "예시 5",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 6,
+            eventTitle: "예시 6",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 7,
+            eventTitle: "예시 7",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          },
+          {
+            eventId: 8,
+            eventTitle: "예시 8",
+            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
+            eventCreateDt: "2018-08-18 22:52:56.823",
+            eventStatus: "종료"
+          }
+        ]
+      };
+    }
   }
 };
 </script>
 
 <style>
-.type-card {
-  cursor: pointer;
+.ql-toolbar {
+  background-color: white;
 }
-.type-card:hover {
-  opacity: 0.7;
+.ql-container {
+  background-color: #fff;
+  color: black;
+  min-height: 300px;
 }
 </style>
 

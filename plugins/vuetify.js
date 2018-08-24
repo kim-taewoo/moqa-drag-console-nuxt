@@ -3,6 +3,9 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import colors from "vuetify/es5/util/colors";
 import VueCircleSlider from "vue-circle-slider";
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import { quillEditor } from "vue-quill-editor";
 
 Vue.use(Vuetify, {
   theme: {
@@ -21,4 +24,7 @@ Vue.use(VueCircleSlider);
 //   const VueAwesomeSwiper = require('vue-awesome-swiper/dist/ssr')
 //   Vue.use(VueAwesomeSwiper)
 // }
+
+Vue.component("quillEditor", quillEditor);
+
 Kakao.init("c8073948e03369facac56feeb022f17a");

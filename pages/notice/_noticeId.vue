@@ -7,7 +7,7 @@
               <h3 class="display-1 text-xs-center">{{content.title}}</h3>
           </v-card-title>
 
-          <div class="mx-4 secondary--text text-xs-right"><strong>{{content.created_date}}</strong> - <span class="primary--text">{{content.name}}</span> </div>
+          <div class="mx-4 secondary--text text-xs-right"><strong>{{content.createDt}}</strong> - <span class="primary--text">{{content.name}}</span> </div>
           <v-divider></v-divider>
           <v-card-text>
             <p class="pa-4 subheading">

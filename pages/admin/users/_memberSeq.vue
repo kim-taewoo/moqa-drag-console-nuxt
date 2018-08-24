@@ -10,6 +10,7 @@
           <v-radio label="기본 정보" value="status"></v-radio>
           <v-radio label="설문등록 이력" value="surveys"></v-radio>
           <v-radio label="포인트 적립 및 사용" value="points"></v-radio>
+          <v-radio label="1:1 메시지" value="message"></v-radio>
         </v-radio-group>
       </v-flex>
       <v-flex class="xs12" v-show="radioBtn == 'status'">
@@ -41,6 +42,9 @@
           </template>
         </v-data-table>
       </v-flex>
+      <v-flex xs12 v-show="radioBtn == 'message'">
+        <one-to-one-message></one-to-one-message>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -48,11 +52,13 @@
 <script>
 import userProfileAdmin from "@/components/profile/userProfileAdmin";
 import promotionManage from "@/components/profile/promotionManage";
+import oneToOneMessage from "@/components/admin/oneToOneMessage";
 
 export default {
   components: {
     userProfileAdmin,
-    promotionManage
+    promotionManage,
+    oneToOneMessage
   },
   data() {
     return {

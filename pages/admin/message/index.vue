@@ -2,18 +2,20 @@
   <v-container>
     <v-layout wrap>
       <v-flex class="xs12">
-        <h3>메세지/push</h3>
+        <h3>메시지/push</h3>
         <v-divider></v-divider>
       </v-flex>
       <v-flex xs12>
         <v-radio-group v-model="radioBtn" row hide-details>
           <v-radio label="PUSH 목록" value="push"></v-radio>
-          <v-radio label="1:1 메세지 목록" value="message"></v-radio>
+          <v-radio label="1:1 메시지 목록" value="message"></v-radio>
         </v-radio-group>
       </v-flex>
+    </v-layout>
 
       <!-- radio 선택 중에 push 목록을 선택했을 시 나타나는 내용들 -->
-      <v-flex class="xs12" v-show="radioBtn == 'push'">
+    <v-layout wrap v-show="radioBtn == 'push'">
+      <v-flex class="xs12" >
 
         <!-- 새로 만들기 버튼 클릭시 뜨는 대화창 -->
         <v-dialog v-model="newPushDialog" persistent max-width="900px">
@@ -22,12 +24,12 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex xs12>
-                    <v-subheader class="primary--text">Push 메세지</v-subheader>
+                    <v-subheader class="primary--text">Push 메시지</v-subheader>
 
-                    <v-text-field label="메세지 내용" required hint="메세지를 입력하세요."></v-text-field>
+                    <v-text-field label="메시지 내용" required hint="메시지를 입력하세요."></v-text-field>
                   </v-flex>
                   <v-flex xs12>
-                    <v-text-field label="메세지 라벨" hint="메세지 닉네임을 입력하세요."></v-text-field>
+                    <v-text-field label="메시지 라벨" hint="메시지 닉네임을 입력하세요."></v-text-field>
                   </v-flex>
                   
                   <!-- select 메뉴 목록 -->
@@ -108,8 +110,9 @@
                     <v-subheader class="primary--text">대상 설정</v-subheader>
                     <v-radio-group v-model="newPushRadioBtn" row hide-details>
                       <v-radio label="안드로이드/iOS 전체" value="all"></v-radio>
-                      <v-radio label="그룹 선택하기" value="selectGroup"></v-radio>
                       <v-radio label="설문번호 입력하기" value="setTargetSurvey"></v-radio>
+                      <v-radio label="그룹 선택하기" value="selectGroup"></v-radio>
+                      <v-radio label="새 그룹 생성" value="newGroup"></v-radio>
                     </v-radio-group>
                   </v-flex>
                   <v-flex xs12 sm6>
@@ -172,51 +175,23 @@
           </template>
         </v-data-table>
       </v-flex>
+    </v-layout>
       <!-- 여기까지가 push 관련 내용 -->
 
 
-
+    <v-layout v-show="radioBtn == 'message'">
       <!-- 여기서부터는 1:1 메시지 관련 내용 -->
-      <v-flex xs12 v-show="radioBtn == 'message'">
-        <v-layout>
-          <v-flex xs4>
-            <v-text-field v-model="search" single-line hide-details label="검색" append-icon="search"></v-text-field>
-          </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex xs6 class="text-xs-right">
-            <v-btn @click.stop="$router.push({name: 'admin-message-newMessage'})">작성하기</v-btn>
-          </v-flex>
-        </v-layout>
-        <v-divider></v-divider>
-        <v-data-table
-            :headers="headersMessage"
-            :items="messages"
-            :pagination.sync="paginationMessage"
-            :total-items="totalMessages"
-            :loading="loading"
-            class="elevation-0"
-            :search="search"
-          >
-          <template slot="items" slot-scope="props">
-            <!-- <tr @click.stop="$router.push({name: 'admin-users-memberSeq', params: props.item})"> -->
-              <td class="text-xs-center">{{ props.item.messageNum }}</td>
-              <td class="text-xs-center">{{ props.item.memberSeq }}</td>
-              <td class="text-xs-center">{{ props.item.email }}</td>
-              <td class="text-xs-center">{{ props.item.name }}</td>
-              <td class="text-xs-center">{{ props.item.gender }}</td>
-              <td class="text-xs-center">{{ props.item.messageContent }}</td>
-              <td class="text-xs-center">{{ props.item.check }}</td>
-            <!-- </tr> -->
-          </template>
-        </v-data-table>
-      </v-flex>
-
+      <one-to-one-message></one-to-one-message>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import oneToOneMessage from "@/components/admin/oneToOneMessage";
 export default {
+  components: {
+    oneToOneMessage
+  },
   data() {
     return {
       radioBtn: "push",
@@ -230,7 +205,7 @@ export default {
       newPushRadioBtn: "all",
       deepLink: "",
       headers: [
-        { text: "메세지", align: "center", value: "title" },
+        { text: "메시지", align: "center", value: "title" },
         { text: "상태", align: "center", value: "status" },
         { text: "전송날짜", align: "center", value: "date" },
         { text: "전송타겟", align: "center", value: "target" },
@@ -276,21 +251,7 @@ export default {
           }
         ],
         search: null
-      },
-      //여기부터 1:1 관련 변수들
-      search: "",
-      headersMessage: [
-        { text: "메세지 번호", align: "center", value: "messageNum" },
-        { text: "회원번호", align: "center", value: "memberSeq" },
-        { text: "이메일", align: "center", value: "email" },
-        { text: "이름", align: "center", value: "name" },
-        { text: "성별", align: "center", value: "gender" },
-        { text: "메세지 내용", align: "center", value: "messageContent" },
-        { text: "수신확인", align: "center", value: "check" }
-      ],
-      messages: [],
-      totalMessages: 0,
-      paginationMessage: {}
+      }
     };
   },
   watch: {
@@ -302,32 +263,12 @@ export default {
         });
       },
       deep: true
-    },
-    paginationMessage: {
-      handler() {
-        this.getDataFromApi("message").then(data => {
-          this.messages = data.items;
-          this.totalMessages = data.total;
-        });
-      },
-      deep: true
-    },
-    // 1:1 메세지 기능에서 검색을 했을 경우 이 search 와 관련이 있음.
-    // 위 pagination 처럼 ajax 콜을 보낸 후에 this.pushes 에 받은 데이터를 넣어야함.
-    // this.totalPushes 에는 해당 검색 결과의 항목 개수가 들어가게 됨.
-    search: {
-      //로직
     }
   },
   mounted() {
     this.getDataFromApi("push").then(data => {
       this.pushes = data.items;
       this.totalPushes = data.total;
-    });
-    // 헷갈림을 줄이기 위해 그냥 중복코드작성
-    this.getDataFromApi("message").then(data => {
-      this.messages = data.items;
-      this.totalMessages = data.total;
     });
   },
   methods: {
@@ -488,94 +429,6 @@ export default {
             target: "안드로이드",
             numTarget: 5005,
             checkRate: 20
-          }
-        ]
-      };
-    },
-    getMessages() {
-      return {
-        total: 25,
-        rows: [
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
           }
         ]
       };
