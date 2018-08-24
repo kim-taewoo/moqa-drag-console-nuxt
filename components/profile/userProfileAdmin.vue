@@ -11,8 +11,8 @@
       >
         <template slot="items" slot-scope="props">
             <td class="font-weight-bold">{{props.item.name}}</td>
-            <td v-if="props.item.name == '비밀번호' || props.item.name == '휴대전화번호'" style="padding-top: 8px; padding-bottom: 8px;">
-              <v-text-field type="password" height="48px" hide-details single-line solo :label="props.item.inputValue" :value="props.item.value" ></v-text-field>
+            <td v-if="props.item.name == '비밀번호'">
+              <v-btn @click.stop="resetPassword">비밀번호 초기화</v-btn>
             </td>
             <td style="padding-top: 8px; padding-bottom: 8px;" v-else-if="props.item.name =='포인트 수동적립'">
               <v-text-field append-icon="attach_money" class="d-inline-block mr-2" type="number" height="48px" hide-details single-line solo :value="props.item.value" ></v-text-field>
@@ -44,6 +44,9 @@ export default {
   methods: {
     punishUser() {
       console.log("징계");
+    },
+    resetPassword () {
+      console.log("회원아이디 "+this.profile.memberId+ ' 의 비밀번호를 초기화합니다.')
     }
   },
   data() {

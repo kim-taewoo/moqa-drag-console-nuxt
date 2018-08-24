@@ -19,7 +19,7 @@
 
 
       <v-flex xs12 v-show="radioBtn == 'surveys'">
-        <promotion-manage :userId="content.userId"/>
+        
       </v-flex>
 
 
@@ -51,13 +51,11 @@
 
 <script>
 import userProfileAdmin from "@/components/profile/userProfileAdmin";
-import promotionManage from "@/components/profile/promotionManage";
 import oneToOneMessage from "@/components/admin/oneToOneMessage";
 
 export default {
   components: {
     userProfileAdmin,
-    promotionManage,
     oneToOneMessage
   },
   data() {
