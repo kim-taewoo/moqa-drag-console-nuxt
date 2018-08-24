@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title
-      class="headline grey lighten-2 pl-5"
+      class="headline pl-5"
       primary-title
     >
       설문 확인
@@ -69,6 +69,12 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
+        flat
+        @click="surveyDetailDialog = false"
+      >
+        재개
+      </v-btn>
+      <v-btn
         color="pink"
         flat
         @click="surveyDetailDialog = false"
@@ -76,14 +82,14 @@
         중단
       </v-btn>
       <v-btn
-        color="primary"
         flat
         @click="surveyDetailDialog = false"
+        color="primary"
       >
         완료
       </v-btn>
       <v-btn
-        color="primary"
+        flat
         depressed
         @click="$emit('closeDialog')"
       >
@@ -123,36 +129,36 @@ export default {
         },
         {
           name: "설문 타입",
-          value: "퀵폴"
+          value: this.item.surveyTypeCode
         },
         {
           name: "설문 기간",
-          value: this.item.time_period
+          value: `${this.item.surveyStartDt} ~ ${this.item.surveyEndDt}`
         },
         {
           name: "진행상태",
-          value: this.item.status
+          value: this.item.state
         },
         {
           name: "참여 인원",
           value:
-            this.item.num_participate +
+            this.item.joinCount +
             "/" +
-            this.item.num_max_participate +
+            this.item.maxUserCount +
             "명"
         },
         {
           name: "등록자 아이디",
           value:
-            "앱 유저 등록: fb_307023269864415 &nsbsp;&nsbsp;(회원번호: 6266)"
+            this.item.userId2
         },
         {
           name: "이름",
-          value: "정채린"
+          value: this.item.name
         },
         {
           name: "설문기관",
-          value: "모카"
+          value: ""
         },
         {
           name: "설문 대상 설정",
@@ -160,15 +166,15 @@ export default {
         },
         {
           name: "페이지 무작위화",
-          value: "미적용"
+          value: this.item.questionRandomYn
         },
         {
           name: "페이지 번호",
-          value: "표시 안 함"
+          value: this.item.pageNum
         },
         {
           name: "설문 주제",
-          value: this.item.title
+          value: this.item.surveyTitle
         }
       ],
       itemContent: [

@@ -55,7 +55,7 @@ export default {
       fixed: true,
       items: [
         { icon: "notifications", title: "공지사항", to: "/admin" },
-        { icon: "list", title: "질문관리", to: "/admin/manageList" },
+        { icon: "list", title: "설문관리", to: "/admin/manageList" },
         { icon: "person", title: "회원관리", to: "/admin/users" },
         { icon: "group_add", title: "회원그룹", to: "/admin/addGroup" },
         { icon: "event", title: "이벤트", to: "/admin/event" },

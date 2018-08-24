@@ -13,17 +13,23 @@
           <v-radio label="1:1 메시지" value="message"></v-radio>
         </v-radio-group>
       </v-flex>
-      <v-flex class="xs12" v-show="radioBtn == 'status'">
+    </v-layout>
+
+    <!-- '기본정보' 라디오버튼 클릭시 페이지 -->
+    <v-layout wrap v-show="radioBtn == 'status'">
+      <v-flex class="xs12">
         <userProfileAdmin :profile="content"/>
       </v-flex>
+    </v-layout>
 
+    <!-- '설문등록 이력' 페이지 -->
+    <v-layout wrap v-show="radioBtn == 'surveys'">
+      <admin-survey-list isUserInfo></admin-survey-list>
+    </v-layout>
 
-      <v-flex xs12 v-show="radioBtn == 'surveys'">
-        
-      </v-flex>
-
-
-      <v-flex xs12 v-show="radioBtn == 'points'">
+    <!-- '포인트 적립 및 사용' 페이지 -->
+    <v-layout wrap v-show="radioBtn == 'points'">
+      <v-flex xs12 >
         <div><span class="font-weight-bold">{{content.name}}</span> 회원님의 현재 포인트는 <span class="pink--text">{{content.point}} P</span> 입니다. </div>
         <v-divider></v-divider>
         <v-data-table
@@ -42,21 +48,27 @@
           </template>
         </v-data-table>
       </v-flex>
-      <v-flex xs12 v-show="radioBtn == 'message'">
+    </v-layout>
+    <!-- '1:1 메세지 페이지' -->
+    <v-layout wrap v-show="radioBtn == 'message'">
+      <v-flex xs12 >
         <one-to-one-message></one-to-one-message>
       </v-flex>
     </v-layout>
+
   </v-container>
 </template>
 
 <script>
 import userProfileAdmin from "@/components/profile/userProfileAdmin";
 import oneToOneMessage from "@/components/admin/oneToOneMessage";
+import adminSurveyList from '@/components/admin/adminSurveyList'
 
 export default {
   components: {
     userProfileAdmin,
-    oneToOneMessage
+    oneToOneMessage,
+    adminSurveyList
   },
   data() {
     return {

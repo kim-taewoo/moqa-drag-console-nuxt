@@ -99,6 +99,7 @@
         <v-dialog
           v-model="surveyDetailDialog"
           width="980"
+          lazy
         >
           <SurveyDetail v-if="surveyDetailDialog" :item="selectedItem" :is-add-group="isAddGroup" @closeDialog="surveyDetailDialog=false"></SurveyDetail>
         </v-dialog>
@@ -246,7 +247,6 @@ export default {
       filter_status: ["모든 설문", "작성중", "심사 대기중", "진행중", "완료"],
       searchStatus: "모든 설문",
       searchTitle: "",
-      typeDialog: false,
       search: "",
       loadedSurveys: [
         {
