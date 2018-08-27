@@ -16,40 +16,7 @@
       </v-flex>
       <v-spacer></v-spacer>
       <v-flex class="xs12 sm6 text-xs-right">
-        <v-btn top slot="activator" dark><v-icon>add</v-icon>그룹생성</v-btn>
-          <!-- <v-dialog v-model="dialog" max-width="900px" persistent>
-            <v-btn large slot="activator" color="primary" dark class="mb-2"><v-icon>add</v-icon> 글쓰기</v-btn>
-            <v-card>
-              <v-card-title>
-                <span class="headline">공지사항 글쓰기</span>
-              </v-card-title>
-              <v-divider></v-divider>
-
-              <v-card-text>
-                <v-container grid-list-md>
-                  <v-layout wrap>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.title" label="제목"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
-                      <div class="subheading grey--text">내용</div>
-                      <quill-editor v-model="content"
-                        ref="myQuillEditor"
-                        :options="editorOption"
-                        style="height: 300px;">
-                      </quill-editor>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">저장</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">취소</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog> -->
+        <v-btn top slot="activator" dark to="/admin/addGroup/newGroup" nuxt><v-icon>add</v-icon>그룹생성</v-btn>
       </v-flex>
 
       <v-flex class="xs12 mt-3">
@@ -60,7 +27,7 @@
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <tr @click="$router.push({name: 'notice-id', params: props.item})" >
+            <tr @click="$router.push({name: 'admin-addGroup-editGroup', params: props.item})" >
               <td class="text-xs-center">{{ props.item.groupId }}</td>
               <td class="text-xs-center">{{ props.item.groupName }}</td>
               <td class="text-xs-center">{{ props.item.creator }}</td>

@@ -101,6 +101,9 @@ export default {
   components: {
     SurveyDetail
   },
+  mounted () {
+    console.log(this.isAddGroup)
+  },
   computed: {
     filteredSurveys() {
       if (this.searchStatus == "모든 설문" && this.searchTitle == "") {

@@ -17,9 +17,13 @@
                 hide-actions
                 hide-headers
               >
+
                 <template slot="items" slot-scope="props">
                   <td class="font-weight-bold">{{ props.item.name }}</td>
-                  <td class="text-xs-left">{{ props.item.value }}</td>
+                  <td class="text-xs-left" v-if="props.item.name=='진행상태' && props.item.value=='01'">진행중</td>
+                  <td class="text-xs-left" v-else-if="props.item.name=='진행상태' && props.item.value=='02'">종료</td>
+                  <td class="text-xs-left" v-else-if="props.item.name=='진행상태' && props.item.value=='03'">중단</td>
+                  <td class="text-xs-left" v-else>{{ props.item.value }}</td>
                 </template>
               </v-data-table>
             </div>
@@ -66,7 +70,7 @@
         </v-flex>
       </v-layout>
     <v-divider></v-divider>
-    <v-card-actions>
+    <v-card-actions v-if="!isAddGroup">
       <v-spacer></v-spacer>
       <v-btn
         flat
@@ -95,6 +99,11 @@
       >
         닫기
       </v-btn>
+    </v-card-actions>
+    <v-card-actions v-else>
+      <v-spacer></v-spacer>
+      <v-btn flat @click="surveyDetailDialog = false">선택</v-btn>
+      <v-btn flat @click="$emit('closeDialog')" color="pink">취소</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -142,10 +151,7 @@ export default {
         {
           name: "참여 인원",
           value:
-            this.item.joinCount +
-            "/" +
-            this.item.maxUserCount +
-            "명"
+            this.item.joinCount
         },
         {
           name: "등록자 아이디",

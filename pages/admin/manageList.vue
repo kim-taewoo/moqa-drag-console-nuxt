@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-layout wrap>
+    <v-layout wrap v-if="!isAddGroup">
       <v-flex xs12>
         <h3>설문관리</h3>
          <v-divider></v-divider>
@@ -8,6 +8,7 @@
     </v-layout>
     <v-layout wrap class="mt-3">
       <v-flex xs12>
+        <v-divider v-if="isAddGroup"></v-divider>
         <v-tabs
           v-model="active"
           slider-color="primary"
@@ -27,7 +28,7 @@
             :key="index"
             class="mt-4"
           >
-            <component :is="tab.comp" :surveyTypeCode="tab.surveyTypeCode" isUserInfo class="tabComponent"></component>
+            <component :is="tab.comp" :surveyTypeCode="tab.surveyTypeCode" isUserInfo class="tabComponent" :isAddGroup="isAddGroup"></component>
           </v-tab-item>
         </v-tabs>
       </v-flex>
@@ -37,15 +38,24 @@
 
 <script>
 import adminSurveyList from "@/components/admin/adminSurveyList";
+import reportedSurveyList from '@/components/admin/reportedSurveyList'
+import confirmSurveyList from '@/components/admin/confirmSurveyList'
 
 export default {
   components: {
-    adminSurveyList
+    adminSurveyList,
+    reportedSurveyList,
+    confirmSurveyList
   },
-  data () {
-    return {
-      active: null,
-      adminSurveyTabs: [
+  props: {
+    isAddGroup: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    adminSurveyTabs () {
+      return this.isAddGroup ? [
         {
           name: "일반설문",
           comp: adminSurveyList,
@@ -65,8 +75,43 @@ export default {
           name: "서베이",
           comp: adminSurveyList,
           surveyTypeCode: '04'
-        }
-      ],
+        },
+      ]
+      : [
+          {
+            name: "일반설문",
+            comp: adminSurveyList,
+            surveyTypeCode: '01'
+          },
+          {
+            name: "타겟설문",
+            comp: adminSurveyList,
+            surveyTypeCode: '02'
+          },
+          {
+            name: "퀵폴",
+            comp: adminSurveyList,
+            surveyTypeCode: '03'
+          },
+          {
+            name: "서베이",
+            comp: adminSurveyList,
+            surveyTypeCode: '04'
+          },
+          {
+            name: "신고설문",
+            comp: reportedSurveyList,
+          },
+          {
+            name: "심사요청",
+            comp: confirmSurveyList
+          }
+      ]
+    }
+  },
+  data () {
+    return {
+      active: null,
     }
   }
 };

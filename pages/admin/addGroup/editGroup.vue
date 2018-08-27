@@ -2,35 +2,8 @@
   <v-container>
     <v-layout wrap>
       <v-flex class="xs12">
-        <h3>회원목록</h3>
+        <h3>{{groupContent.groupName}} 회원목록</h3>
         <v-divider></v-divider>
-      </v-flex>
-      <v-flex xs12 class="mt-4">
-        <v-layout>
-          <v-flex xs2 class="mr-3">
-            <v-select
-              :items="searchTypes"
-              v-model="searchType"
-              hide-details
-              label="검색 기준"
-            ></v-select>
-          </v-flex>
-          <v-flex xs3>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="검색"
-              @keydown.enter.prevent="searchByType"
-              :hint="`${searchType} 로 검색`"
-              persistent-hint
-            ></v-text-field>
-          </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex xs6 class="text-xs-right">
-            <!-- 다운로드 버튼 클릭시 회원목록을 엑셀로 다운 받는 기능 들어가야 함. (아래 script 태그 내용의 methods 중에 'downloadUserList' 함수 안에 해당 로직 들어가도록 되어있음) -->
-            <v-btn v-if="!isAddGroup" @click.stop="downloadUserList">회원목록 다운로드</v-btn>
-          </v-flex>
-        </v-layout>
       </v-flex>
       <v-flex xs12 class="mt-2">
         <v-divider></v-divider>
@@ -46,26 +19,27 @@
             v-model="selected"
           >
             <template slot="items" slot-scope="props">
-              <tr @click.stop="rowSelected(props.item)">
-                <td v-if="isAddGroup">
-                  <v-checkbox
-                    v-model="props.selected"
-                    primary
-                    hide-details
-                  ></v-checkbox>
-                </td>
-                <td class="text-xs-center">{{ props.item.memberSeq }}</td>
-                <td class="text-xs-center">{{ props.item.email }}</td>
-                <td class="text-xs-center">{{ props.item.name }}</td>
-                <td class="text-xs-center">{{ props.item.gender }}</td>
-                <td class="text-xs-center">{{ props.item.mobileNum }}</td>
-                <td class="text-xs-center">{{ props.item.point }}</td>
-                <td class="text-xs-center">{{ props.item.joinDt }}</td>
+              <tr>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.memberSeq }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.email }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.name }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.gender }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.mobileNum }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.point }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.joinDt }}</td>
                 <td class="text-xs-center"></td>
-                <td class="text-xs-center">{{ props.item.birth }}</td>
-                <td class="text-xs-center">{{ props.item.deviceType }}</td>
-                <td class="text-xs-center">{{ props.item.version }}</td>
-                <td class="text-xs-center" v-text="props.item.useYn == 'Y' ? '사용중' : '탈퇴'"></td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.birth }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.deviceType }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)">{{ props.item.version }}</td>
+                <td class="text-xs-center" @click.stop="rowSelected(props.item)" v-text="props.item.useYn == 'Y' ? '사용중' : '탈퇴'"></td>
+                <td class="justify-center layout px-0">
+                  <v-icon
+                    small
+                    @click="deleteItem(props.item)"
+                  >
+                    delete
+                  </v-icon>
+                </td>
               </tr>
             </template>
           </v-data-table>
@@ -85,6 +59,7 @@ export default {
   },
   data() {
     return {
+      groupContent: {...this.$route.params},
       search: "",
       selected: [],
       searchTypes: [
@@ -120,7 +95,8 @@ export default {
         { text: "생일", align: "center", value: "birth" },
         { text: "로그인기기", align: "center", value: "deviceType" },
         { text: "앱버전", align: "center", value: "version" },
-        { text: "회원상태", align: "center", value: "useYn" }
+        { text: "회원상태", align: "center", value: "useYn" },
+        { text: '삭제', value: '', sortable: false }
       ],
       loading: true,
       pagination: {},
@@ -144,6 +120,7 @@ export default {
       this.users = data.items;
       this.totalUsers = data.total;
     });
+    console.log(this.$route)
   },
   methods: {
     downloadUserList() {
@@ -158,21 +135,10 @@ export default {
         this.$router.push({name: 'admin-users-memberSeq', params: item})
       }
     },
-    searchByType() {
-      //검색 유형에 따른 다른 함수 적용. 물론 하나의 함수에 인자만 다르게 넣어도 됨.
-      // this.search 가 사용자가 검색입력창에 입력한 값이고 this.searchType 가 검색기준(이름,휴대전화,메일, 회원번호)이다.
-      if (this.searchType == "name") {
-
-        this.users=  this.users.filter(user => {
-          return user.name.includes(this.search);
-        });
-      } else if (this.searchType == "mobile") {
-        console.log("모바일로 검색중");
-      } else if (this.searchType == "userNum") {
-        console.log("회원번호로 검색중");
-      } else {
-        console.log("메일로 검색중");
-      }
+    deleteItem (item) {
+      const index = this.users.indexOf(item)
+      confirm('Are you sure you want to delete this item?') && this.users.splice(index, 1)
+      // 이곳에 서버에 변경사항을 저장하는 로직이 필요함. 사용자 몇명이 삭제되었기 때문에..
     },
 
     getDataFromApi() {
