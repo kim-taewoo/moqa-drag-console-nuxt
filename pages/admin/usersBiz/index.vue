@@ -5,7 +5,11 @@
         <h3>기업회원</h3>
         <v-divider></v-divider>
       </v-flex>
-      <v-flex class="xs12 mt-3">
+      <v-flex class="xs12 text-xs-right mt-3">
+        <v-btn nuxt to="/admin/usersBiz/newBizUser">새로 만들기</v-btn>
+      </v-flex>
+
+      <v-flex class="xs12">
         <v-divider></v-divider>
         <v-data-table
           :headers="headers"

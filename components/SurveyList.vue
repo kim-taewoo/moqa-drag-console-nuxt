@@ -240,6 +240,7 @@ export default {
     return {
       surveyDetailDialog: false,
       selectedItem: null,
+      typeDialog: false,
       moreItems: [
         { title: "결과 다운로드" },
         { title: "통계 보기", link: "surveyStatistics" }
