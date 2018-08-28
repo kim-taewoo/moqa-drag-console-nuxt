@@ -74,7 +74,7 @@
                     <v-card-media :src="require('@/assets/quiz.jpg')" height="200px" @click="choseSurvey">
 
                     </v-card-media>
-                    <v-card-text @click="choseSurvey">
+                    <v-card-text @click="choseQuiz">
                       <h3 class="text-xs-center title">퀴즈</h3>
                       <p class="text-xs-center body-1 grey--text mt-2">"시간 제한이 있는 퀴즈를 진행하고 싶을 때!"</p>
                       <p class="text-xs-center body-1 mb-0">
@@ -167,6 +167,9 @@ export default {
     },
     choseSurvey() {
       this.$router.push("/basicSetting");
+    },
+    choseQuiz () {
+      this.$router.push("/basicSetting")
     },
     itemSelected(e, item) {
       this.openDialogKey++;

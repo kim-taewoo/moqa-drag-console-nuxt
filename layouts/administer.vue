@@ -35,7 +35,7 @@
       </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat>Logout</v-btn>
+      <v-btn flat nuxt @click="logout">Logout</v-btn>
     </v-toolbar>
     <v-content>
         
@@ -67,6 +67,12 @@ export default {
       miniVariant: false,
       title: "MOQA 관리자"
     };
+  },
+  methods: {
+    logout () {
+      // 로그아웃 로직이 들어갈 장소
+      this.$router.push('/login')
+    }
   }
 };
 </script>

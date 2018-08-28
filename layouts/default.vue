@@ -8,10 +8,11 @@
       dark
       dense
     >
+      <img @click="$router.push('/')" style="cursor:pointer;" :src="require('@/assets/moqaLogos/toolbarIcon2.png')" alt="" height="60%" class="mr-2">
       <v-tooltip bottom>
         <v-toolbar-title slot="activator" class="toolbar-title">
           <router-link to="/" tag="span" nuxt style="cursor: pointer;">
-            MOQA!<span style="width: 20px; height: 10px background:red;"></span>
+            MOQA
           </router-link>
         </v-toolbar-title>
         <span>홈으로</span>

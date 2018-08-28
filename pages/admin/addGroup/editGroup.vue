@@ -45,11 +45,35 @@
           </v-data-table>
         <v-divider></v-divider>
       </v-flex>
+      <v-dialog v-model="addUserDialog" max-width="1000px">
+        <v-card>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <component :is="'Users'" class="tabComponent" :isAddGroup="true"></component>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="closeAddDialog">Cancel</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="saveAdd">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-flex xs12 class="text-xs-right ">
+        <v-btn @click.stop="addUserDialog=true">회원 추가하기</v-btn>
+        <v-btn nuxt to="/admin/addGroup">목록으로</v-btn>
+        <v-btn @click="deleteGroup">그룹삭제</v-btn>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import Users from '@/pages/admin/users'
 export default {
   props: {
     isAddGroup: {
@@ -57,8 +81,32 @@ export default {
       default: false
     },
   },
+  components: {
+    Users
+  },
   data() {
     return {
+      searchType: "name",
+      search: '',
+      searchTypes: [
+        {
+          text: "이름",
+          value: "name"
+        },
+        {
+          text: "휴대전화",
+          value: "mobile"
+        },
+        {
+          text: "회원번호",
+          value: "userNum"
+        },
+        {
+          text: "메일",
+          value: "email"
+        }
+      ],
+      addUserDialog: false,
       groupContent: {...this.$route.params},
       search: "",
       selected: [],
@@ -123,6 +171,9 @@ export default {
     console.log(this.$route)
   },
   methods: {
+    closeAddDialog () {
+      this.addUserDialog = false
+    },
     downloadUserList() {
       // 엑셀 다운로드 아래 로그 기록은 지워도 됨.
       console.log("리스트 다운로드");
@@ -139,6 +190,10 @@ export default {
       const index = this.users.indexOf(item)
       confirm('Are you sure you want to delete this item?') && this.users.splice(index, 1)
       // 이곳에 서버에 변경사항을 저장하는 로직이 필요함. 사용자 몇명이 삭제되었기 때문에..
+    },
+    deleteGroup () {
+      console.log('그룹삭제')
+      // db 에서 이 그룹을 삭제하는 로직 필요.
     },
 
     getDataFromApi() {

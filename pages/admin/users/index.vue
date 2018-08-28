@@ -163,7 +163,7 @@ export default {
       // this.search 가 사용자가 검색입력창에 입력한 값이고 this.searchType 가 검색기준(이름,휴대전화,메일, 회원번호)이다.
       if (this.searchType == "name") {
 
-        this.users=  this.users.filter(user => {
+        this.filteredUsers=  this.users.filter(user => {
           return user.name.includes(this.search);
         });
       } else if (this.searchType == "mobile") {
