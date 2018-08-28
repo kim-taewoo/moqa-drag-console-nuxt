@@ -36,7 +36,7 @@
         <v-divider></v-divider>
           <v-data-table
             :headers="headers"
-            :items="users"
+            :items="filteredUsers"
             :pagination.sync="pagination"
             :total-items="totalUsers"
             :loading="loading"
@@ -125,6 +125,7 @@ export default {
       loading: true,
       pagination: {},
       users: [],
+      filteredUsers: [],
       totalUsers: 0
     };
   },
@@ -134,15 +135,43 @@ export default {
         this.getDataFromApi().then(data => {
           this.users = data.items;
           this.totalUsers = data.total;
+          this.filteredUsers = data.items
         });
       },
       deep: true
+    },
+    search (val) {
+      // 지금은 더미 데이터에서만 검색이 되지만, 아래 함수를 전체 서버에서 가져오는 것으로
+      // 수정하고 나면 전체 데이터에서 검색이 가능할 것. 
+      if (this.searchType == "name") {
+        this.filteredUsers=  this.users.filter(user => {
+          return user.name.includes(val)
+        });
+      } else if (this.searchType == "mobile") {
+        // this.filteredUsers = this.users.filter(user => {
+        //   return user.mobileNum.indexOf(val) > -1
+        // })
+        console.log(this.users[1].mobileNum)
+        console.log("모바일로 검색중", val);
+        console.log(typeof(val))
+      } else if (this.searchType == "userNum") {
+        this.filteredUsers = this.users.filter(user => {
+          return String(user.memberSeq).indexOf(val) > -1
+        })
+        console.log("회원번호로 검색중", val);
+      } else {
+        this.filteredUsers = this.users.filter(user => {
+          return user.email.includes(val)
+        })
+        console.log("메일로 검색중");
+      }
     }
   },
   mounted() {
     this.getDataFromApi().then(data => {
       this.users = data.items;
       this.totalUsers = data.total;
+      this.filteredUsers = data.items
     });
   },
   methods: {

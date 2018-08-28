@@ -13,8 +13,24 @@
           <v-card>
             <v-container>
               <v-layout wrap justify-center>
+                <v-flex v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;align-items:center;justify-content:center" xs12 class="text-xs-center grey lighten-3 d-flex">
+                  <span @click="onPickFile"><v-icon>image_search</v-icon> <span>이미지 삽입하기</span></span>
+                </v-flex>
+                <v-flex v-else class="xs10 text-xs-center">
+                  <img
+                  v-for="(img,index) in imageUrl"
+                  :key="index"
+                  :src="img"
+                  width="40%"
+                  alt="">
+                  <div>
+                    <v-btn small color="primary" @click="onPickFile">이미지 삽입<v-icon right dark>cloud_upload</v-icon></v-btn>
+                  </div>
+                </v-flex>
                 <v-flex xs10>
                   <v-text-field label="제목" v-model="qTitle"></v-text-field>
+                  <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
+
                 </v-flex>
                 <v-flex xs9 offset-xs1>
                   <v-text-field type="number" label="최소값을 입력해주세요" v-model="circleMin"></v-text-field>
@@ -34,37 +50,7 @@
             </v-container>
           </v-card>
         </v-tab-item>
-        <v-tab>
-          옵션
-        </v-tab>
-        <v-tab-item>
-          <v-card>
-            <v-container>
-              <v-layout wrap justify-center align-center>
-                <v-flex xs6>
-                  <v-switch
-                    label="멀티미디어형"
-                    v-model="multimediaSwitch"
-                  ></v-switch>
-                </v-flex>
-                <v-flex xs4>
-                    <v-btn @click="onPickFile" :disabled="!multimediaSwitch" class="primary">
-                        Upload <v-icon right dark>cloud_upload</v-icon>
-                    </v-btn>
-                    <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
-                </v-flex>
-                <v-flex class="xs12">
-                    <img
-                    v-for="(img,index) in imageUrl"
-                    :key="index"
-                    :src="img"
-                    width="100%"
-                    alt="">
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card>
-        </v-tab-item>
+        
         <v-tab>
           로직
         </v-tab>
@@ -219,7 +205,7 @@ export default {
       qTitle: null,
       panel: [true],
       active: null,
-      imageUrl: []
+      imageUrl: null
     };
   }
 };
