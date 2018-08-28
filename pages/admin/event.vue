@@ -122,8 +122,12 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <!-- 대화창 끝 -->
-
+          <!-- 이벤트 추가 대화창 끝 -->
+          <!-- 표 row 클릭시 등장하는 이벤트 세부사항 대화창 시작 -->
+          <v-dialog lazy v-model="eventDetailDialog" max-width="900px">
+            <EventDetail v-if="eventDetailDialog" :selectedItem='selectedItem' @closeDialog="surveyDetailDialog=false"></EventDetail>
+          </v-dialog> 
+          <!-- 이벤트 디테일 세부사항 대화창 끝 -->
         <v-data-table
           :headers="headers"
           :items="events"
@@ -133,23 +137,31 @@
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <td class="text-xs-center">{{ props.item.eventId }}</td>
-            <td class="text-xs-center">{{ props.item.eventTitle }} </td>
-            <td class="text-xs-center">{{ props.item.eventPeriod }}</td>
-            <td class="text-xs-center">{{ props.item.eventCreateDt }}</td>
-            <td class="text-xs-center">{{ props.item.eventStatus }}</td>
+            <tr @click.stop="itemSelected($event,props.item)">
+              <td class="text-xs-center">{{ props.item.eventId }}</td>
+              <td class="text-xs-center">{{ props.item.eventTitle }} </td>
+              <td class="text-xs-center">{{ props.item.eventPeriod }}</td>
+              <td class="text-xs-center">{{ props.item.eventCreateDt }}</td>
+              <td class="text-xs-center">{{ props.item.eventStatus }}</td>
+            </tr>
           </template>
         </v-data-table>
-        
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import EventDetail from '@/components/EventDetail'
 export default {
+  components: {
+    EventDetail
+  },
   data() {
     return {
+      selectedItem: null,
+      eventDetailDialog: false,
+      
       newDialog: false,
       menu1: false,
       menu2: false,
@@ -209,6 +221,12 @@ export default {
     });
   },
   methods: {
+    // 이벤트 세부사항 대화창 클릭시 실행
+    itemSelected(e, item) {
+      // this.openDialogKey++;
+      this.selectedItem = item;
+      this.eventDetailDialog = true;
+    },
     // 새로만들기에서 취소를 클릭시 발생 이벤트. 창을 닫고 내용을 초기화시킨다.
     close() {
       this.newDialog = false;

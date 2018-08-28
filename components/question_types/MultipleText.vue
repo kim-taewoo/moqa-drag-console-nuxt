@@ -99,7 +99,7 @@
                             <div class="ml-3">이라면</div> 
                         </v-flex>
                         <v-flex xs9 class="mt-2">
-                            <v-select offset-y no-data-text="다른 문항이 없습니다." browser-autocomplete="off" height="24px" outline hide-details label="목표 문항 고르기">                          
+                            <v-select :items="questionsIndexList" offset-y no-data-text="다른 문항이 없습니다." browser-autocomplete="off" height="24px" outline hide-details label="목표 문항 고르기">                          
                             </v-select>
                         </v-flex>
                         <v-flex xs3>
@@ -148,7 +148,7 @@ import LogicCard from "@/components/question_types/LogicCard";
 
 export default {
   name: "MultipleText",
-  props: ["questionIndex"],
+  props: ["questionIndex", 'questions'],
   components: {
     LogicCard
   },
@@ -199,6 +199,18 @@ export default {
       if (val == false) {
         this.multiselectMax = 0;
       }
+    }
+  },
+  computed : {
+    questionsIndexList () {
+      if (!this.questions) {return}
+      let lengthList = []
+      for (let i = 1; i <= this.questions.length; i++) {
+        lengthList.push(i + '번 문항')
+      }
+      lengthList.push('자격박탈')
+      lengthList.push('설문 종료')
+      return lengthList
     }
   },
   data() {

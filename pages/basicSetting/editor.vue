@@ -40,7 +40,7 @@
 
 
                   <v-card class="workplace-card">
-                    <component :is="question.comp" :questionIndex="index" class="card-component"></component>
+                    <component :is="question.comp" :questionIndex="index" class="card-component" :type="type" :questions="questions"></component>
                   </v-card>
 
                 </v-expansion-panel-content>
@@ -137,11 +137,26 @@ export default {
     VideoFull,
     HelpPopup
   },
+  props: {
+    type: {
+      type: String,
+      required: true,
+    }
+  },
+  created () {
+    if (!this.type) {
+      this.$router.push('/')
+    }
+  },
   methods: {
     checkblur(target) {
       console.log("blur", target);
     },
     addCard(id) {
+      if(this.type =='quick' && this.questions.length == 1) {
+        alert('퀵폴은 문항 한 개만 생성 가능합니다. 기존 것을 삭제 후 추가해주세요.')
+        return
+      }
       let x = this.questionTypes.filter(type => {
         return type.id == id;
       })[0];
@@ -164,13 +179,16 @@ export default {
           return question.order != target.order;
         });
       } else {
-        return;
+        return [
+
+        ]
       }
     }
   },
   localData: {
     currentCardNum: 0
   },
+  
   data() {
     return {
       menu: false,
@@ -181,109 +199,201 @@ export default {
       panel: true,
       helpPop: false,
       currentHelp: "",
-      questionTypes: [
-        {
-          order: 1,
-          id: 0,
-          typeName: "객관식",
-          typeSubName: "(텍스트)",
-          title: "",
-          comp: "MultipleText",
-          description: "선택지를 텍스트로 제공합니다."
-        },
-        {
-          order: 2,
-          id: 1,
-          typeName: "객관식",
-          typeSubName: "(이미지)",
-          title: "",
-          comp: "MultipleImage",
-          description: "선택지를 이미지로 제공합니다."
-        },
-        {
-          order: 3,
-          id: 2,
-          typeName: "순위 선택형",
-          typeSubName: "(텍스트)",
-          title: "",
-          comp: "RankingText",
-          description: "텍스트 선택지 순위를 매기도록 합니다."
-        },
-        {
-          order: 4,
-          id: 3,
-          typeName: "순위 선택형",
-          typeSubName: "(이미지)",
-          title: "",
-          comp: "RankingImage",
-          description: "이미지 선택지 순위를 매기도록 합니다."
-        },
-        {
-          order: 5,
-          id: 4,
-          typeName: "별점형",
-          title: "",
-          comp: "StarRating",
-          description: "5점 만점의 별점을 매기도록 합니다."
-        },
-        {
-          order: 6,
-          id: 5,
-          typeName: "주관식",
-          title: "",
-          comp: "Subjective",
-          description: "주관식으로 답을 받습니다."
-        },
-        {
-          order: 7,
-          id: 6,
-          typeName: "척도형",
-          typeSubName: "(가로)",
-          title: "",
-          comp: "TickHorizontal",
-          description: "가로형 척도를 제공합니다."
-        },
-        {
-          order: 8,
-          id: 7,
-          typeName: "척도형",
-          typeSubName: "(세로)",
-          title: "",
-          comp: "TickVertical",
-          description: "세로형 척도를 제공합니다."
-        },
-        {
-          order: 9,
-          id: 8,
-          typeName: "척도형",
-          typeSubName: "(원형)",
-          title: "",
-          comp: "TickCircle",
-          description: "원형 척도를 제공합니다."
-        },
-        {
-          order: 10,
-          id: 9,
-          typeName: "이미지",
-          typeSubName: "(Full)",
-          title: "",
-          comp: "ImageFull",
-          description: "질문에 답하기 전 보여줄 이미지를 설정합니다."
-        },
-        {
-          order: 11,
-          id: 10,
-          typeName: "동영상",
-          typeSubName: "(Full)",
-          title: "",
-          comp: "VideoFull",
-          description: "질문에 답하기 전 보여줄 영상을 설정합니다."
-        }
-      ],
       questions: [],
       isDragging: false
     };
-  }
+  },
+  computed : {
+    questionTypes () {
+      if (this.type == 'quick') {
+        return [
+          {
+            order: 1,
+            id: 0,
+            typeName: "객관식",
+            typeSubName: "(텍스트)",
+            title: "",
+            comp: "MultipleText",
+            description: "선택지를 텍스트로 제공합니다."
+          },
+          {
+            order: 2,
+            id: 1,
+            typeName: "객관식",
+            typeSubName: "(이미지)",
+            title: "",
+            comp: "MultipleImage",
+            description: "선택지를 이미지로 제공합니다."
+          },
+          {
+            order: 3,
+            id: 2,
+            typeName: "순위 선택형",
+            typeSubName: "(텍스트)",
+            title: "",
+            comp: "RankingText",
+            description: "텍스트 선택지 순위를 매기도록 합니다."
+          },
+          {
+            order: 4,
+            id: 3,
+            typeName: "순위 선택형",
+            typeSubName: "(이미지)",
+            title: "",
+            comp: "RankingImage",
+            description: "이미지 선택지 순위를 매기도록 합니다."
+          },
+          {
+            order: 5,
+            id: 4,
+            typeName: "별점형",
+            title: "",
+            comp: "StarRating",
+            description: "5점 만점의 별점을 매기도록 합니다."
+          },
+        ]
+      } else if (this.type=='survey') {
+        return [
+          {
+            order: 1,
+            id: 0,
+            typeName: "객관식",
+            typeSubName: "(텍스트)",
+            title: "",
+            comp: "MultipleText",
+            description: "선택지를 텍스트로 제공합니다."
+          },
+          {
+            order: 2,
+            id: 1,
+            typeName: "객관식",
+            typeSubName: "(이미지)",
+            title: "",
+            comp: "MultipleImage",
+            description: "선택지를 이미지로 제공합니다."
+          },
+          {
+            order: 3,
+            id: 2,
+            typeName: "순위 선택형",
+            typeSubName: "(텍스트)",
+            title: "",
+            comp: "RankingText",
+            description: "텍스트 선택지 순위를 매기도록 합니다."
+          },
+          {
+            order: 4,
+            id: 3,
+            typeName: "순위 선택형",
+            typeSubName: "(이미지)",
+            title: "",
+            comp: "RankingImage",
+            description: "이미지 선택지 순위를 매기도록 합니다."
+          },
+          {
+            order: 5,
+            id: 4,
+            typeName: "별점형",
+            title: "",
+            comp: "StarRating",
+            description: "5점 만점의 별점을 매기도록 합니다."
+          },
+          {
+            order: 6,
+            id: 5,
+            typeName: "주관식",
+            title: "",
+            comp: "Subjective",
+            description: "주관식으로 답을 받습니다."
+          },
+          {
+            order: 7,
+            id: 6,
+            typeName: "척도형",
+            typeSubName: "(가로)",
+            title: "",
+            comp: "TickHorizontal",
+            description: "가로형 척도를 제공합니다."
+          },
+          {
+            order: 8,
+            id: 7,
+            typeName: "척도형",
+            typeSubName: "(세로)",
+            title: "",
+            comp: "TickVertical",
+            description: "세로형 척도를 제공합니다."
+          },
+          {
+            order: 9,
+            id: 8,
+            typeName: "척도형",
+            typeSubName: "(원형)",
+            title: "",
+            comp: "TickCircle",
+            description: "원형 척도를 제공합니다."
+          },
+          {
+            order: 10,
+            id: 9,
+            typeName: "이미지",
+            typeSubName: "(Full)",
+            title: "",
+            comp: "ImageFull",
+            description: "질문에 답하기 전 보여줄 이미지를 설정합니다."
+          },
+          {
+            order: 11,
+            id: 10,
+            typeName: "동영상",
+            typeSubName: "(Full)",
+            title: "",
+            comp: "VideoFull",
+            description: "질문에 답하기 전 보여줄 영상을 설정합니다."
+          }
+        ]
+      } else {
+        return [
+          {
+            order: 1,
+            id: 0,
+            typeName: "객관식",
+            typeSubName: "(텍스트)",
+            title: "",
+            comp: "MultipleText",
+            description: "선택지를 텍스트로 제공합니다."
+          },
+          {
+            order: 2,
+            id: 1,
+            typeName: "객관식",
+            typeSubName: "(이미지)",
+            title: "",
+            comp: "MultipleImage",
+            description: "선택지를 이미지로 제공합니다."
+          },
+          {
+            order: 3,
+            id: 2,
+            typeName: "순위 선택형",
+            typeSubName: "(텍스트)",
+            title: "",
+            comp: "RankingText",
+            description: "텍스트 선택지 순위를 매기도록 합니다."
+          },
+          {
+            order: 4,
+            id: 3,
+            typeName: "순위 선택형",
+            typeSubName: "(이미지)",
+            title: "",
+            comp: "RankingImage",
+            description: "이미지 선택지 순위를 매기도록 합니다."
+          },
+        ]
+      }
+    }
+  },
 };
 </script>
 

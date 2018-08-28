@@ -17,7 +17,7 @@
 
               <v-divider></v-divider>
 
-              <v-stepper-step :complete="e1 > 2" step="2" editable>설문 디자인</v-stepper-step>
+              <v-stepper-step :complete="e1 > 2" step="2">설문 디자인</v-stepper-step>
 
               <v-divider></v-divider>
 
@@ -30,7 +30,7 @@
               </div>
 
             </v-stepper-header>
-              <nuxt-child />   
+              <nuxt-child :type="paramsType.type" />   
 
           </v-stepper>
 
@@ -140,6 +140,9 @@ export default {
       this.finishDialog = true;
     }
   },
+  mounted () {
+    console.log(this.$route)
+  },
   watch: {
     e1: function(val) {
       if (val == 2) {
@@ -158,6 +161,7 @@ export default {
   },
   data() {
     return {
+      paramsType: {...this.$route.params},
       e1: 1,
       title: "",
       lastStepDialog: false,

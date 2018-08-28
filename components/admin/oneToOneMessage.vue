@@ -10,6 +10,13 @@
       </v-flex>
     </v-layout>
     <v-divider></v-divider>
+    <v-dialog
+      v-model="messageDetailDialog"
+      width="980"
+      lazy
+    >
+      <MessageDetail v-if="messageDetailDialog" :item="selectedItem"></MessageDetail>
+    </v-dialog>
     <v-data-table
         :headers="headersMessage"
         :items="messages"
@@ -20,7 +27,7 @@
         :search="search"
       >
       <template slot="items" slot-scope="props">
-        <!-- <tr @click.stop="$router.push({name: 'admin-users-memberSeq', params: props.item})"> -->
+        <tr @click.stop="itemSelected($event,props.item)">
           <td class="text-xs-center">{{ props.item.messageNum }}</td>
           <td class="text-xs-center">{{ props.item.memberSeq }}</td>
           <td class="text-xs-center">{{ props.item.email }}</td>
@@ -28,16 +35,22 @@
           <td class="text-xs-center">{{ props.item.gender }}</td>
           <td class="text-xs-center">{{ props.item.messageContent }}</td>
           <td class="text-xs-center">{{ props.item.check }}</td>
-        <!-- </tr> -->
+        </tr>
       </template>
     </v-data-table>
   </v-flex>
 </template>
 
 <script>
+import MessageDetail from '@/components/MessageDetail'
 export default {
+  components: {
+    MessageDetail
+  },
   data() {
     return {
+      selectedItem: null,
+      messageDetailDialog: false,
       search: "",
       headersMessage: [
         { text: "메시지 번호", align: "center", value: "messageNum" },
@@ -78,6 +91,11 @@ export default {
     });
   },
   methods: {
+    itemSelected(e, item) {
+      // this.openDialogKey++;
+      this.selectedItem = item;
+      this.messageDetailDialog = true;
+    },
     getDataFromApi() {
       this.loading = true;
       return new Promise((resolve, reject) => {

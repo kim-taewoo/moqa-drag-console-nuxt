@@ -71,7 +71,7 @@
                 </v-flex>
                 <v-flex xs4>
                   <v-card class="type-card">
-                    <v-card-media :src="require('@/assets/quiz.jpg')" height="200px" @click="choseSurvey">
+                    <v-card-media :src="require('@/assets/quiz.jpg')" height="200px" @click="choseQuiz">
 
                     </v-card-media>
                     <v-card-text @click="choseQuiz">
@@ -81,7 +81,7 @@
                         타이머 설정
                       </p>
                       <p class="text-xs-center body-1 my-0">보상리워드 지정</p>
-                      <p class="text-xs-center body-1 my-0">특정 타입의 질문 등록 가능</p>
+                      <p class="text-xs-center body-1 my-0">객관식 / 순위선택형 등록 가능</p>
                     </v-card-text>
                   </v-card>
                 </v-flex>
@@ -163,13 +163,13 @@ export default {
   },
   methods: {
     choseQuick() {
-      this.$router.push("/basicSetting");
+      this.$router.push({name: 'basicSetting', params: {type: 'quick'}});
     },
     choseSurvey() {
-      this.$router.push("/basicSetting");
+      this.$router.push({name: 'basicSetting', params: {type: 'survey'}});
     },
     choseQuiz () {
-      this.$router.push("/basicSetting")
+      this.$router.push({name: 'basicSetting', params: {type: 'quiz'}})
     },
     itemSelected(e, item) {
       this.openDialogKey++;

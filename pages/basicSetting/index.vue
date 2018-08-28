@@ -186,7 +186,6 @@
                         <v-text-field
                           ref="state"
                           v-model="state"
-                          :rules="[() => !!state || '필수 입력란입니다.']"
                           label="설문 기관"
                           required
                         ></v-text-field>
@@ -305,20 +304,6 @@ export default {
   name: "BasicSetting",
   data() {
     return {
-      items: [
-        {
-          text: "Dashboard",
-          disabled: false
-        },
-        {
-          text: "Link 1",
-          disabled: false
-        },
-        {
-          text: "Link 2",
-          disabled: true
-        }
-      ],
       e1: 0,
       targetGroups: [
         "나의 맞춤타겟1",

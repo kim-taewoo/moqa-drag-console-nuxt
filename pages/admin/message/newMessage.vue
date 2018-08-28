@@ -29,7 +29,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="close">저장</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="save">취소</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="$router.push('/admin/message')">취소</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
