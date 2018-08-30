@@ -38,6 +38,7 @@
           :total-items="totalSurveys"
           :loading="loading"
           class="elevation-0"
+          :rows-per-page-items="[10,15,20]"
         >
           <template slot="items" slot-scope="props">
             <tr>

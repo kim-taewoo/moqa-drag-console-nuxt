@@ -15,33 +15,32 @@
               <v-layout wrap justify-center>
                 <v-flex @click="onPickFile" v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;" xs12 class="text-xs-center grey lighten-3">
                  
-                    <span><v-icon>image_search</v-icon> 이미지 삽입하기 </span>
-                    <v-menu
-                      open-on-hover
-                      offset-x
-                    >
-                      <v-btn slot="activator" icon class="mb-2 mx-0" color="grey--text"><v-icon style="font-size:20px;">help_outline</v-icon></v-btn>
+                  <span><v-icon>image_search</v-icon> 이미지 삽입하기 </span>
+                  <v-menu
+                    open-on-hover
+                    offset-x
+                  >
+                    <v-btn slot="activator" icon class="mb-2 mx-0" color="grey--text"><v-icon style="font-size:20px;">help_outline</v-icon></v-btn>
 
-                      <v-card>
-                        <v-list>
-                          <v-list-tile>
+                    <v-card>
+                      <v-list>
+                        <v-list-tile>
 
-                            <v-list-tile-content>
-                              <v-list-tile-title><span>예시 이미지</span></v-list-tile-title>
-                              <v-list-tile-sub-title>앱에서 문항 위쪽에 들어갈 이미지입니다.</v-list-tile-sub-title>
-                            </v-list-tile-content>
-                          </v-list-tile>
-                        </v-list>
+                          <v-list-tile-content>
+                            <v-list-tile-title><span>예시 이미지</span></v-list-tile-title>
+                            <v-list-tile-sub-title>앱에서 문항 위쪽에 들어갈 이미지입니다.</v-list-tile-sub-title>
+                          </v-list-tile-content>
+                        </v-list-tile>
+                      </v-list>
 
-                        <v-divider></v-divider>
+                      <v-divider></v-divider>
 
-                        <div class="example-image-container">
-                          <img class="example-image" :src="require('@/assets/typeExamples/BackgroundImage.png')" alt="">
-                        </div>
+                      <div class="example-image-container">
+                        <img class="example-image" :src="require('@/assets/typeExamples/BackgroundImage.png')" alt="">
+                      </div>
 
-                      </v-card>
-                    </v-menu>
-                
+                    </v-card>
+                  </v-menu>               
                  
                 </v-flex>
                 <v-flex v-else class="xs10 text-xs-center">
@@ -52,7 +51,7 @@
                   width="40%"
                   alt="">
                   <div>
-                    <v-btn small color="primary" @click="onPickFile">이미지 삽입<v-icon right dark>cloud_upload</v-icon></v-btn>
+                    <v-btn small color="primary" @click="onPickFile">이미지 변경<v-icon right dark>cloud_upload</v-icon></v-btn>
                   </div>
                 </v-flex>
                 <v-flex xs10 class="mt-3">
@@ -86,20 +85,30 @@
                   <v-text-field :disabled="!multiselectSwitch" v-model="multiselectMax" type="number"></v-text-field>
                 </v-flex>
                 
-                <v-flex xs6>
+                <v-flex xs6 v-if="type == 'quiz'">
                   <v-switch
                     label="퀴즈 타이머(초)"
                     v-model="quizTimerSwitch"
                   ></v-switch>
                 </v-flex>
-                <v-flex xs4>
+                <v-flex xs4 v-if="type == 'quiz'">
                   <v-text-field v-model="quizTime" :disabled="!quizTimerSwitch" type="number"></v-text-field>
+                </v-flex>
+
+                <v-flex xs6 v-if="type == 'survey'">
+                  <v-switch
+                    label="응답시간 제한(초)"
+                    v-model="surveyTimerSwitch"
+                  ></v-switch>
+                </v-flex>
+                <v-flex xs4 v-if="type == 'survey'">
+                  <v-text-field v-model="surveyTime" :disabled="!surveyTimerSwitch" type="number"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card>
         </v-tab-item>
-        <v-tab>
+        <v-tab v-if="type!='quick'">
           로직
         </v-tab>
         <v-tab-item>
@@ -176,7 +185,7 @@ import LogicCard from "@/components/question_types/LogicCard";
 
 export default {
   name: "MultipleText",
-  props: ["questionIndex", 'questions'],
+  props: ["questionIndex", 'questions', 'type'],
   components: {
     LogicCard
   },
@@ -252,25 +261,24 @@ export default {
       logicCardOrder: 0,
       logicCards: [],
       options: [],
-      logicOption: ["다음문항", "자격박탈", "설문 종료", "3.lorem..."],
+      logicOption: ["다음문항", "자격박탈", "설문 종료"],
       multiselectSwitch: false,
       multiselectMax: 0,
       quizTimerSwitch: false,
       quizTime: 0,
+      surveyTimerSwitch: false,
+      surveyTime: 0,
       qTitle: null,
       panel: [true],
       active: null,
       imageUrl: null,
       filename: null,
-      multimediaSwitch: false,
-      text:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      form: {
-        qTitle: this.qTitle,
-        options: this.options,
-        multiselectMax: this.multiselectMax,
-        imageUrl: this.imageUrl
-      }
+      // form: {
+      //   qTitle: this.qTitle,
+      //   options: this.options,
+      //   multiselectMax: this.multiselectMax,
+      //   imageUrl: this.imageUrl
+      // }
     };
   }
 };

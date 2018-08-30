@@ -13,14 +13,56 @@
           <v-card>
             <v-container>
               <v-layout wrap justify-center>
-                <v-flex xs10>
+                <v-flex @click="onPickFile" v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;" xs12 class="text-xs-center grey lighten-3">
+                 
+                  <span><v-icon>image_search</v-icon> 이미지 삽입하기 </span>
+                  <v-menu
+                    open-on-hover
+                    offset-x
+                  >
+                    <v-btn slot="activator" icon class="mb-2 mx-0" color="grey--text"><v-icon style="font-size:20px;">help_outline</v-icon></v-btn>
+
+                    <v-card>
+                      <v-list>
+                        <v-list-tile>
+
+                          <v-list-tile-content>
+                            <v-list-tile-title><span>예시 이미지</span></v-list-tile-title>
+                            <v-list-tile-sub-title>앱에서 문항 위쪽에 들어갈 이미지입니다.</v-list-tile-sub-title>
+                          </v-list-tile-content>
+                        </v-list-tile>
+                      </v-list>
+
+                      <v-divider></v-divider>
+
+                      <div class="example-image-container">
+                        <img class="example-image" :src="require('@/assets/typeExamples/BackgroundImage.png')" alt="">
+                      </div>
+
+                    </v-card>
+                  </v-menu>               
+                 
+                </v-flex>
+                <v-flex v-else class="xs10 text-xs-center">
+                  <img
+                  v-for="(img,index) in imageUrl"
+                  :key="index"
+                  :src="img"
+                  width="40%"
+                  alt="">
+                  <div>
+                    <v-btn small color="primary" @click="onPickFile">이미지 변경<v-icon right dark>cloud_upload</v-icon></v-btn>
+                  </div>
+                </v-flex>
+                <v-flex xs10 class="mt-3">
                   <v-text-field label="제목" v-model="qTitle"></v-text-field>
+                  <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex xs9 offset-xs1 v-for="(option,index) in options" :key="index">
                   <v-text-field @click:append="deleteOption(option)" append-icon="delete" :label="(index+1).toString()" v-model="options[index]"></v-text-field>
                 </v-flex>
-                <v-flex v-if="options.length<3" xs9 offset-xs1>
-                  <v-text-field label="선택지 (Tab 키로 추가)" v-model="anotherOption" @keydown.tab.prevent="addOption"></v-text-field>
+                <v-flex v-if="options.length<7" xs9 offset-xs1>
+                  <v-text-field label="선택지 (Enter 키로 추가)" v-model="anotherOption" @keydown.enter.prevent="addOption"></v-text-field>
                 </v-flex>
                 <v-flex xs10 offset-xs5 class="mt-3">
                     <v-radio-group hide-details style="margin:0">
@@ -29,6 +71,11 @@
                         <v-radio :label="options[1]" style="margin-bottom:0;" value="radio-2"></v-radio>
                         <div style="margin-left:12px; min-width: 1px; min-height: 60px; max-width: 1px;background-color:rgba(0,0,0,.12);"></div>
                         <v-radio :label="options[2]" style="margin-bottom:0;" value="radio-3"></v-radio>
+                        <template v-if="options.length>3" v-for="(item,i) in options.slice(3)">
+                          <div :key="item" style="margin-left:12px; min-width: 1px; min-height: 60px; max-width: 1px;background-color:rgba(0,0,0,.12);"></div>
+                          <v-radio :key='item' :label="item" style="margin-bottom:0;" value="radio-3"></v-radio>
+                        </template>
+
                     </v-radio-group>
                 </v-flex>
                 <v-flex xs11>
@@ -37,37 +84,7 @@
             </v-container>
           </v-card>
         </v-tab-item>
-        <v-tab>
-          옵션
-        </v-tab>
-        <v-tab-item>
-          <v-card>
-            <v-container>
-              <v-layout wrap justify-center align-center>
-                <v-flex xs6>
-                  <v-switch
-                    label="멀티미디어형"
-                    v-model="multimediaSwitch"
-                  ></v-switch>
-                </v-flex>
-                <v-flex xs4>
-                    <v-btn @click="onPickFile" :disabled="!multimediaSwitch" class="primary">
-                        Upload <v-icon right dark>cloud_upload</v-icon>
-                    </v-btn>
-                    <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
-                </v-flex>
-                <v-flex class="xs12">
-                    <img
-                    v-for="(img,index) in imageUrl"
-                    :key="index"
-                    :src="img"
-                    width="100%"
-                    alt="">
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card>
-        </v-tab-item>
+        
         <v-tab>
           로직
         </v-tab>
@@ -218,7 +235,7 @@ export default {
       qTitle: null,
       panel: [true],
       active: null,
-      imageUrl: []
+      imageUrl: null
     };
   }
 };

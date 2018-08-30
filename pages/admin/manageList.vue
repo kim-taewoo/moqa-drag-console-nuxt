@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pa-0">
     <v-layout wrap v-if="!isAddGroup">
       <v-flex xs6 class="d-flex" align-end>
         <h3>설문관리</h3>

@@ -44,6 +44,7 @@
             :select-all="isAddGroup"
             item-key="memberSeq"
             v-model="selected"
+            :rows-per-page-items="[10,15,20]"
           >
             <template slot="items" slot-scope="props">
               <tr @click.stop="rowSelected(props.item)">

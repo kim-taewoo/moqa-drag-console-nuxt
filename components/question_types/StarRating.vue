@@ -13,8 +13,35 @@
           <v-card>
             <v-container>
               <v-layout wrap justify-center>
-                <v-flex v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;align-items:center;justify-content:center" xs12 class="text-xs-center grey lighten-3 d-flex">
-                  <span @click="onPickFile"><v-icon>image_search</v-icon> <span> 배경 이미지 삽입하기</span></span>
+                <v-flex @click="onPickFile" v-if="!imageUrl" style="position: absolute; top:0; height: 40px; left:0; right: 0;" xs12 class="text-xs-center grey lighten-3">
+                 
+                  <span><v-icon>image_search</v-icon> 이미지 삽입하기 </span>
+                  <v-menu
+                    open-on-hover
+                    offset-x
+                  >
+                    <v-btn slot="activator" icon class="mb-2 mx-0" color="grey--text"><v-icon style="font-size:20px;">help_outline</v-icon></v-btn>
+
+                    <v-card>
+                      <v-list>
+                        <v-list-tile>
+
+                          <v-list-tile-content>
+                            <v-list-tile-title><span>예시 이미지</span></v-list-tile-title>
+                            <v-list-tile-sub-title>앱에서 문항 위쪽에 들어갈 이미지입니다.</v-list-tile-sub-title>
+                          </v-list-tile-content>
+                        </v-list-tile>
+                      </v-list>
+
+                      <v-divider></v-divider>
+
+                      <div class="example-image-container">
+                        <img class="example-image" :src="require('@/assets/typeExamples/BackgroundImage.png')" alt="">
+                      </div>
+
+                    </v-card>
+                  </v-menu>               
+                 
                 </v-flex>
                 <v-flex v-else class="xs10 text-xs-center">
                   <img
@@ -24,7 +51,7 @@
                   width="40%"
                   alt="">
                   <div>
-                    <v-btn small color="primary" @click="onPickFile">배경이미지<v-icon right dark>cloud_upload</v-icon></v-btn>
+                    <v-btn small color="primary" @click="onPickFile">이미지 변경<v-icon right dark>cloud_upload</v-icon></v-btn>
                   </div>
                 </v-flex>
                 <v-flex xs10 class="mt-3">
@@ -38,19 +65,8 @@
             </v-container>
           </v-card>
         </v-tab-item>
-        <v-tab>
-          옵션
-        </v-tab>
-        <v-tab-item>
-          <v-card>
-            <v-container>
-              <v-layout wrap justify-center align-center>                
-                
-              </v-layout>
-            </v-container>
-          </v-card>
-        </v-tab-item>
-        <v-tab>
+        
+        <v-tab v-if="type=='survey'">
           로직
         </v-tab>
         <v-tab-item>
@@ -143,7 +159,7 @@ export default {
     CompStarRating,
     LogicCardStar
   },
-  props: ["questionIndex"],
+  props: ["questionIndex", 'type'],
   data() {
     return {
       panel: [true],
