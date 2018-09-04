@@ -23,8 +23,8 @@
         :pagination.sync="paginationMessage"
         :total-items="totalMessages"
         :loading="loading"
+        :rows-per-page-items="[10,15,20]"
         class="elevation-0"
-        :search="search"
       >
       <template slot="items" slot-scope="props">
         <tr @click.stop="itemSelected($event,props.item)">

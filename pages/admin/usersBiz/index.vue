@@ -16,6 +16,7 @@
           :items="bizUsers"
           :pagination.sync="pagination"
           :total-items="totalBizUsers"
+          :rows-per-page-items="[10,15,20]"
           :loading="loading"
           class="elevation-0"
         >

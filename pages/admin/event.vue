@@ -134,6 +134,7 @@
           :pagination.sync="pagination"
           :total-items="totalEvents"
           :loading="loading"
+          :rows-per-page-items="[10,15,20]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">

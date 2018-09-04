@@ -38,7 +38,7 @@
           :total-items="totalSurveys"
           :loading="loading"
           class="elevation-0"
-          :rows-per-page-items="[10,15,20]"
+          :rows-per-page-items="[10,5]"
         >
           <template slot="items" slot-scope="props">
             <tr>
@@ -192,13 +192,14 @@ export default {
       search: "",
       loadedSurveys: [],
       totalSurveys: 0,
-      pagination: {},
+      pagination: {descending: true},
       loading: true
     };
   },
   watch: {
     pagination: {
       handler() {
+        console.log('watch')
         this.getDataFromApi().then(data => {
           this.loadedSurveys = data.items;
           this.totalSurveys = data.total;
@@ -211,6 +212,7 @@ export default {
     this.getDataFromApi().then(data => {
       this.loadedSurveys = data.items;
       this.totalSurveys = data.total;
+      console.log('mount')
     });
   },
   methods: {
@@ -238,7 +240,10 @@ export default {
       // 와 같은 인자를 넣어 POST 해주면 되는거 같다.
       this.loading = true;
       return new Promise((resolve, reject) => {
-        const { sortBy, descending, page, rowsPerPage } = this.pagination;
+        console.log('getDataFrom API', this.pagination)
+        let { sortBy, descending, page, rowsPerPage } = this.pagination;
+        // descending = true;
+        console.log('check',this.pagination)
         let dataResult = this.getSurveys();
         let items = dataResult.rows;
         const total = dataResult.total;
@@ -257,6 +262,17 @@ export default {
               if (sortA > sortB) return 1;
               return 0;
             }
+
+            // 이렇게 해야만 내림차순으로 처음에 정렬됨
+            // if (ascending) {
+            //   if (sortA < sortB) return -1;
+            //   if (sortA > sortB) return 1
+            //   return 0
+            // } else {
+            //   if (sortA < sortB) return 1
+            //   if (sortA > sortB) return -1
+            //   return 0
+            // }
           });
         }
 

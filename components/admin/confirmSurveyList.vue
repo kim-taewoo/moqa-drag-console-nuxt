@@ -28,6 +28,7 @@
           :items="filteredSurveys"
           :pagination.sync="pagination"
           :total-items="totalSurveys"
+          :rows-per-page-items="[10,15,20]"
           :loading="loading"
           class="elevation-0"
         >

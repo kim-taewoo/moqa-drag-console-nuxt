@@ -33,19 +33,13 @@
       <v-dialog lazy v-model="newDialog" max-width="900px" persistent>
         <v-card>
           <v-card-title>
-            <span class="headline">공지사항 글쓰기</span>
+            <span class="headline" v-text="radioBtn == 'app'? '앱 공지사항 글쓰기' : '웹 공지사항 글쓰기'"></span>
           </v-card-title>
           <v-divider></v-divider>
 
           <v-card-text>
             <v-container>
               <v-layout wrap>
-                <v-flex class="xs12">
-                  <v-radio-group v-model="newRadioBtn" row hide-details>
-                    <v-radio label="앱 공지사항" value="app"></v-radio>
-                    <v-radio label="웹 공지사항" value="web"></v-radio>
-                  </v-radio-group>
-                </v-flex>
                 <v-flex xs12>
                   <v-text-field v-model="editedItem.title" label="제목"></v-text-field>
                 </v-flex>
@@ -82,6 +76,7 @@
           :total-items="totalNotices"
           :loading="loading"
           class="elevation-0"
+          :rows-per-page-items="[10,15,20]"
         >
           <template slot="items" slot-scope="props">
             <tr @click="$router.push({name: 'notice-noticeId', params: props.item})" >
@@ -105,6 +100,7 @@
           :search="searchWeb"
           :total-items="totalNoticesWeb"
           :loading="loading"
+          :rows-per-page-items="[10,15,20]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">

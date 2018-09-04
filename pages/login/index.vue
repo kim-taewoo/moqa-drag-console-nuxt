@@ -5,13 +5,13 @@
     <img src="@/assets/moqaLogos/1.png" class="avatar">
       <h1>모두의 Q&A</h1>
       <h1>MOQA</h1>
-      <form @submit.prevent="$router.push('/')">
+      <form @submit.prevent="onSubmit">
         <p>ID</p>
-        <input type="text" name="username" placeholder="Enter ID">
+        <input type="text" name="username" v-model="userId" placeholder="Enter ID">
         <p>Password</p>
-        <input type="password" name="password" placeholder="Enter Password">
+        <input type="password" v-model="userPassword" name="password" placeholder="Enter Password">
         <input type="submit" name="submit" value="로그인" >
-        <a href="#">Forgot Password</a>    
+        <v-btn class="ma-0 pa-0" @click="isAdmin = !isAdmin" flat>{{isAdmin? '기업 회원 로그인으로 바꾸기' : '관리자 페이지 로그인으로 바꾸기'}}</v-btn>    
       </form>
   </div>  
 </div>
@@ -20,7 +20,43 @@
 <script>
 export default {
   name: "Login",
-  layout: "login"
+  layout: "login",
+  data () {
+    return {
+      isAdmin: false,
+      userId: '',
+      userPassword: '',
+    }
+  },
+  methods: {
+    onSubmit () {
+      if ( this.isAdmin == false) {
+        // 기업 고객 로그인일 경우 실행될 함수. 
+        return this.$axios.$post('https://~~', {
+          userId: this.userId,
+          password: this.userPassword
+        }).then(data => {
+          console.log(data)
+          // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수
+          this.$store.commit('setToken', result.idToken)
+        }).catch(err => {
+          console.log(err)
+        })
+      } else {
+        // 관리자 로그인일 경우 실행될 함수
+        return this.$axios.$post('https://~~', {
+          userId: this.userId,
+          password: this.userPassword
+        }).then(data => {
+          console.log(data)
+          // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수
+          this.$store.commit('setToken', result.idToken)
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+    }
+  }
 };
 </script>
 

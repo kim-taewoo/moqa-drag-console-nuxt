@@ -48,7 +48,14 @@ module.exports = {
   /*
   ** Nuxt.js modules
   */
-  modules: [],
+  modules: [
+    '@nuxtjs/axios'
+  ],
+  axios: {
+    // http 리퀘스트 넣을 때의 기본 URL 을 설정할 수 있다.
+    // baseURL: process.env.BASE_URL || 'https://'
+    credentials: false
+  },
 
   /*
   ** Build configuration
