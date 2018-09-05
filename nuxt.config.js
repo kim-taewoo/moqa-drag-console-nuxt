@@ -4,6 +4,9 @@ const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   mode: "spa",
+  env: {
+    baseUrl: process.env.BASE_URL || 'http://locahost:3000'
+  },
 
   /*
   ** Headers of the page

@@ -57,20 +57,20 @@
       <v-flex xs12>
         <v-data-table
           :headers="headers"
-          :items="notices"
+          :items="items"
           :search="search"
+          :pagination.sync="pagination"
+          :loading="loading"
+          :rows-per-page-items="[10,25,50,100]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
             <tr @click="$router.push({name: 'notice-id', params: props.item})" >
-              <td class="text-xs-center">{{ props.item.writerId }}</td>
+              <td class="text-xs-center">{{ props.item.userId }}</td>
               <td class="text-xs-center">{{ props.item.name }}</td>
               <td class="text-xs-center">{{ props.item.title }}</td>
-              <td class="text-xs-center">{{ props.item.created_date }}</td>
+              <td class="text-xs-center">{{ props.item.createDt }}</td>
             </tr>
-          </template>
-          <template slot="no-data">
-            <v-btn color="primary" @click="initialize">Reset</v-btn>
           </template>
         </v-data-table>
       </v-flex>
@@ -100,18 +100,16 @@ export default {
     dialog: false,
     search: "",
     headers: [
-      {
-        text: "사용자ID",
-        align: "center",
-        value: "writerId"
-      },
-      { text: "이름", align: "center", value: "name" },
+      { text: "사용자ID", align: "center", value: "writerId",sortable: false },
+      { text: "이름", align: "center", value: "name" ,sortable: false},
       { text: "제목", align: "center", value: "title", sortable: false },
-      { text: "등록일", align: "center", value: "created_date" }
+      { text: "등록일", align: "center", value: "created_date" ,sortable: false}
       // { text: "Actions", align: "center", value: "name", sortable: false }
     ],
-    notices: [],
+    items: [],
     editedIndex: -1,
+    pagination: {descending: true},
+    loading: true,
     editedItem: {
       title: "",
       content: ""
@@ -121,13 +119,25 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
+    },
+    pagination: {
+      handler () {
+        this.getDataFromApi().then(data => {
+          this.items = data.rows;
+          this.pagination.totalItems = data.total
+          this.loading = false
+        }).catch(err => console.log(err))
+      },
+      deep: true
     }
   },
-
-  created() {
-    this.$nextTick(() => {
-      this.initialize();
-    });
+  mounted () {
+    this.getDataFromApi().then(data => {
+      this.items = data.rows;
+      this.pagination.totalItems = data.total
+      this.loading = false
+      console.log(this.pagination)
+    })
   },
   computed: {
     editor() {
@@ -136,58 +146,25 @@ export default {
   },
 
   methods: {
+    getDataFromApi() {
+      let that = this
+      this.loading = true;
+      
+      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/noticeList.do', {
+        withCredentials: true,
+        crossdomain : true,
+        data: {
+          limit: 10,
+          offset: 0
+        }
+      })
+    },
     onEditorChange({ quill, html, text }) {
       console.log("editor change!", quill, html, text);
       this.content = html;
     },
     check(item) {
       console.log(item);
-    },
-    initialize() {
-      this.notices = [
-        {
-          id: 1,
-          writerId: "admin",
-          name: "관리자",
-          title: "[7/27] 올바른 MOQA 이용을 위한 안내 [필독!]",
-          created_date: "2018-07-27 13:30:28"
-        },
-        {
-          id: 2,
-          writerId: "admin",
-          name: "김태우",
-          title: "[7/21] 금주의 베스트 질문상 [필독!]",
-          created_date: "2018-07-21 13:30:28"
-        },
-        {
-          id: 3,
-          writerId: "admin",
-          name: "이하영",
-          title: "[6/19] 모카 아이오에스 오픈",
-          created_date: "2018-06-19 13:35:28"
-        },
-        {
-          id: 4,
-          writerId: "admin",
-          name: "안주은",
-          title: "[6/19] 모두와 함께 만드는 모카",
-          created_date: "2018-06-19 13:30:28"
-        },
-        {
-          id: 5,
-          writerId: "admin",
-          name: "관리자",
-          title: "[5/22] 테스트중입니다",
-          created_date: "2018-05-22 13:30:28"
-        },
-        {
-          id: 6,
-          writerId: "admin",
-          name: "관리자",
-          title: "[3/33] 모카 안드로이드 서비스",
-          created_date: "2018-03-33 13:30:28"
-        }
-      ];
     },
 
     editItem(item) {

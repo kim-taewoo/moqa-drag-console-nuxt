@@ -10,7 +10,7 @@
         <input type="text" name="username" v-model="userId" placeholder="Enter ID">
         <p>Password</p>
         <input type="password" v-model="userPassword" name="password" placeholder="Enter Password">
-        <input type="submit" name="submit" value="로그인" >
+        <input type="submit" name="submit" :value="isAdmin?'관리자 로그인':'기업회원 로그인'" >
         <v-btn class="ma-0 pa-0" @click="isAdmin = !isAdmin" flat>{{isAdmin? '기업 회원 로그인으로 바꾸기' : '관리자 페이지 로그인으로 바꾸기'}}</v-btn>    
       </form>
   </div>  
@@ -30,31 +30,18 @@ export default {
   },
   methods: {
     onSubmit () {
-      if ( this.isAdmin == false) {
-        // 기업 고객 로그인일 경우 실행될 함수. 
-        return this.$axios.$post('https://~~', {
-          userId: this.userId,
-          password: this.userPassword
-        }).then(data => {
-          console.log(data)
-          // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수
-          this.$store.commit('setToken', result.idToken)
-        }).catch(err => {
-          console.log(err)
-        })
-      } else {
-        // 관리자 로그인일 경우 실행될 함수
-        return this.$axios.$post('https://~~', {
-          userId: this.userId,
-          password: this.userPassword
-        }).then(data => {
-          console.log(data)
-          // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수
-          this.$store.commit('setToken', result.idToken)
-        }).catch(err => {
-          console.log(err)
-        })
-      }
+      this.$store.dispatch('authenticateUser', {
+        isAdmin: this.isAdmin,
+        userId: this.userId,
+        userPassword: this.userPassword
+      })
+      .then(() => {
+        if (this.isAdmin == false) {
+          this.$router.push('/')
+        } else {
+          this.$router.push('/admin')
+        }
+      })
     }
   }
 };

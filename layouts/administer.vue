@@ -48,6 +48,7 @@
 
 <script>
 export default {
+  // middleware: ['check-auth','auth'],
   data() {
     return {
       clipped: true,
@@ -71,6 +72,7 @@ export default {
   methods: {
     logout () {
       // 로그아웃 로직이 들어갈 장소
+      this.$store.dispatch('logout')
       this.$router.push('/login')
     }
   }

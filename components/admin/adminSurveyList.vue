@@ -102,9 +102,6 @@ export default {
   components: {
     SurveyDetail
   },
-  mounted () {
-    console.log(this.isAddGroup)
-  },
   computed: {
     filteredSurveys() {
       if (this.searchStatus == "모든 설문" && this.searchTitle == "") {
@@ -240,10 +237,10 @@ export default {
       // 와 같은 인자를 넣어 POST 해주면 되는거 같다.
       this.loading = true;
       return new Promise((resolve, reject) => {
-        console.log('getDataFrom API', this.pagination)
+        // console.log('getDataFrom API', this.pagination)
         let { sortBy, descending, page, rowsPerPage } = this.pagination;
         // descending = true;
-        console.log('check',this.pagination)
+        // console.log('check',this.pagination)
         let dataResult = this.getSurveys(page,rowsPerPage);
         let items = dataResult.rows;
         const total = dataResult.total;
@@ -262,24 +259,11 @@ export default {
         //       if (sortA > sortB) return 1;
         //       return 0;
         //     }
-
-            // 이렇게 해야만 내림차순으로 처음에 정렬됨
-            // if (ascending) {
-            //   if (sortA < sortB) return -1;
-            //   if (sortA > sortB) return 1
-            //   return 0
-            // } else {
-            //   if (sortA < sortB) return 1
-            //   if (sortA > sortB) return -1
-            //   return 0
-            // }
-        //   });
         // }
 
         // if (rowsPerPage > 0) {
         //   items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
         // }
-        var forPagination = Array(page)
         setTimeout(() => {
           this.loading = false;
           resolve({
