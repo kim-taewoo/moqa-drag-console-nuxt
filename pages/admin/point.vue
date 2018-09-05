@@ -21,7 +21,7 @@
           :headers="headers"
           :items="points"
           :pagination.sync="pagination"
-          :total-items="totalpoints"
+          :total-items="totalPoints"
           :loading="loading"
           :rows-per-page-items="[10,15,20]"
           class="elevation-0"
@@ -32,7 +32,7 @@
             <td class="text-xs-center">{{ props.item.useDt }}</td>
             <td class="text-xs-center">{{ props.item.useReason }}</td>
             <td class="text-xs-center">{{ props.item.usePoint }}</td>
-            <td class="text-xs-center">{{ props.item.status }}</td>
+            <td class="text-xs-center" v-text="props.item.revokeYn == 'N'? '정상구매': '환불'"></td>
           </template>
         </v-data-table>
       </v-flex>
@@ -43,7 +43,7 @@
           :headers="headersSave"
           :items="pointsSave"
           :pagination.sync="paginationSave"
-          :total-items="totalpointsSave"
+          :total-items="totalPointsSave"
           :loading="loading"
           :rows-per-page-items="[10,15,20]"
           class="elevation-0"
@@ -62,26 +62,27 @@
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   data() {
     return {
       radioBtn: "use",
-      totalpoints: 0,
-      totalpointsSave: 0,
+      totalPoints: 0,
+      totalPointsSave: 0,
       headers: [
-        { text: "사용자ID", align: "center", value: "memberId" },
-        { text: "이름", align: "center", value: "name" },
-        { text: "사용일시", align: "center", value: "useDt" },
-        { text: "사용아이템", align: "center", value: "useReason" },
-        { text: "사용포인트", align: "center", value: "usePoint" },
-        { text: "처리상태", align: "center", value: "status" }
+        { text: "사용자ID", align: "center", value: "memberId", sortable: false },
+        { text: "이름", align: "center", value: "name", sortable: false },
+        { text: "사용일시", align: "center", value: "useDt", sortable: false },
+        { text: "사용아이템", align: "center", value: "useReason", sortable: false },
+        { text: "사용포인트", align: "center", value: "usePoint", sortable: false },
+        { text: "처리상태", align: "center", value: "status", sortable: false }
       ],
       headersSave: [
-        { text: "사용자ID", align: "center", value: "memberId" },
-        { text: "이름", align: "center", value: "name" },
-        { text: "적립일시", align: "center", value: "saveDt" },
-        { text: "적립사유", align: "center", value: "saveReason" },
-        { text: "적립포인트", align: "center", value: "savePoint" }
+        { text: "사용자ID", align: "center", value: "memberId", sortable: false },
+        { text: "이름", align: "center", value: "name", sortable: false },
+        { text: "적립일시", align: "center", value: "saveDt", sortable: false },
+        { text: "적립사유", align: "center", value: "saveReason", sortable: false },
+        { text: "적립포인트", align: "center", value: "savePoint", sortable: false }
       ],
       points: [],
       pointsSave: [],
@@ -94,17 +95,21 @@ export default {
     pagination: {
       handler() {
         this.getDataFromApi("use").then(data => {
-          this.points = data.items;
-          this.totalpoints = data.total;
-        });
+          console.log(data)
+          this.points = data.rows;
+          this.totalPoints = data.total
+          this.loading = false
+          console.log(this.pagination)
+        }).catch(err => console.log(err));
       },
       deep: true
     },
     paginationSave: {
       handler() {
         this.getDataFromApi("save").then(data => {
-          this.pointsSave = data.items;
-          this.totalpointsSave = data.total;
+          this.pointsSave = data.rows;
+          this.totalPointsSave = data.total;
+          this.loading =false
         });
       },
       deep: true
@@ -112,12 +117,14 @@ export default {
   },
   mounted() {
     this.getDataFromApi("use").then(data => {
-      this.points = data.items;
-      this.totalpoints = data.total;
+      this.points = data.rows;
+      this.totalPoints = data.total;
+      this.loading = false
     });
     this.getDataFromApi("save").then(data => {
-      this.pointsSave = data.items;
-      this.totalpointsSave = data.total;
+      this.pointsSave = data.rows;
+      this.totalPointsSave = data.total;
+      this.loading = false
     });
   },
   methods: {
@@ -130,75 +137,24 @@ export default {
     getDataFromApi(arg) {
       this.loading = true;
       if (arg == "use") {
-        return new Promise((resolve, reject) => {
-          const { sortBy, descending, page, rowsPerPage } = this.pagination;
-
-          let items = this.getpoints();
-          const total = items.length;
-
-          if (this.pagination.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy];
-              const sortB = b[sortBy];
-
-              if (descending) {
-                if (sortA < sortB) return 1;
-                if (sortA > sortB) return -1;
-                return 0;
-              } else {
-                if (sortA < sortB) return -1;
-                if (sortA > sortB) return 1;
-                return 0;
-              }
-            });
-          }
-
-          if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-          }
-          setTimeout(() => {
-            this.loading = false;
-            resolve({
-              items,
-              total
-            });
-          }, 1000);
-        });
+        
+        return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/pointUseList.do?' + qs.stringify({
+            pageSize:10,
+            offset:0,
+            pageNum:this.pagination.page,
+          }), {
+          withCredentials: true,
+          crossdomain : true,
+        })
       } else {
-        return new Promise((resolve, reject) => {
-          const { sortBy, descending, page, rowsPerPage } = this.paginationSave;
-
-          let items = this.getpointsSave();
-          const total = items.length;
-
-          if (this.paginationSave.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy];
-              const sortB = b[sortBy];
-
-              if (descending) {
-                if (sortA < sortB) return 1;
-                if (sortA > sortB) return -1;
-                return 0;
-              } else {
-                if (sortA < sortB) return -1;
-                if (sortA > sortB) return 1;
-                return 0;
-              }
-            });
-          }
-
-          if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-          }
-          setTimeout(() => {
-            this.loading = false;
-            resolve({
-              items,
-              total
-            });
-          }, 1000);
-        });
+        return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/pointSaveList.do?' + qs.stringify({
+            pageSize:10,
+            offset:0,
+            pageNum:this.paginationSave.page,
+          }), {
+          withCredentials: true,
+          crossdomain : true,
+        })
       }
     },
     getpoints() {

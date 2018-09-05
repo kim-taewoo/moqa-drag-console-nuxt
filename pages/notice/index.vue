@@ -126,6 +126,7 @@ export default {
           this.items = data.rows;
           this.pagination.totalItems = data.total
           this.loading = false
+          console.log(data)
         }).catch(err => console.log(err))
       },
       deep: true
@@ -147,13 +148,14 @@ export default {
 
   methods: {
     getDataFromApi() {
-      let that = this
       this.loading = true;
       
       return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/noticeList.do', {
         withCredentials: true,
         crossdomain : true,
         data: {
+          pageNum: 1,
+          pageSize: 10,
           limit: 10,
           offset: 0
         }

@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   props: {
     isAddGroup: {
@@ -134,9 +135,9 @@ export default {
     pagination: {
       handler() {
         this.getDataFromApi().then(data => {
-          this.users = data.items;
+          this.users = data.rows;
           this.totalUsers = data.total;
-          this.filteredUsers = data.items
+          this.filteredUsers = data.rows
         });
       },
       deep: true
@@ -170,9 +171,9 @@ export default {
   },
   mounted() {
     this.getDataFromApi().then(data => {
-      this.users = data.items;
+      this.users = data.rows;
       this.totalUsers = data.total;
-      this.filteredUsers = data.items
+      this.filteredUsers = data.rows
     });
   },
   methods: {
@@ -207,40 +208,52 @@ export default {
 
     getDataFromApi() {
       this.loading = true;
-      return new Promise((resolve, reject) => {
-        const { sortBy, descending, page, rowsPerPage } = this.pagination;
-        let dataResult = this.getUsers();
-        let items = dataResult.rows;
-        const total = dataResult.total;
-
-        if (this.pagination.sortBy) {
-          items = items.sort((a, b) => {
-            const sortA = a[sortBy];
-            const sortB = b[sortBy];
-
-            if (descending) {
-              if (sortA < sortB) return 1;
-              if (sortA > sortB) return -1;
-              return 0;
-            } else {
-              if (sortA < sortB) return -1;
-              if (sortA > sortB) return 1;
-              return 0;
-            }
-          });
+      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxMemberList.do?' + qs.stringify({
+          limit: 10,
+          offset: 0,
+          pageNum: 1,
+          pageSize: 10,
+        }), {
+        withCredentials: true,
+        crossdomain : true,
+        headers: {
+          Cookie: 'JSESSIONID=0C77D2C5BF51757474910F21384AF61E',
         }
+      })
+      // return new Promise((resolve, reject) => {
+      //   const { sortBy, descending, page, rowsPerPage } = this.pagination;
+      //   let dataResult = this.getUsers();
+      //   let items = dataResult.rows;
+      //   const total = dataResult.total;
 
-        if (rowsPerPage > 0) {
-          items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-        }
-        setTimeout(() => {
-          this.loading = false;
-          resolve({
-            items,
-            total
-          });
-        }, 1000);
-      });
+      //   if (this.pagination.sortBy) {
+      //     items = items.sort((a, b) => {
+      //       const sortA = a[sortBy];
+      //       const sortB = b[sortBy];
+
+      //       if (descending) {
+      //         if (sortA < sortB) return 1;
+      //         if (sortA > sortB) return -1;
+      //         return 0;
+      //       } else {
+      //         if (sortA < sortB) return -1;
+      //         if (sortA > sortB) return 1;
+      //         return 0;
+      //       }
+      //     });
+      //   }
+
+      //   if (rowsPerPage > 0) {
+      //     items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+      //   }
+      //   setTimeout(() => {
+      //     this.loading = false;
+      //     resolve({
+      //       items,
+      //       total
+      //     });
+      //   }, 1000);
+      // });
     },
     getUsers() {
       return {
