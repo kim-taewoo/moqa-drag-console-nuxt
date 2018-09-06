@@ -55,14 +55,14 @@
                   </div>
                 </v-flex>
                 <v-flex xs10 class="mt-3">
-                  <v-text-field label="제목" v-model="qTitle"></v-text-field>
+                  <v-text-field label="제목" v-model="qTitle" @blur="$emit('titleInput', qTitle)"></v-text-field>
                   <input type="file" style="display:none;" ref="fileInput" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex xs9 offset-xs1 v-for="(option,index) in options" :key="index">
                   <v-text-field @click:append="deleteOption(option)" append-icon="delete" :label="(index+1).toString()" v-model="options[index]"></v-text-field>
                 </v-flex>
                 <v-flex xs9 offset-xs1>
-                  <v-text-field label="선택지 (Enter 키로 추가)" v-model="anotherOption" @keydown.enter.prevent="addOption"></v-text-field>
+                  <v-text-field label="선택지 (Enter 키로 추가)" @blur="$emit('answersInput', options)" v-model="anotherOption" @keydown.enter.prevent="addOption"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -79,6 +79,7 @@
                   <v-switch
                     label="중복 선택 가능"
                     v-model="multiselectSwitch"
+                    @change="$emit('multipleYn', multiselectSwitch)"
                   ></v-switch>
                 </v-flex>
                 <v-flex xs4>

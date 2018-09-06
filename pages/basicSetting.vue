@@ -26,11 +26,12 @@
 
               <div class="stepper-header-footer justify-end">
                 <v-btn v-show="e1 !=2" class="primary" @click="e1++">다음 <v-icon>arrow_forward</v-icon></v-btn>
-                <v-btn v-show="e1 == 2" class="primary" @click.stop="lastStepDialog=true">배포<v-icon>arrow_forward</v-icon></v-btn>
+                <!-- <v-btn v-show="e1 == 2" class="primary" @click.stop="lastStepDialog=true">배포<v-icon>arrow_forward</v-icon></v-btn> -->
               </div>
 
             </v-stepper-header>
-              <nuxt-child :type="paramsType.type" />   
+
+              <nuxt-child :type="paramsType.type" @targetSetting="targetSetting" @questionsSetting="questionsSetting" />   
 
           </v-stepper>
 
@@ -133,11 +134,28 @@
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   methods: {
     finish() {
+      console.log({...this.questions, ...this.target})
+      // 리퀘스트를 어떻게 넣어야 할지...
+      this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/writeQuickpoll.do?' + qs.stringify({
+          ...this.questions,
+          ...this.target
+        }), {
+        withCredentials: true,
+        crossdomain : true,
+      })
       this.lastStepDialog = false;
       this.finishDialog = true;
+    },
+    targetSetting (e) {
+      this.target = e
+    },
+    questionsSetting (e) {
+      this.questions = e
+      this.lastStepDialog = true
     }
   },
   mounted () {
@@ -161,6 +179,8 @@ export default {
   },
   data() {
     return {
+      target: null,
+      questions: null, 
       paramsType: {...this.$route.params},
       e1: 1,
       title: "",

@@ -147,6 +147,7 @@
 </template>
 
 <script>
+import qs from 'qs'
 const SurveyDetail = () => import("@/components/SurveyDetail");
 // import SurveyDetail from "@/components/SurveyDetail";
 

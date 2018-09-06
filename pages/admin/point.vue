@@ -45,7 +45,7 @@
           :pagination.sync="paginationSave"
           :total-items="totalPointsSave"
           :loading="loading"
-          :rows-per-page-items="[10,15,20]"
+          :rows-per-page-items="[10,25,50,100]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">

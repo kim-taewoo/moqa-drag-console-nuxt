@@ -28,6 +28,16 @@
       >
       <template slot="items" slot-scope="props">
         <tr @click.stop="itemSelected($event,props.item)">
+          <td class="text-xs-center">{{ props.item.seq }}</td>
+          <td class="text-xs-center">{{ props.item.memberSeq }}</td>
+          <td class="text-xs-center">{{ props.item.title }}</td>
+          <td class="text-xs-center">{{ props.item.context }}</td>
+          <td class="text-xs-center">{{ props.item.sendDt }}</td>
+          <td class="text-xs-center">{{ props.item.createDt }}</td>
+        </tr>
+      </template>
+      <!-- <template slot="items" slot-scope="props">
+        <tr @click.stop="itemSelected($event,props.item)">
           <td class="text-xs-center">{{ props.item.messageNum }}</td>
           <td class="text-xs-center">{{ props.item.memberSeq }}</td>
           <td class="text-xs-center">{{ props.item.email }}</td>
@@ -36,12 +46,13 @@
           <td class="text-xs-center">{{ props.item.messageContent }}</td>
           <td class="text-xs-center">{{ props.item.check }}</td>
         </tr>
-      </template>
+      </template> -->
     </v-data-table>
   </v-flex>
 </template>
 
 <script>
+import qs from 'qs'
 import MessageDetail from '@/components/MessageDetail'
 export default {
   components: {
@@ -53,13 +64,12 @@ export default {
       messageDetailDialog: false,
       search: "",
       headersMessage: [
-        { text: "메시지 번호", align: "center", value: "messageNum" },
+        { text: "메시지 번호", align: "center", value: "seq" },
         { text: "회원번호", align: "center", value: "memberSeq" },
-        { text: "이메일", align: "center", value: "email" },
-        { text: "이름", align: "center", value: "name" },
-        { text: "성별", align: "center", value: "gender" },
-        { text: "메시지 내용", align: "center", value: "messageContent" },
-        { text: "수신확인", align: "center", value: "check" }
+        { text: "제목", align: "center", value: "title" },
+        { text: "내용", align: "center", value: "context" },
+        { text: "발송일", align: "center", value: "sendDt" },
+        { text: "생성일", align: "center", value: "createDt" },
       ],
       messages: [],
       totalMessages: 0,
@@ -71,23 +81,19 @@ export default {
     paginationMessage: {
       handler() {
         this.getDataFromApi().then(data => {
-          this.messages = data.items;
+          this.messages = data.rows;
           this.totalMessages = data.total;
+          this.loading = false
         });
       },
       deep: true
     },
-    // 1:1 메세지 기능에서 검색을 했을 경우 아래 search 와 관련이 있음.
-    // 위 pagination 처럼 ajax 콜을 보낸 후에 this.pushes 에 받은 데이터를 넣어야함.
-    // this.totalPushes 에는 해당 검색 결과의 항목 개수가 들어가게 됨.
-    search: {
-      //로직
-    }
   },
   mounted() {
     this.getDataFromApi().then(data => {
-      this.messages = data.items;
+      this.messages = data.rows;
       this.totalMessages = data.total;
+      this.loading = false
     });
   },
   methods: {
@@ -98,130 +104,11 @@ export default {
     },
     getDataFromApi() {
       this.loading = true;
-      return new Promise((resolve, reject) => {
-        const { sortBy, descending, page, rowsPerPage } = this.paginationMessage;
-
-        let dataResult = this.getMessages();
-        let items = dataResult.rows;
-        const total = dataResult.total;
-
-        if (this.paginationMessage.sortBy) {
-          items = items.sort((a, b) => {
-            const sortA = a[sortBy];
-            const sortB = b[sortBy];
-
-            if (descending) {
-              if (sortA < sortB) return 1;
-              if (sortA > sortB) return -1;
-              return 0;
-            } else {
-              if (sortA < sortB) return -1;
-              if (sortA > sortB) return 1;
-              return 0;
-            }
-          });
-        }
-
-        if (rowsPerPage > 0) {
-          items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-        }
-        setTimeout(() => {
-          this.loading = false;
-          resolve({
-            items,
-            total
-          });
-        }, 1000);
-      });
+      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxSelectMemberNote.do', {
+        withCredentials: true,
+        crossdomain : true,
+      })
     },
-    getMessages() {
-      return {
-        total: 25,
-        rows: [
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          },
-          {
-            messageNum: "100",
-            memberSeq: "2084",
-            email: "example@gmail.com",
-            name: "민수",
-            gender: "M",
-            messageContent: "안녕하세요 민수님",
-            check: "수신"
-          }
-        ]
-      };
-    }
   }
 };
 </script>

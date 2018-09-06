@@ -15,9 +15,9 @@
               <v-btn @click.stop="resetPassword">비밀번호 초기화</v-btn>
             </td>
             <td style="padding-top: 8px; padding-bottom: 8px;" v-else-if="props.item.name =='포인트 수동적립'">
-              <v-text-field append-icon="attach_money" class="d-inline-block mr-2" type="number" height="48px" hide-details single-line solo :value="props.item.value" ></v-text-field>
-              <v-text-field label="포인트 적립사유" class="d-inline-block" height="48px" hide-details single-line solo :value="props.item.value" ></v-text-field>
-              <v-btn>적립</v-btn>
+              <v-text-field v-model="pointSize" append-icon="attach_money" class="d-inline-block mr-2" type="number" height="48px" hide-details single-line solo ></v-text-field>
+              <v-text-field v-model="saveReason" label="포인트 적립사유" class="d-inline-block" height="48px" hide-details single-line solo ></v-text-field>
+              <v-btn @click="givePoint">적립</v-btn>
             </td>
             <td  v-else-if="props.item.name =='이용제한'">
               <v-radio-group class="d-inline-block" v-model="punishRadioBtn" row hide-details>
@@ -35,10 +35,15 @@
       </v-data-table>
       <v-divider></v-divider>
     </v-flex>
+    <v-flex xs12 class="text-xs-center mt-3">
+      <v-btn v-if="profile.useYn == 'Y'" @click="memberOut">탈퇴</v-btn>
+      <v-btn v-if="profile.useYn == 'N'" @click="memberIn">아이디 재사용</v-btn>
+    </v-flex>
   </v-layout>
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   props: ["profile"],
   methods: {
@@ -47,11 +52,41 @@ export default {
     },
     resetPassword () {
       console.log("회원아이디 "+this.profile.memberId+ ' 의 비밀번호를 초기화합니다.')
+    },
+    memberOut() {
+      this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxMemberPointList.do?' + qs.stringify({
+          memberSeq: this.profile.memberSeq
+        }), {
+        withCredentials: true,
+        crossdomain : true,
+      })
+    },
+    memberIn() {
+      this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/updateUserStateResotre.do?' + qs.stringify({
+          memberSeq: this.profile.memberSeq
+        }), {
+        withCredentials: true,
+        crossdomain : true,
+      })
+    },
+    givePoint() {
+      this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxGivePoint.do?' + qs.stringify({
+          memberSeq: this.profile.memberSeq,
+          saveReason: this.saveReason,
+          point: this.pointSize
+        }), {
+        withCredentials: true,
+        crossdomain : true,
+      }).catch(err => console.log(err))
+      this.pointSize = 0
+      this.saveReason = ''
     }
   },
   data() {
     return {
       punishRadioBtn: "three",
+      saveReason: '',
+      pointSize: 0,
       profileInfo: [
         {
           name: "가입일",

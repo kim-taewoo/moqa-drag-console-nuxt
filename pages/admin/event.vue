@@ -54,13 +54,13 @@
                         <v-text-field
                           slot="activator"
                           readonly
-                          v-model="startDate"
+                          v-model="startDt"
                           label="시작하는 날"
                           prepend-icon="event"
                           hide-details
                         ></v-text-field>
                         <v-date-picker 
-                          v-model="startDate" 
+                          v-model="startDt" 
                           no-title 
                           locale="ko-kr" 
                           @input="menu1 = false"
@@ -76,7 +76,7 @@
                         v-model="menu2"
                         :nudge-right="40"
                         lazy
-                        :disabled="!startDate"
+                        :disabled="!startDt"
                         transition="scale-transition"
                         offset-y
                         full-width
@@ -85,19 +85,19 @@
                       >
                         <v-text-field
                           slot="activator"
-                          v-model="endDate"
+                          v-model="endDt"
                           label="끝나는 날"
-                          :disabled="!startDate"
+                          :disabled="!startDt"
                           readonly
                           prepend-icon="event"
                           hide-details
                         ></v-text-field>
                         <v-date-picker 
-                          v-model="endDate" 
+                          v-model="endDt" 
                           no-title 
                           locale="ko-kr" 
                           @input="menu2 = false"
-                          :min="startDate">
+                          :min="startDt">
                           </v-date-picker>
                       </v-menu>
                     </v-flex>
@@ -134,7 +134,7 @@
           :pagination.sync="pagination"
           :total-items="totalEvents"
           :loading="loading"
-          :rows-per-page-items="[10,15,20]"
+          :rows-per-page-items="[10,25,50,100]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
@@ -153,6 +153,7 @@
 </template>
 
 <script>
+import qs from 'qs'
 import EventDetail from '@/components/EventDetail'
 export default {
   components: {
@@ -167,10 +168,11 @@ export default {
       menu1: false,
       menu2: false,
       imageUrl: [],
+      image: [],
       loadingImage: false,
       filename: "",
-      startDate: null,
-      endDate: null,
+      startDt: null,
+      endDt: null,
       editedItem: {
         title: "",
         content: ""
@@ -208,18 +210,20 @@ export default {
     pagination: {
       handler() {
         this.getDataFromApi().then(data => {
-          this.events = data.items;
-          this.totalEvents = data.total;
-        });
+          this.events = data.rows;
+          this.totalEvents = data.total
+          this.loading = false
+        }).catch(err => console.log(err))
       },
       deep: true
     }
   },
   mounted() {
     this.getDataFromApi().then(data => {
-      this.events = data.items;
-      this.totalEvents = data.total;
-    });
+      this.events = data.rows;
+      this.totalEvents = data.total
+      this.loading = false
+    }).catch(err => console.log(err))
   },
   methods: {
     // 이벤트 세부사항 대화창 클릭시 실행
@@ -233,6 +237,25 @@ export default {
       this.newDialog = false;
       this.editedItem.title = "";
       this.editedItem.content = "";
+      this.startDt = null
+      this.endDt = null
+    },
+    save() {
+      // 공지사항 저장 클릭시 실행 함수 POST request 가 들어가야 한다. 
+      this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxCreateEvent.do?' + qs.stringify({
+        title: this.editedItem.title,
+        contents: this.editedItem.content,
+        userId: '',
+        startDt: this.startDt,
+        endDt: this.endDt
+      }), {
+        withCredentials: true,
+        crossdomain: true
+      }).then(data => {
+        alert('이벤트 작성이 완료되었습니다.')
+      }).catch(err => {
+        alert('오류 발생', err)
+      })
     },
     // 이미지 업로드를 위한 버튼 클릭 method
     onPickFile() {
@@ -243,7 +266,6 @@ export default {
       this.loadingImage = true;
       this.imageUrl = [];
       const files = event.target.files;
-      console.log("1:", files);
       const file = files[0];
       let filename = file.name;
       this.filename = filename;
@@ -256,107 +278,13 @@ export default {
       });
       fileReader.readAsDataURL(file);
       this.loadingImage = false;
+      this.image.push(file)
     },
     getDataFromApi() {
       this.loading = true;
-      return new Promise((resolve, reject) => {
-        const { sortBy, descending, page, rowsPerPage } = this.pagination;
-        let dataResult = this.getEvents();
-        let items = dataResult.rows;
-        const total = dataResult.total;
-
-        if (this.pagination.sortBy) {
-          items = items.sort((a, b) => {
-            const sortA = a[sortBy];
-            const sortB = b[sortBy];
-
-            if (descending) {
-              if (sortA < sortB) return 1;
-              if (sortA > sortB) return -1;
-              return 0;
-            } else {
-              if (sortA < sortB) return -1;
-              if (sortA > sortB) return 1;
-              return 0;
-            }
-          });
-        }
-
-        if (rowsPerPage > 0) {
-          items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-        }
-        setTimeout(() => {
-          this.loading = false;
-          resolve({
-            items,
-            total
-          });
-        }, 1000);
-      });
+      // 이벤트 목록 가져오기
+      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxGetEvent.do')
     },
-    getEvents() {
-      return {
-        total: 8,
-        rows: [
-          {
-            eventId: 1,
-            eventTitle: "예시 1",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 2,
-            eventTitle: "예시 2",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 3,
-            eventTitle: "예시 3",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 4,
-            eventTitle: "예시 4",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 5,
-            eventTitle: "예시 5",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 6,
-            eventTitle: "예시 6",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 7,
-            eventTitle: "예시 7",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          },
-          {
-            eventId: 8,
-            eventTitle: "예시 8",
-            eventPeriod: "2018-08-18 22:52 ~ 2018-08-18 24:52",
-            eventCreateDt: "2018-08-18 22:52:56.823",
-            eventStatus: "종료"
-          }
-        ]
-      };
-    }
   }
 };
 </script>

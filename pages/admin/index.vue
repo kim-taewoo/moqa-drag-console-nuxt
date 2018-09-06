@@ -76,7 +76,7 @@
           :total-items="totalNotices"
           :loading="loading"
           class="elevation-0"
-          :rows-per-page-items="[10,15,20]"
+          :rows-per-page-items="[10,25,50, 100]"
         >
           <template slot="items" slot-scope="props">
             <tr @click="$router.push({name: 'notice-noticeId', params: props.item})" >
@@ -91,6 +91,7 @@
     </v-layout>
     <!-- 앱 공지사항 테이블 끝 -->
     <!-- 웹 공지사항 테이블 -->
+    <!-- 웹 공지사항을 따로 만들어서 적용할지 여부 미정 -->
     <v-layout v-show="radioBtn == 'web'">
       <v-flex xs12>
         <v-data-table
@@ -100,7 +101,7 @@
           :search="searchWeb"
           :total-items="totalNoticesWeb"
           :loading="loading"
-          :rows-per-page-items="[10,15,20]"
+          :rows-per-page-items="[10,25,50, 100]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
@@ -119,6 +120,7 @@
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   data: () => ({
     radioBtn: "app",
@@ -138,7 +140,6 @@ export default {
       }
     },
     newDialog: false,
-    newRadioBtn: "app",
     editedIndex: -1,
     editedItem: {
       title: "",
@@ -165,18 +166,20 @@ export default {
     pagination: {
       handler() {
         this.getDataFromApi("app").then(data => {
-          this.notices = data.items;
+          this.notices = data.rows;
           this.totalNotices = data.total;
-        });
+          this.loading = false
+        }).catch(err => console.log(err))
       },
       deep: true
     },
     paginationWeb: {
       handler() {
         this.getDataFromApi("web").then(data => {
-          this.noticesWeb = data.items;
+          this.noticesWeb = data.rows;
           this.totalNoticesWeb = data.total;
-        });
+          this.loading = false
+        }).catch(err => console.log(err))
       },
       deep: true
     }
@@ -186,13 +189,15 @@ export default {
   },
   mounted() {
     this.getDataFromApi("app").then(data => {
-      this.notices = data.items;
-      this.totalNotices = data.total;
-    });
-    this.getDataFromApi("web").then(data => {
-      this.noticesWeb = data.items;
+      this.noticesWeb = data.rows;
       this.totalNoticesWeb = data.total;
-    });
+      this.loading = false
+    }).catch(err => console.log(err))
+    this.getDataFromApi("web").then(data => {
+      this.noticesWeb = data.rows;
+      this.totalNoticesWeb = data.total;
+      this.loading = false
+    }).catch(err => console.log(err))
   },
 
   // created() {
@@ -207,52 +212,101 @@ export default {
   },
 
   methods: {
+    // 아래 close 와 save 함수는 공지사항 새로 만들기 대화창에서 쓰이는 함수.
+    close() {
+      this.newDialog = false;
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      }, 300);
+    },
+
+    save() {
+      // 공지사항 저장 클릭시 실행 함수 POST request 가 들어가야 한다. 
+      this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/noticeSave.do?' + qs.stringify({
+        title: this.editedItem.title,
+        content: this.editedItem.content
+      }), {
+        withCredentials: true,
+        crossdomain: true
+      }).then(data => {
+        alert('공지사항 작성이 완료되었습니다.')
+      }).catch(err => {
+        alert('오류 발생', err)
+      })
+    },
     getDataFromApi(arg) {
       this.loading = true;
       if (arg == "app") {
-        return new Promise((resolve, reject) => {
-          const { sortBy, descending, page, rowsPerPage } = this.pagination;
-          let dataResult = this.getNotices("app");
-          let items = dataResult.rows;
-          const total = dataResult.total;
-
-          if (this.pagination.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy];
-              const sortB = b[sortBy];
-
-              if (descending) {
-                if (sortA < sortB) return 1;
-                if (sortA > sortB) return -1;
-                return 0;
-              } else {
-                if (sortA < sortB) return -1;
-                if (sortA > sortB) return 1;
-                return 0;
-              }
-            });
+        // 앱 공지사항을 POST Request 로 받아오는 함수. 이대로 axios 함수를 쓸지 미정
+        return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/noticeList.do', {
+          withCredentials: true,
+          crossdomain : true,
+          data: {
+            pageNum: 1,
+            pageSize: 10,
+            limit: 10,
+            offset: 0
           }
+        })
 
-          if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-          }
-          setTimeout(() => {
-            this.loading = false;
-            resolve({
-              items,
-              total
-            });
-          }, 1000);
-        });
+        // 더미데이터 이용시 코드
+        // return new Promise((resolve, reject) => {
+        //   const { sortBy, descending, page, rowsPerPage } = this.pagination;
+        //   let dataResult = this.getNotices("app");
+        //   let items = dataResult.rows;
+        //   const total = dataResult.total;
+
+        //   if (this.pagination.sortBy) {
+        //     items = items.sort((a, b) => {
+        //       const sortA = a[sortBy];
+        //       const sortB = b[sortBy];
+
+        //       if (descending) {
+        //         if (sortA < sortB) return 1;
+        //         if (sortA > sortB) return -1;
+        //         return 0;
+        //       } else {
+        //         if (sortA < sortB) return -1;
+        //         if (sortA > sortB) return 1;
+        //         return 0;
+        //       }
+        //     });
+        //   }
+
+        //   if (rowsPerPage > 0) {
+        //     items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+        //   }
+        //   setTimeout(() => {
+        //     this.loading = false;
+        //     resolve({
+        //       items,
+        //       total
+        //     });
+        //   }, 1000);
+        // });
       } else {
+        // 현재 구현되어있지 않은 웹 공지사항 데이터 받아오기.
+        // return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/noticeListWeb.do', {
+        //   withCredentials: true,
+        //   crossdomain : true,
+        //   data: {
+        //     pageNum: 1,
+        //     pageSize: 10,
+        //     limit: 10,
+        //     offset: 0
+        //   }
+        // })
+        
+        //웹용 공지사항은 더미데이터로 우선 구현
         return new Promise((resolve, reject) => {
           const { sortBy, descending, page, rowsPerPage } = this.paginationWeb;
           let dataResult = this.getNotices("web");
-          let items = dataResult.rows;
+          let rows = dataResult.rows;
           const total = dataResult.total;
 
           if (this.paginationWeb.sortBy) {
-            items = items.sort((a, b) => {
+            rows = rows.sort((a, b) => {
               const sortA = a[sortBy];
               const sortB = b[sortBy];
 
@@ -269,12 +323,12 @@ export default {
           }
 
           if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+            rows = rows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
           }
           setTimeout(() => {
             this.loading = false;
             resolve({
-              items,
+              rows,
               total
             });
           }, 1000);
@@ -442,22 +496,7 @@ export default {
     // },
 
     // 아래 close 와 save 함수는 수정 예정
-    close() {
-      this.newDialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
-      }
-      this.close();
-    }
+    
   }
 };
 </script>

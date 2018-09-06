@@ -16,10 +16,13 @@
                 <v-btn>검색</v-btn>
               </v-flex>
               <v-flex xs12>
-                <v-text-field single-line readonly label="대상 리스트"></v-text-field>
+                <v-text-field persistent-hint hint="쉼표( , ) 로 구분하여 회원번호 입력" v-model="selected" single-line label="대상 리스트"></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <quill-editor v-model="content"
+                <v-text-field v-model="editedItem.title" label="제목"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <quill-editor v-model="editedItem.content"
                   ref="myQuillEditor"
                   :options="editorOption">
                 </quill-editor>
@@ -28,8 +31,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="close">저장</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="$router.push('/admin/message')">취소</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="save">보내기</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="close">취소</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -41,7 +44,11 @@
 export default {
   data() {
     return {
-      content: "",
+      editedItem: {
+        title:'',
+        content:''
+      },
+      selected: '',
       editorOption: {
         // theme: "bubble",
         placeholder: "여기에 작성",
@@ -58,9 +65,63 @@ export default {
           ]
         },
         theme: "snow"
-      }
+      },
     };
-  }
+  },
+  methods: {
+    close() {
+      this.newDialog = false;
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      }, 300);
+    },
+
+    save() {
+      if (this.selectedMembers == false) {
+        alert('적어도 한 명의 대상이 필요합니다.')
+      } else if (this.selectedMembers.length == 1) {
+        this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxInsertMemberNote.do?' + qs.stringify({
+          title: this.editedItem.title,
+          content: this.editedItem.content,
+          memberSeq: this.selectedMembers[0]
+        }), {
+          withCredentials: true,
+          crossdomain: true
+        }).then(data => {
+          alert('메시지 작성이 완료되었습니다.')
+        }).catch(err => {
+          alert('오류 발생', err)
+        })
+      } else if (this.selectedMembers.length > 1) {
+        this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxInsertMemberNoteBatch.do?' + qs.stringify({
+          title: this.editedItem.title,
+          content: this.editedItem.content,
+          memberSeqs: this.selectedMembers
+        }), {
+          withCredentials: true,
+          crossdomain: true
+        }).then(data => {
+          alert('메시지 작성이 완료되었습니다.')
+        }).catch(err => {
+          alert('오류 발생', err)
+        })
+      }
+    },
+  },
+  computed: {
+    selectedMembers () {
+      let x = this.selected.split(',')
+      let y = []
+      x.forEach((e) => {
+        y.push(e)
+      })
+      return y
+    },
+    editor() {
+      return this.$refs.myQuillEditor.quill;
+    }
+  },
 };
 </script>
 

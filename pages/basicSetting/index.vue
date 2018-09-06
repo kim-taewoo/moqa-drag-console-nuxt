@@ -5,8 +5,7 @@
         <v-flex xs12 sm10 md8 lg6>
           <h3><v-icon>border_color</v-icon> 기본사항</h3>
           <v-card ref="form" class="mt-2">
-            <v-card-text>                                                  
-              <form action="">
+            <v-card-text>        
                 <v-container py-0 grid-list-md >
                   <v-layout row wrap>  
                       <v-flex xs12>
@@ -40,11 +39,11 @@
                           <v-text-field
                             slot="activator"
                             readonly
-                            v-model="dateFormatted"
+                            v-model="date"
                             label="시작하는 날"
                             persistent-hint
                             prepend-icon="event"
-                            @blur="date = parseDate(dateFormatted)"
+                            
                           ></v-text-field>
                           <v-date-picker 
                             v-model="date" 
@@ -65,27 +64,27 @@
                           lazy
                           transition="scale-transition"
                           offset-y
-                          :disabled="!dateFormatted"
+                          :disabled="!date"
                           full-width
                           max-width="290px"
                           min-width="290px"
                         >
                           <v-text-field
                             slot="activator"
-                            v-model="dateFormattedEnd"
+                            v-model="date2"
                             label="끝나는 날"
                             readonly
-                            :disabled="!dateFormatted"
+                            :disabled="!date"
                             persistent-hint
                             prepend-icon="event"
-                            @blur="date2 = parseDate(dateFormattedEnd)"
+                            
                           ></v-text-field>
                           <v-date-picker 
                             v-model="date2" 
                             no-title 
                             locale="ko-kr" 
                             @input="menu2 = false"
-                            :min="dateFormatted">
+                            :min="date">
                             </v-date-picker>
                         </v-menu>
                       </v-flex>
@@ -187,10 +186,10 @@
                           ref="state"
                           v-model="state"
                           label="설문 기관"
-                          required
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs12>
+                      <!-- 만들어져있는 API 에 설명들어가는 곳이없음. -->
+                      <!-- <v-flex xs12>
                         <v-textarea
                           name="input-7-1"
                           label="설문 설명"
@@ -198,12 +197,11 @@
                           v-model="description"
                           row-height="12"
                         ></v-textarea>
-                      </v-flex>
+                      </v-flex> -->
 
 
                   </v-layout>
                 </v-container>
-              </form>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -233,49 +231,35 @@
                       ></v-text-field>
                     </v-flex>
                     <v-flex xs12>
-                      <v-autocomplete
+                      <v-select
                         ref="targetGroup"
                         :items="targetGroups"
+                        item-text="memberGroupName"
+                        item-value="memberCount"
+                        return-object
+                        single-line
                         v-model="targetGroup"
                         label="나의 맞춤타겟 가져오기"
-                      ></v-autocomplete>
+                      ></v-select>
                     </v-flex>
                     <v-flex class="xs9" @click.stop="newTargetDialog = true">
-                      <v-text-field readonly disabled label="새로 대상 설정하기" >
+                      <v-text-field v-model="calcTargetMember" readonly label="새로 대상 설정하기" >
 
                       </v-text-field>
                     </v-flex>
                     <v-flex class="xs3">
-                      <v-dialog v-model="newTargetDialog" scrollable persistent fullscreen hide-overlay transition="dialog-bottom-transition">
+                      <v-dialog v-model="newTargetDialog" scrollable persistent transition="dialog-bottom-transition">
                         <v-btn slot="activator" color="primary" ref="newTargetBtn">설정</v-btn>
                         <v-card>
                           <v-card-title class="primary white--text headline">
                             <v-icon dark>people</v-icon>
-                            <span class="pl-2">타겟설정</span> 
-                            <v-spacer></v-spacer>
-                            <v-dialog max-width="290" persistent v-model="addTargetDialog">
-                              <v-btn slot="activator" flat dark>현재 설정을 맞춤타겟에 추가</v-btn>
-                              <v-card>
-                                <v-card-title class="subheading">맞춤타겟에 추가</v-card-title>
-                                <v-card-text>
-                                  <v-text-field v-model="addedTargetGroup" counter="25" label="타겟 이름"></v-text-field>
-                                </v-card-text>
-                                <v-card-actions>
-                                  <v-spacer></v-spacer>
-                                  <v-btn color="green darken-1" flat @click.native="addTargetDialog = false">취소</v-btn>
-                                  <v-btn color="green darken-1" flat @click.native="addTargetDialog = false">저장</v-btn>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                            <v-btn dark class="subheading" flat @click.native="newTargetDialog = false">
-                              적용하기
-                            </v-btn>
+                            <span class="pl-2">타겟설정</span>
                           </v-card-title>
                           <v-divider></v-divider>
                           <v-card-text class="text-xs-center">
-                            <v-layout>
+                            <v-layout wrap>
                               <v-flex xs12>
-                                <select-target></select-target>
+                                <select-target @targetSet="makeForm($event)"></select-target>
                               </v-flex>
                             </v-layout>
                           </v-card-text>
@@ -296,7 +280,7 @@
 
 <script>
 import SelectTarget from "@/components/basic_setting_target/SelectTarget";
-
+import qs from 'qs'
 export default {
   components: {
     SelectTarget
@@ -305,14 +289,7 @@ export default {
   data() {
     return {
       e1: 0,
-      targetGroups: [
-        "나의 맞춤타겟1",
-        "나의 맞춤타겟2",
-        "나의 맞춤타겟3",
-        "나의 맞춤타겟4",
-        "나의 맞춤타겟5"
-      ],
-      addedTargetGroup: null,
+      targetGroups: [],
       targetGroup: null,
       errorMessages: [],
       title: null,
@@ -327,82 +304,64 @@ export default {
       menu_time1: false,
       time2: null,
       menu_time2: false,
-      dateFormatted: null,
-      dateFormattedEnd: null,
       menu1: false,
       menu2: false,
-      maxParticipate: 1000,
+      maxParticipate: null,
       newTargetDialog: false,
-      addTargetDialog: false
+      calcTargetMember: null,
+      formAll: null
     };
   },
-  computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date);
-    }
-    // genderAll: {
-    //   get () {
-    //     if (this.genders.length == this.selectedGender.length) {
-    //       return true
-    //     } else {
-    //       return false
-    //     }
-    //   },
-    //   set (event) {
-    //     if (event) {
-    //       this.selectedGender = this.genders
-    //     } else {
-    //       this.selectedGender = []
-    //     }
-    //   }
-    // }
-  },
-  watch: {
-    name() {
-      this.errorMessages = [];
-    },
-    date(val) {
-      this.dateFormatted = this.date;
-    },
-    date2(val) {
-      this.dateFormattedEnd = this.date2;
-    }
+  mounted () {
+    // 페이지가 열리면 맞춤타겟 목록도 가져와서 대기한다.
+    // 역시나 쿠키가 필요한 곳이라 어떻게 설정하느냐가 중요할 거 같다. 
+    this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxMemberGroupList.do?')
+      .then(data => {
+        this.targetGroups = data.rows
+      })
   },
   methods: {
-    addressCheck() {
-      this.errorMessages =
-        this.address && !this.name ? ["Hey! I'm required"] : [];
+    makeForm (e) {
+      this.formAll = {
+        surveyTitle: this.title,
+        surveyStartDt: this.date,
+        surveyEndDt: this.date2,
+        startTime: this.time,
+        endTime: this.time2,
+        surveyCompany: this.state,
+        maxUserCount: this.maxParticipate,
+        ...e
+      }
+      console.log(this.formAll)
+      this.newTargetDialog = false
 
-      return true;
-    },
-    resetForm() {
-      this.errorMessages = [];
-      this.formHasErrors = false;
+      // 멤버 수 계산
+      // this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxAdminUserList.do?' + qs.stringify({
+      //   targetAge: e.targetAge,
+      //   targetLocation: e.targetLocation,
+      //   targetMarryYn: e.targetMarryYn,
+      //   targetFamilly: e.targetFamilly,
+      //   targetJob: e.targetJob,
+      //   targetEducation: e.targetEducation,
+      //   targetGender: e.targetGender,
+      //   targetMobileComp: e.targetMobileComp,
+      //   targetPrivacyIncome: e.targetPrivacyIncome,
+      //   targetFamillyIncome: e.targetFamillyIncome
+      // }), {
+      //   withCredentials: true,
+      //   crossdomain: true
+      // }).then(data => {
+      //   this.calcTargetMember = data.data.length
+      //   this.$emit('targetSetting', {
+      //     ...this.formAll,
+      //     memberSeqs: data.data
+      //   })
+      // }).catch(err => console.log(err))
+      this.$emit('targetSetting', {
+          ...this.formAll,
+          memberSeqs: 8000
+        })
 
-      Object.keys(this.form).forEach(f => {
-        this.$refs[f].reset();
-      });
-    },
-    submit() {
-      this.formHasErrors = false;
-
-      Object.keys(this.form).forEach(f => {
-        if (!this.form[f]) this.formHasErrors = true;
-
-        this.$refs[f].validate(true);
-      });
-    },
-    // formatDate (date) {
-    //   if (!date) return null
-
-    //   const [year, month, day] = date.split('-')
-    //   return `${year}-${month}-${day}`
-    // },
-    parseDate(date) {
-      if (!date) return null;
-
-      const [year, month, day] = date.split("-");
-      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     }
   }
 };

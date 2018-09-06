@@ -30,34 +30,29 @@ export default {
       messageInfo: [
         {
           name: "ID",
-          value: this.item.messageNum
+          value: this.item.seq
         },
         {
           name: "유저번호",
           value: this.item.memberSeq
         },
         {
-          name: "이메일",
-          value: this.item.email
-        },
-        {
-          name: "이름",
-          value: this.item.name
-        },
-        {
-          name: "성별",
+          name: "제목",
           value:
-            this.item.gender
-        },
-        {
-          name: "수신여부",
-          value:
-            this.item.check
+            this.item.title
         },
         {
           name: "내용",
           value:
-            this.item.messageContent
+            this.item.context
+        },
+        {
+          name: "발송일",
+          value: this.item.sendDt
+        },
+        {
+          name: "생성일",
+          value: this.item.createDt
         },
       ]
     }

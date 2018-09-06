@@ -26,7 +26,12 @@ export default {
   },
   methods: {
     checkChanged() {
-      this.$emit("checkChanged", this.selectedOption);
+      if (this.selectedOption.length == this.options.length) {
+        var result = 'ALL'
+      } else {
+        var result = this.selectedOption
+      }
+      this.$emit("checkChanged", result);
     }
   },
   computed: {

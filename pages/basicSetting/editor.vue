@@ -40,7 +40,7 @@
 
 
                   <v-card class="workplace-card">
-                    <component :is="question.comp" :questionIndex="index" class="card-component" :type="type" :questions="questions"></component>
+                    <component @titleInput="typeQ.surveyTitle = $event" @answersInput="typeQ.answers = $event" @multipleYn="typeQ.multipleYn = $event" :is="question.comp" :questionIndex="index" class="card-component" :type="type" :questions="questions"></component>
                   </v-card>
 
                 </v-expansion-panel-content>
@@ -51,15 +51,15 @@
               <div class="subheading" ref="addButton">아래 버튼을 클릭해서 질문 추가</div>
             </v-flex>
           </v-layout>
-          <v-layout>
-            <v-flex xs12 class="text-xs-center">
+          <v-layout wrap>
+            <v-flex xs12 class="text-xs-center" style="position:relative;">
               <v-menu transition="slide-x-transition" top right>
                 <v-btn slot="activator" fab bottom dark color="pink" >
                   <v-icon>add</v-icon>
                 </v-btn>
                 <v-card width="380px">
                   <v-layout wrap>
-                    <v-flex v-for="(type, index) in questionTypes" xs6 v-if="type.typeName" :key="index" @click="addCard(type.id)" style="border: 1px solid #F5F5F5" class="question-types px-3 py-2 text-xs-right">
+                    <v-flex v-for="(type, index) in questionTypes" xs6 v-if="type.typeName" :key="index" @click="addCard(type.id)" style="border: 1px solid #F5F5F5; position:relative;" class="question-types px-3 py-2 text-xs-right">
                       <span>{{type.typeName}} <small v-if="type.typeSubName">{{type.typeSubName}}</small></span> 
 
                       <v-menu
@@ -93,8 +93,14 @@
                   </v-layout>
                 </v-card>
               </v-menu>
+                <!-- <v-btn flat absolute class="" color="blue darken-2" dark :right="true">저장하기<v-icon>arrow_forward</v-icon></v-btn> -->
+
+                <v-btn absolute class="mt-4 " color="blue darken-2" dark :right="true" @click="questionsSet">배포하기<v-icon>arrow_forward</v-icon></v-btn>
+
+              
             </v-flex>       
           </v-layout>
+              
 
         </v-card>
       </v-flex>
@@ -149,6 +155,9 @@ export default {
     }
   },
   methods: {
+    questionsSet () {
+      this.$emit('questionsSetting', this.typeQ)
+    },
     checkblur(target) {
       console.log("blur", target);
     },
@@ -191,6 +200,7 @@ export default {
   
   data() {
     return {
+      fab: false,
       menu: false,
       fav: true,
       message: false,
@@ -200,10 +210,20 @@ export default {
       helpPop: false,
       currentHelp: "",
       questions: [],
-      isDragging: false
+      isDragging: false,
     };
   },
   computed : {
+    typeQ () {
+      if (this.type == 'quick') {
+        return {
+          surveyTitle: null,
+          answers: null,
+          multipleYn: false,
+          surveyTypeCode: this.type
+        }
+      }
+    },
     questionTypes () {
       if (this.type == 'quick') {
         return [

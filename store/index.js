@@ -20,8 +20,8 @@ const createStore = () => {
         if ( authData.isAdmin == false) {
           // 기업 고객 로그인일 경우 실행될 함수. 
           return this.$axios.$post('https://~~', {
-            userId: this.userId,
-            password: this.userPassword
+            userId: authData.userId,
+            password: authData.userPassword
           }).then(data => {
             console.log(data)
             // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수
@@ -31,25 +31,25 @@ const createStore = () => {
           })
         } else {
           // 관리자 로그인일 경우 실행될 함수
-          // return this.$axios.$post('https://~~', {
-          //   userId: this.userId,
-          //   password: this.userPassword
-          // }).then(data => {
-          //   console.log(data)
-          //   // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수. 만일 쿠키로 등록해야 한다면 아래 처럼 쿠키를 넣는다.
-          //   vuexContext.commit('setToken', data.idToken)
-          //   localStorage.setItem('token', data.idToken)
-          //   localStorage.setItem('tokenExpiration', new Date().getTime() + Number.parseInt(data.expiresIn) * 1000)
-          //   Cookie.set('jwt', data.idToken)
-          //   Cookie.set('expirationDate', new Date().getTime() + Number.parseInt(data.expiresIn) * 1000)
-          //   // vuexContext.dispatch('setLogoutTimer', data.expiresIn * 1000)
-          // }).catch(err => {
-          //   console.log(err)
-          // })
+          return this.$axios.$post('https://~~', {
+            userId: authData.userId,
+            password: authData.userPassword
+          }).then(data => {
+            console.log(data)
+            // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수. 만일 쿠키로 등록해야 한다면 아래 처럼 쿠키를 넣는다.
+            vuexContext.commit('setToken', data.idToken)
+            localStorage.setItem('token', data.idToken)
+            localStorage.setItem('tokenExpiration', new Date().getTime() + Number.parseInt(data.expiresIn) * 1000)
+            Cookie.set('jwt', data.idToken)
+            Cookie.set('expirationDate', new Date().getTime() + Number.parseInt(data.expiresIn) * 1000)
+            // vuexContext.dispatch('setLogoutTimer', data.expiresIn * 1000)
+          }).catch(err => {
+            console.log(err)
+          })
 
           //test 용 임시 함수
-          vuexContext.commit('setToken', '0C77D2C5BF51757474910F21384AF61E')
-          Cookie.set('JSESSIONID', '0C77D2C5BF51757474910F21384AF61E')
+          // vuexContext.commit('setToken', '0C77D2C5BF51757474910F21384AF61E')
+          // Cookie.set('JSESSIONID', '0C77D2C5BF51757474910F21384AF61E')
         }
       },
       // setLogoutTimer(vuexContext, duration) {

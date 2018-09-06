@@ -63,6 +63,7 @@
 import userProfileAdmin from "@/components/profile/userProfileAdmin";
 import oneToOneMessage from "@/components/admin/oneToOneMessage";
 import adminSurveyList from '@/components/admin/adminSurveyList'
+import qs from 'qs'
 
 export default {
   components: {
@@ -89,139 +90,37 @@ export default {
   watch: {
     pagination: {
       handler() {
-        this.getDataFromApi("points").then(data => {
-          this.points = data.items;
+        this.getDataFromApi().then(data => {
+          this.points = data.rows;
           this.totalpoints = data.total;
+          this.loading = false
         });
       },
       deep: true
     }
   },
   mounted() {
-    this.getDataFromApi("points").then(data => {
-      this.points = data.items;
+    this.getDataFromApi().then(data => {
+      this.points = data.rows;
       this.totalpoints = data.total;
+      this.loading = false
     });
   },
   methods: {
-    getDataFromApi(arg) {
+    getDataFromApi() {
       this.loading = true;
-      if (arg == "points") {
-        return new Promise((resolve, reject) => {
-          const { sortBy, descending, page, rowsPerPage } = this.pagination;
-
-          let dataResult = this.getUserPoints();
-          let items = dataResult.rows;
-          const total = dataResult.total;
-
-          if (this.pagination.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy];
-              const sortB = b[sortBy];
-
-              if (descending) {
-                if (sortA < sortB) return 1;
-                if (sortA > sortB) return -1;
-                return 0;
-              } else {
-                if (sortA < sortB) return -1;
-                if (sortA > sortB) return 1;
-                return 0;
-              }
-            });
-          }
-
-          if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-          }
-          setTimeout(() => {
-            this.loading = false;
-            resolve({
-              items,
-              total
-            });
-          }, 1000);
-        });
-      } else {
-        return new Promise((resolve, reject) => {
-          const { sortBy, descending, page, rowsPerPage } = this.paginationSave;
-
-          let items = this.getpointsSave();
-          const total = items.length;
-
-          if (this.paginationSave.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy];
-              const sortB = b[sortBy];
-
-              if (descending) {
-                if (sortA < sortB) return 1;
-                if (sortA > sortB) return -1;
-                return 0;
-              } else {
-                if (sortA < sortB) return -1;
-                if (sortA > sortB) return 1;
-                return 0;
-              }
-            });
-          }
-
-          if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-          }
-          setTimeout(() => {
-            this.loading = false;
-            resolve({
-              items,
-              total
-            });
-          }, 1000);
-        });
-      }
+      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/ajaxMemberPointList.do?' + qs.stringify({
+          pageSize:10,
+          limit: 10,
+          offset:0,
+          pageNum:this.pagination.page,
+          memberSeq: this.content.memberSeq
+        }), {
+        withCredentials: true,
+        crossdomain : true,
+      })
     },
-    getUserPoints() {
-      return {
-        total: 5,
-        rows: [
-          {
-            point: 500,
-            reason: "회원가입 축하 리워드",
-            memberSeq: 9452,
-            type: "save",
-            date: "2018-08-23 06:58:06"
-          },
-          {
-            point: 50,
-            reason: "설문완료(성공)",
-            memberSeq: 9452,
-            type: "save",
-            date: "2018-08-23 06:59:21"
-          },
-          {
-            point: 50,
-            reason: "설문완료(성공)",
-            memberSeq: 9452,
-            type: "save",
-            date: "2018-08-23 07:05:52"
-          },
-          {
-            point: 100,
-            reason: "설문완료(성공)",
-            memberSeq: 9452,
-            type: "save",
-            date: "2018-08-23 07:07:54"
-          },
-          {
-            point: 50,
-            reason: "설문완료(성공)",
-            memberSeq: 9452,
-            type: "save",
-            date: "2018-08-23 07:10:02"
-          }
-        ],
-        search: null
-      };
-    }
+    
   }
 };
 </script>
