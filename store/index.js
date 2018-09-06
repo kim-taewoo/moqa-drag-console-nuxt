@@ -47,7 +47,7 @@ const createStore = () => {
           //   console.log(err)
           // })
 
-          //test
+          //test 용 임시 함수
           vuexContext.commit('setToken', '0C77D2C5BF51757474910F21384AF61E')
           Cookie.set('JSESSIONID', '0C77D2C5BF51757474910F21384AF61E')
         }

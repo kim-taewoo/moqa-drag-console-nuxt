@@ -14,7 +14,7 @@
           ></v-text-field>
       </v-flex>
       <v-spacer></v-spacer>
-      <v-flex class="xs12 sm6 text-xs-right">
+      <!-- <v-flex class="xs12 sm6 text-xs-right">
           <v-dialog v-model="dialog" max-width="900px" persistent>
             <v-btn large slot="activator" color="primary" dark class="mb-2"><v-icon>add</v-icon> 글쓰기</v-btn>
             <v-card>
@@ -48,7 +48,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-      </v-flex>
+      </v-flex> -->
     </v-layout>
         
     <v-divider></v-divider>
