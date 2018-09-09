@@ -48,7 +48,7 @@
 
 <script>
 export default {
-  // middleware: ['check-auth','auth'],
+  // middleware: ['auth'],
   data() {
     return {
       clipped: true,

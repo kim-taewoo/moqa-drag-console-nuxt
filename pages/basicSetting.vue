@@ -31,7 +31,7 @@
 
             </v-stepper-header>
 
-              <nuxt-child :type="paramsType.type" @targetSetting="targetSetting" @questionsSetting="questionsSetting" />   
+              <nuxt-child :type="paramsType.type" :isAdmin="paramsType.isAdmin" @targetSetting="targetSetting" @questionsSetting="questionsSetting" />   
 
           </v-stepper>
 
@@ -159,7 +159,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route)
+    console.log(this.paramsType)
   },
   watch: {
     e1: function(val) {

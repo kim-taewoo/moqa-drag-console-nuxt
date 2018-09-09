@@ -1,6 +1,5 @@
 <template>
 <div>
-
   <div class="login-box">
     <img src="@/assets/moqaLogos/1.png" class="avatar">
       <h1>모두의 Q&A</h1>
@@ -9,7 +8,7 @@
         <p>ID</p>
         <input type="text" name="username" v-model="userId" placeholder="Enter ID">
         <p>Password</p>
-        <input type="password" v-model="userPassword" name="password" placeholder="Enter Password">
+        <input type="password" v-model="userPassword" name="password" placeholder="Enter Password" @keyup.enter="onSubmit">
         <input type="submit" name="submit" :value="isAdmin?'관리자 로그인':'기업회원 로그인'" >
         <v-btn class="ma-0 pa-0" @click="isAdmin = !isAdmin" flat>{{isAdmin? '기업 회원 로그인으로 바꾸기' : '관리자 페이지 로그인으로 바꾸기'}}</v-btn>    
       </form>
@@ -35,12 +34,15 @@ export default {
         userId: this.userId,
         userPassword: this.userPassword
       })
-      .then(() => {
+      .then((result) => {
+        console.log(result)
         if (this.isAdmin == false) {
           this.$router.push('/')
         } else {
           this.$router.push('/admin')
         }
+      }).catch(err => {
+        console.log(err)
       })
     }
   }

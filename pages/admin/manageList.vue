@@ -195,13 +195,13 @@ export default {
   },
   methods: {
     choseQuick() {
-      this.$router.push({name: 'basicSetting', params: {type: 'quick'}});
+      this.$router.push({name: 'basicSetting', params: {type: 'quick', isAdmin: true}});
     },
     choseSurvey() {
-      this.$router.push({name: 'basicSetting', params: {type: 'survey'}});
+      this.$router.push({name: 'basicSetting', params: {type: 'survey', isAdmin: true}});
     },
     choseQuiz () {
-      this.$router.push({name: 'basicSetting', params: {type: 'quiz'}})
+      this.$router.push({name: 'basicSetting', params: {type: 'quiz', isAdmin: true}})
     }
   }
 };

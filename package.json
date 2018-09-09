@@ -11,11 +11,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.55",
+    
     "@babel/polyfill": "^7.0.0-beta.55",
     "@nuxtjs/axios": "^5.3.1",
     "@nuxtjs/proxy": "^1.2.4",
-    "babel-loader": "^8.0.0-beta.4",
+    
     "js-cookie": "^2.2.0",
     "nuxt": "^1.0.0",
     "qs": "^6.5.2",
@@ -27,7 +27,9 @@
     "vuetify": "^1.1.10"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.55",
     "@babel/core": "^7.0.0-beta.55",
+    "babel-loader": "^8.0.0-beta.4",
     "@babel/preset-env": "^7.0.0-beta.55",
     "cross-env": "^5.0.1",
     "stylus": "^0.54.5",

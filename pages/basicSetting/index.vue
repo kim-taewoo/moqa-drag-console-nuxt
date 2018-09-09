@@ -149,7 +149,9 @@
                         </v-menu>
                       </v-flex>
                       <!-- 날짜 및 '리워드' 유효하지 않은 값을 입력했을 경우 경고 후 리셋 하도록 로직 설정이 필요함 -->
-                      <!-- <v-flex xs9 mt-3>
+
+                      <!-- 리워드 설정인 관리자 페이지에서 접근했을 경우에만 렌더링됨 -->
+                      <v-flex xs9 mt-3 v-if="isAdmin">
                         <v-slider
                           v-model="reward"
                           :max="500"
@@ -158,14 +160,14 @@
                         >
                         </v-slider>
                       </v-flex>
-                      <v-flex xs3 mt-3>
+                      <v-flex xs3 mt-3 v-if="isAdmin">
                         <v-text-field
                           v-model="reward"
                           class="mt-0"
                           type="number"
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs9>
+                      <v-flex xs9 v-if="isAdmin">
                         <v-slider
                           v-model="stopReward"
                           :max= reward
@@ -174,13 +176,14 @@
                         >
                         </v-slider>
                       </v-flex>
-                      <v-flex xs3>
+                      <v-flex xs3 v-if="isAdmin">
                         <v-text-field
                           v-model="stopReward"
                           class="mt-0"
                           type="number"
                         ></v-text-field>
-                      </v-flex> -->
+                      </v-flex>
+
                       <v-flex xs12>
                         <v-text-field
                           ref="state"
@@ -282,6 +285,12 @@
 import SelectTarget from "@/components/basic_setting_target/SelectTarget";
 import qs from 'qs'
 export default {
+  props: {
+    isAdmin: {
+      type: Boolean,
+      required: false,
+    }
+  },
   components: {
     SelectTarget
   },
@@ -296,7 +305,7 @@ export default {
       state: null,
       description: null,
       formHasErrors: false,
-      reward: 5,
+      reward: 0,
       stopReward: 0,
       date: null,
       date2: null,
@@ -328,6 +337,8 @@ export default {
         surveyEndDt: this.date2,
         startTime: this.time,
         endTime: this.time2,
+        savePoint: this.reward,
+        stopSurveyPoint: this.stopReward,
         surveyCompany: this.state,
         maxUserCount: this.maxParticipate,
         ...e

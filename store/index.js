@@ -1,5 +1,6 @@
 import Vuex from 'vuex';
 import Cookie from 'js-cookie';
+import qs from 'qs'
 
 const createStore = () => {
   return new Vuex.Store({
@@ -23,7 +24,6 @@ const createStore = () => {
             userId: authData.userId,
             password: authData.userPassword
           }).then(data => {
-            console.log(data)
             // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수
             vuexContext.commit('setToken', data.idToken)
           }).catch(err => {
@@ -31,11 +31,14 @@ const createStore = () => {
           })
         } else {
           // 관리자 로그인일 경우 실행될 함수
-          return this.$axios.$post('https://~~', {
-            userId: authData.userId,
-            password: authData.userPassword
+          return this.$axios.$post('https://~~' + qs.stringify({
+              pageSize:10,
+              offset:0,
+              pageNum:this.pagination.page,
+            }), {
+            withCredentials: true,
+            crossdomain : true,
           }).then(data => {
-            console.log(data)
             // 로그인 성공으로 받은 토큰을 넣는 함수. idToken 은 임의의 변수. 만일 쿠키로 등록해야 한다면 아래 처럼 쿠키를 넣는다.
             vuexContext.commit('setToken', data.idToken)
             localStorage.setItem('token', data.idToken)
@@ -49,7 +52,7 @@ const createStore = () => {
 
           //test 용 임시 함수
           // vuexContext.commit('setToken', '0C77D2C5BF51757474910F21384AF61E')
-          // Cookie.set('JSESSIONID', '0C77D2C5BF51757474910F21384AF61E')
+          // Cookie.set('JSESSIONID', '393C1C93B55E98BE2DAA5495C65BAAED')
         }
       },
       // setLogoutTimer(vuexContext, duration) {
@@ -99,6 +102,9 @@ const createStore = () => {
     getters: {
       isAuthenticated(state) {
         return state.token != null
+      },
+      getToken(state) {
+        return state.token
       }
     }
   })

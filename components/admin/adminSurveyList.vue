@@ -82,6 +82,7 @@
 
 <script>
 import qs from 'qs'
+import Cookie from 'js-cookie'
 const SurveyDetail = () => import("@/components/SurveyDetail");
 // import SurveyDetail from "@/components/SurveyDetail";
 
@@ -226,7 +227,12 @@ export default {
       this.surveyDetailDialog = true;
     },
     getDataFromApi() {
-      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/pointUseList.do?' + qs.stringify({
+      const cookie = Cookie.get('JSESSIONID')
+      this.$axios.setHeader('Cookie', cookie)
+      this.$axios.setHeader('Content-Type', 'application/x-www-form-urlencoded', [
+        'post'
+      ])
+      return this.$axios.$post('http://admin.moqa.co.kr/admin/ajax/surveyListForWeb.do?' + qs.stringify({
           pageSize:10,
           offset:0,
           surveyTypeCode: this.surveyTypeCode,
